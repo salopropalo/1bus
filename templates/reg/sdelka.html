@@ -1,0 +1,58 @@
+{% extends 'reg/base.html' %}
+
+{% block content %}
+    <div class="container" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+        <div class="d-flex justify-content-center"><h1> {{ title }}</h1></div>
+            <div class="row gy-2">
+                <div class="content">
+                    <p class="fs-5">Дата создания: {{ date_born }}</p>
+                    <p class="fs-5">Ответственный: {{ responsible }}</p>
+                    <p class="fs-5">Наименование покупателя: {{ customer_company }}</p>
+                    <p class="fs-5">Адрес объекта: {{ adres }}</p>
+                    <p class="fs-5">Статус сделки: {{ status }}</p>
+                </div>
+
+                <!-- Кнопка-триггер модального окна -->
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                    <!-- Проверяем есть ли пользователь в которую входит пользователь в списке разрешенных групп -->
+                    {% if add == True %}
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        Редактировать
+                        </button>
+                    {% endif %}
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <button type="button" class="btn btn-success">
+                        Отправить на проверку
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+    <!-- Модальное окно -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">{{ title2 }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.NameProg }}<br>
+                        {{ form.Adres_obj }}<br>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary" name="new_sdelka">Зарегистрировать</button>
+                        </div>
+                        <span>{{ error }}</span>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}
