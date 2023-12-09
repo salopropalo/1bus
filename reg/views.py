@@ -62,15 +62,28 @@ def regis(request):
                 dateReg = dateReg.filter(Status=selected_sorting)
         else:
             error = 'POST запрос с ошибкой!'
-
-    # поиск по карточкам
     if request.method == 'GET':
-        if request.GET:
+        if 'q' in request.GET:
+            # Получение вводимой информации в поисковике и запрос в БД
             a = request.GET['q']
-            dateReg = regModel.objects.filter(numbers=a) | regModel.objects.filter(NameProg=a) \
-                      | regModel.objects.filter(Responsible=a) | regModel.objects.filter(Customer_company=a) \
-                      | regModel.objects.filter(Adres_obj=a) | regModel.objects.filter(Status=a)
-
+            dateReg = regModel.objects.filter(numbers__icontains=a) | regModel.objects.filter(NameProg__icontains=a) \
+                      | regModel.objects.filter(Responsible__icontains=a) \
+                      | regModel.objects.filter(Customer_company__icontains=a) \
+                      | regModel.objects.filter(Adres_obj__icontains=a) | regModel.objects.filter(Status__icontains=a)
+        elif 'sortirovka' in request.GET:
+            selected_sorting = request.GET['sortirovka']
+            if selected_sorting in ['все']:
+                if request.user.has_perm('reg.delete_regmodel'):
+                    dateReg = regModel.objects.all()
+                elif request.user.has_perm('reg.add_regmodel'):
+                    dateReg = regModel.objects.filter(Responsible=request.user.get_full_name())
+                elif not request.user.has_perm('reg.add_regmodel'):
+                    dateReg = regModel.objects.filter(Status='в работе')
+                    dateReg = dateReg.objects.filter(Status='завершен')
+                else:
+                    raise PermissionDenied
+            else:
+                dateReg = dateReg.filter(Status=selected_sorting)
     form = regForm()
     content = {
         'add': add,
@@ -82,6 +95,7 @@ def regis(request):
     }
 
     return render(request, 'reg/reg.html', content)
+
 
 def inreg(request):
     error = ''
