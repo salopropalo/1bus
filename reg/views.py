@@ -48,14 +48,18 @@ def regis(request):
         # Если post запрос связан с сортировкой списка карточек сделок
         elif 'sortirovka' in request.POST:
             selected_sorting = request.POST['sortirovka']
-            if selected_sorting in ['все']:
+            print('aaaaaaaaaaa', selected_sorting)
+            if selected_sorting in ['всё']:
+                # для группы пользователей у которых есть права на удаление
                 if request.user.has_perm('reg.delete_regmodel'):
                     dateReg = regModel.objects.all()
+                # для группы пользователей у которых есть права на добавление
                 elif request.user.has_perm('reg.add_regmodel'):
                     dateReg = regModel.objects.filter(Responsible=request.user.get_full_name())
+                # для группы пользователей у которых нет прав на добавление или удаление
                 elif not request.user.has_perm('reg.add_regmodel'):
                     dateReg = regModel.objects.filter(Status='в работе')
-                    dateReg = dateReg.objects.filter(Status='завершен')
+                    dateReg = dateReg.objects.filter(Status='завершён')
                 else:
                     raise PermissionDenied
             else:
@@ -71,14 +75,16 @@ def regis(request):
                       | regModel.objects.filter(Responsible=a) | regModel.objects.filter(Customer_company=a) \
                       | regModel.objects.filter(Adres_obj=a) | regModel.objects.filter(Status=a)
 
+    status_html = {1: 'всё', 2: 'создан', 3: 'согласован', 4: 'в работе', 5: 'завершён'}
     form = regForm()
     content = {
-        'add': add,
-        'title': title,
-        'dateReg': dateReg,
-        'form': form,
-        'error': error,
-        'title2': 'Регистрация нового проекта'
+        'status_html': status_html,     # статус для формы HTML
+        'add': add,                     # статус пользователя для определения его прав на просмотр и изменения
+        'title': title,                 # заголовок списка
+        'data_cards': dateReg,          # данные для отображения в карточках
+        'form': form,                   # данные для отображения в карточках
+        'error': error,                 #
+        'title2': 'Регистрация нового проекта'  # заголовок страницы
     }
 
     return render(request, 'reg/reg.html', content)
