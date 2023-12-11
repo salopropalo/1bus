@@ -3,10 +3,10 @@ from django.db import models
 class regModel(models.Model):
     class Stat(models.Model):
         STATUS = (
-            ('создан', 'создан'),
-            ('согласован', 'согласован'),
-            ('в работе', 'в работе'),
-            ('завершен', 'завершен')
+            ('1', 'создан'),
+            ('2', 'согласован'),
+            ('3', 'в работе'),
+            ('4', 'завершён')
         )
 
     numbers = models.CharField('Номер проекта', max_length=10)
