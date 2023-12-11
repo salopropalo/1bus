@@ -24,7 +24,7 @@
                     Фильтр по статусу
                 </a>
                 <ul class="dropdown-menu dropdown-menu" aria-labelledby="dropdownMenu2">
-                    <form method="post">
+                    <form action="{% url 'regis' %}"  method="get">
                         {% csrf_token %}
                         {% for key, value in status_html.items %}
                             <li><button type="submit" class="dropdown-item" name="sortirovka" value="{{ value }}">{{ value }}</button> </li>
@@ -34,15 +34,13 @@
             </div>
             {% endif %}
 
-            <!-- Поиск -->
-            <form action="{% url 'regis' %}" method="get">
-                    <label>
-                        <input name="q" type="text" placeholder="Поиск">
-                    </label>
-            </form>
-
             <!-- Список всех проектов -->
-            {% for el in data_cards %}
+            <form action="{% url 'regis' %}" method="get">
+                <label>
+                    <input name="q" type="text" placeholder="Поиск">
+                </label>
+            </form>
+            {% for el in dateReg %}
             <div
                 {% if el.Status == 'создан' %}
                 class="alert alert-warning" role="alert"
