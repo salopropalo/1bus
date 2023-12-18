@@ -16,14 +16,25 @@
         <span class="fs-4">PitON</span>
       </a>
       <ul class="nav nav-pills">
-        <li class="nav-item"><a href="{% url 'home' %}"
-                                {% if 'glavn' in request.path %}
+          <li class="nav-item"><a href="{% url 'home' %}"
+                                    {% if 'glavn' in request.path %}
+                                    class="nav-link active"
+                                    {% else %}
+                                    class="nav-link"
+                                    {% endif %}
+                                    aria-current="page">Главная</a></li>
+          <li class="nav-item"><a href="{% url 'regis' %}"
+                                    {% if 'regis' in request.path %}
+                                    class="nav-link active"
+                                    {% else %}
+                                    class="nav-link"
+                                    {% endif %}>Проекты</a></li>
+          <li class="nav-item"><a href="{% url 'companyList' %}"
+                                {% if 'companyList' in request.path %}
                                 class="nav-link active"
                                 {% else %}
                                 class="nav-link"
-                                {% endif %}
-                                aria-current="page">Главная</a></li>
-        <li class="nav-item"><a href="{% url 'regis' %}" {% if 'regis' in request.path %}class="nav-link active"{% else %}class="nav-link"{% endif %}>Проекты</a></li>
+                                {% endif %}>Компании</a></li>
         <li class="nav-item"><a href="{% url 'logout' %}" class="nav-link">Выход</a></li>
       </ul>
     </header>

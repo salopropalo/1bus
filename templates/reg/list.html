@@ -1,0 +1,83 @@
+{% extends 'reg/base.html' %}
+
+{% block content %}
+    <div class="container" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+        <div class="d-flex justify-content-center"><h1> {{ title }}</h1></div>
+        <div class="row gy-2">
+
+
+            <!-- Модальное окно -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">{{ title2 }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post">
+                                {% csrf_token %}
+                                {% for la in form %}
+                                    {{ la }}<br>
+                                {% endfor %}
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary" name="modal">Зарегистрировать</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Фильтры и поиск -->
+            <div class="d-flex flex-row mb-3">
+                <div class="p-2">
+                    <!-- Кнопка-триггер модального окна -->
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                        <!-- Проверяем есть ли пользователь в которую входит пользователь в списке разрешенных групп -->
+                        {% if add == True %}
+                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Создать
+                            </button>
+                        {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="p-2">
+                    <!-- Фильтр для списка проектов-->
+                    {% if add == True %}
+                    <div class="dropdown">
+                        <a class="btn btn-secondary dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                            Фильтр по статусу
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu" aria-labelledby="dropdownMenu2">
+                            <form method="post">
+                                {% csrf_token %}
+                                    <li><button type="submit" class="dropdown-item" name="sortirovka" value="всё">всё</button> </li>
+                                {% for el in status_html %}
+                                    <li><button type="submit" class="dropdown-item" name="sortirovka" value="{{ el.1 }}">{{ el.1 }}</button> </li>
+                                {% endfor %}
+                            </form>
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+                <!-- Поиск -->
+                <div class="p-2">
+                    <form action="{% url name_str %}" method="get">
+                        <div class="input-group mb-3">
+                          <input name="q" type="text" class="form-control" placeholder="Поиск" aria-describedby="button-addon2">
+                          <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Искать</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+        <!-- Вставляем в нашу форму список -->
+        {% block list %}{% endblock %}
+
+        </div>
+    </div>
+{% endblock %}

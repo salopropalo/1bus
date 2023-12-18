@@ -7,7 +7,8 @@ from app_users.views import AnotherLogoutView
 urlpatterns = [
     path('glavn', views.glavn, name='home'),
     path('regis', views.regis, name='regis'),
-    path('inreg', views.inreg, name='inreg'),
+    path('companyList', views.companyList, name='companyList'),
+    # path('inreg', views.inreg, name='inreg'),
     path('logout', AnotherLogoutView.as_view(), name='logout'),
     path('sdelka/<int:sdelka_id>', views.sdelka, name='sdelka'),
 ]

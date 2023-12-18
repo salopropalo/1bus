@@ -1,0 +1,26 @@
+{% extends 'reg/list.html' %}
+
+{% block list %}
+
+    <!-- Список всех проектов -->
+    {% for el in data_cards %}
+    <div
+        {% if el.Status == 'действующая компания' %}
+        class="alert alert-warning" role="alert"
+        {% elif el.Status == 'ликвидирована' %}
+        class="alert alert-danger" role="alert"
+        {% else %}
+        class="alert alert-light" role="alert"
+        {% endif %}>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-link" name="sdelka" value="{{ el.id }}">
+                {{ el.Nmae_Company }}
+            </button>
+        </form>
+        <p>ИНН: {{ el.INN }}</p>
+        <p>Юридический адрес: {{ el.Legal_address }}</p>
+        <p>Статус:   {{ el.Status }}</p><br>
+    </div>
+    {% endfor %}
+{% endblock %}
