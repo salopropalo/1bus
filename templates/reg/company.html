@@ -14,8 +14,8 @@
         {% endif %}>
         <form method="post">
             {% csrf_token %}
-            <button type="submit" class="btn btn-link" name="sdelka" value="{{ el.id }}">
-                {{ el.Nmae_Company }}
+            <button type="submit" class="btn btn-link" name="card" value="{{ el.id }}">
+                {{ el.Name_Company }}
             </button>
         </form>
         <p>ИНН: {{ el.INN }}</p>

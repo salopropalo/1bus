@@ -2,42 +2,15 @@ from django.db import models
 from django.core.validators import RegexValidator
 
 
-class Stat(models.Model):
-    STATUS = (
-        ('1', 'создан'),
-        ('2', 'согласован'),
-        ('3', 'в работе'),
-        ('4', 'завершён')
-    )
-
-class regModel(models.Model):
-    numbers = models.CharField('Номер проекта', max_length=10)
-    NameProg = models.CharField('Наименование', max_length=100)
-    Date_born = models.DateField('Дата создания', auto_now=True)
-    Responsible = models.CharField('Ответственный', max_length=100)
-    Customer_company = models.CharField('', max_length=50)
-    Adres_obj = models.TextField('Адрес объекта')
-    Status = models.CharField('Статус', max_length=30, default='создан', choices=Stat.STATUS)
-
-    # название строчки в таблице
-    def __str__(self):
-        return 'Проект №' + self.numbers + ' ' + self.NameProg
-
-    # название таблицы
-    class Meta:
-        verbose_name = 'Таблица регистрации'
-
 # модель для создания компании
 class companyModel(models.Model):
-    class Stat(models.Model):
-        STATUS = (
-            ('1', 'действующая компания'),
-            ('2', 'ликвидирована'),
-        )
+    STATUS = (
+        ('1', 'действующая компания'),
+        ('2', 'ликвидирована'),
+    )
 
-    Name = models.CharField('Имя', max_length=255)
-    Nmae_Company = models.TextField('Наименование', max_length=255)
-    Full_Nmae_Company = models.CharField('Полное наименование', max_length=255)
+    Name_Company = models.CharField('Наименование', max_length=255, unique=True)
+    Full_Name_Company = models.CharField('Полное наименование', max_length=255, unique=True)
     inn_validator = RegexValidator(regex=r'^\d{9}$',
                                    message="ИНН должен содержать только цифры и быть длиной 10 символов")
     INN = models.CharField('ИНН', max_length=9, validators=[inn_validator])
@@ -70,7 +43,7 @@ class companyModel(models.Model):
     Telephone = models.CharField('Номер телефона', max_length=11, validators=[Telephone_validator])
     Date_born = models.DateField('Дата создания', auto_now=True)
     Responsible = models.CharField('Ответственный', max_length=100)
-    Status = models.CharField('Статус', max_length=255, default='действующая компания', choices=Stat.STATUS)
+    Status = models.CharField('Статус', max_length=255, default='действующая компания', choices=STATUS)
 
     # название строчки в таблице
     def __str__(self):
@@ -79,3 +52,41 @@ class companyModel(models.Model):
     # название таблицы
     class Meta:
         verbose_name = 'Компании'
+
+
+class regModel(models.Model):
+    STATUS = (
+        ('1', 'создан'),
+        ('2', 'согласован'),
+        ('3', 'в работе'),
+        ('4', 'завершён')
+    )
+
+    numbers = models.CharField('Номер проекта', max_length=10)
+    NameProg = models.CharField('Наименование', max_length=100)
+    Date_born = models.DateField('Дата создания', auto_now=True)
+    Responsible = models.CharField('Ответственный', max_length=100)
+    Customer_company = models.ForeignKey(companyModel,
+                                         on_delete=models.CASCADE,
+                                         to_field='Name_Company',
+                                         related_name='customer_company',
+                                         blank=True,  # Делаем поле необязательным
+                                         null=True  # Добавляем null=True для обозначения пустого значения в базе данных
+                                         )
+    Seller_company = models.ForeignKey(companyModel,
+                                       on_delete=models.CASCADE,
+                                       to_field='Full_Name_Company',
+                                       related_name='seller_company',
+                                       blank=True,  # Делаем поле необязательным
+                                       null=True  # Добавляем null=True для обозначения пустого значения в базе данных
+                                       )
+    Adres_obj = models.TextField('Адрес объекта')
+    Status = models.CharField('Статус', max_length=30, default='создан', choices=STATUS)
+
+    # название строчки в таблице
+    def __str__(self):
+        return 'Проект №' + self.numbers + ' ' + self.NameProg
+
+    # название таблицы
+    class Meta:
+        verbose_name = 'Таблица регистрации'

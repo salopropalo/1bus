@@ -1,10 +1,11 @@
 from django.contrib import admin
-from .models import regModel
+from .models import regModel, companyModel
 #регистрация таблиц из баз данных
 # Register your models here.
 
 #Добавляем таблицу из models.py
 admin.site.register(regModel)
+admin.site.register(companyModel)
 
 '''class NewFileAdmin(admin.ModelAdmin):
     exclude = ('Responsible', )

@@ -1,91 +1,28 @@
-{% extends 'reg/base.html' %}
+{% extends 'reg/list.html' %}
 
-{% block content %}
-    <div class="container" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
-        <div class="d-flex justify-content-center"><h1> {{ title }}</h1></div>
-        <div class="row gy-2">
+{% block list %}
 
-            <!-- Кнопка-триггер модального окна -->
-            <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                <!-- Проверяем есть ли пользователь в которую входит пользователь в списке разрешенных групп -->
-                {% if add == True %}
-                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    Создать новый проект
-                    </button>
-                {% endif %}
-                </div>
-            </div>
-
-            <!-- Фильтр для списка проектов-->
-            {% if add == True %}
-            <div class="dropdown">
-                <a class="btn btn-secondary dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                    Фильтр по статусу
-                </a>
-                <ul class="dropdown-menu dropdown-menu" aria-labelledby="dropdownMenu2">
-                    <form action="{% url 'regis' %}"  method="get">
-                        {% csrf_token %}
-                        {% for key, value in status_html.items %}
-                            <li><button type="submit" class="dropdown-item" name="sortirovka" value="{{ value }}">{{ value }}</button> </li>
-                        {% endfor %}
-                    </form>
-                </ul>
-            </div>
-            {% endif %}
-
-            <!-- Список всех проектов -->
-            <form action="{% url 'regis' %}" method="get">
-                <label>
-                    <input name="q" type="text" placeholder="Поиск">
-                </label>
-            </form>
-            {% for el in dateReg %}
-            <div
-                {% if el.Status == 'создан' %}
-                class="alert alert-warning" role="alert"
-                {% elif el.Status == 'в работе' %}
-                class="alert alert-danger" role="alert"
-                {% elif el.Status == 'согласован' %}
-                class="alert alert-success" role="alert"
-                {% else %}
-                class="alert alert-light" role="alert"
-                {% endif %}>
-                <form method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-link" name="sdelka" value="{{ el.id }}">
-                        Проект №{{ el.numbers }} {{ el.NameProg }}
-                    </button>
-                </form>
-                <p>Дата регистрации: {{ el.Date_born }}</p>
-                <p>Статус:   {{ el.Status }}</p>
-                <p>Ответственный: {{ el.Responsible }}</p><br>
-            </div>
-            {% endfor %}
-
-            <!-- Модальное окно -->
-            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">{{ title2 }}</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-                        </div>
-                        <div class="modal-body">
-                            <!-- Наш модуль из "inger" -->
-                            <form method="post">
-                                {% csrf_token %}
-                                {{ form.NameProg }}<br>
-                                {{ form.Adres_obj }}<br>
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary" name="new_sdelka">Зарегистрировать</button>
-                                </div>
-                                <span>{{ error }}</span>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- Список всех проектов -->
+    {% for el in data_cards %}
+    <div
+        {% if el.Status == 'создан' %}
+        class="alert alert-warning" role="alert"
+        {% elif el.Status == 'в работе' %}
+        class="alert alert-danger" role="alert"
+        {% elif el.Status == 'согласован' %}
+        class="alert alert-success" role="alert"
+        {% else %}
+        class="alert alert-light" role="alert"
+        {% endif %}>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-link" name="card" value="{{ el.id }}">
+                Проект №{{ el.numbers }} {{ el.NameProg }}
+            </button>
+        </form>
+        <p>Дата регистрации: {{ el.Date_born }}</p>
+        <p>Статус:   {{ el.Status }}</p>
+        <p>Ответственный: {{ el.Responsible }}</p><br>
     </div>
+    {% endfor %}
 {% endblock %}

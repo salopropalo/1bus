@@ -21,7 +21,7 @@ class regForm(ModelForm):
 class sdelkaForm(ModelForm):
     class Meta:
         model = regModel
-        fields = ['Adres_obj', 'NameProg']
+        fields = ['Adres_obj', 'NameProg', 'Customer_company']
         widgets = {
             'Adres_obj': TextInput(attrs={
                 'class': 'form-control',
@@ -36,19 +36,15 @@ class sdelkaForm(ModelForm):
 class companyForm(ModelForm):
     class Meta:
         model = companyModel
-        fields = ['Name', 'Nmae_Company', 'Full_Nmae_Company', 'INN', 'KPP', 'Legal_address', 'Actual_address',
+        fields = ['Name_Company', 'Full_Name_Company', 'INN', 'KPP', 'Legal_address', 'Actual_address',
                   'OGRN', 'OKPO', 'Checking_account', 'Correspondent_account', 'BIK', 'Bank', 'Name_manager',
                   'Manager', 'Right_of_management', 'Telephone']
         widgets = {
-                    'Name': TextInput(attrs={
-                            'class': 'form-control',
-                            'placeholder': 'Имя'
-                            }),
-                    'Nmae_Company': TextInput(attrs={
+                    'Name_Company': TextInput(attrs={
                             'class': 'form-control',
                             'placeholder': 'Наименование'
                             }),
-                    'Full_Nmae_Company': TextInput(attrs={
+                    'Full_Name_Company': TextInput(attrs={
                             'class': 'form-control',
                             'placeholder': 'Полное наименование'
                             }),
