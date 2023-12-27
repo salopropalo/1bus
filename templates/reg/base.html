@@ -11,56 +11,61 @@
 <body>
     <div class="container">
     <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
-      <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
-        <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
-        <span class="fs-4">PitON</span>
-      </a>
-      <ul class="nav nav-pills">
-          <li class="nav-item"><a href="{% url 'home' %}"
+        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+            <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+            <span class="fs-4">PitON</span>
+        </a>
+        <ul class="nav nav-pills">
+            <li class="nav-item"><a href="{% url 'home' %}"
                                     {% if 'glavn' in request.path %}
                                     class="nav-link active"
                                     {% else %}
                                     class="nav-link"
                                     {% endif %}
                                     aria-current="page">Главная</a></li>
-          <li class="nav-item"><a href="{% url 'regis' %}"
+            <li class="nav-item"><a href="{% url 'regis' %}"
                                     {% if 'regis' in request.path %}
                                     class="nav-link active"
                                     {% else %}
                                     class="nav-link"
                                     {% endif %}>Проекты</a></li>
-          <li class="nav-item"><a href="{% url 'companyList' %}"
+            <li class="nav-item"><a href="{% url 'companyList' %}"
                                 {% if 'companyList' in request.path %}
                                 class="nav-link active"
                                 {% else %}
                                 class="nav-link"
                                 {% endif %}>Компании</a></li>
-        <li class="nav-item"><a href="{% url 'logout' %}" class="nav-link">Выход</a></li>
-      </ul>
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Выход</a>
+                <form id="logout-form" method="post" action="{% url 'logout' %}" style="display: none;">
+                    {% csrf_token %}
+                </form>
+            </li>
+        </ul>
     </header>
-  </div>
-    <div class="container">
-        {% block content %}{% endblock %}
     </div>
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
 </body>
 
 {% else %}
 </body>
     <div class="container">
     <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
-      <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
-        <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
-        <span class="fs-4">PitON</span>
-      </a>
-     <ul class="nav nav-pills">
-        <li class="nav-item"><a href="{% url 'another_login' %}" class="nav-link active" aria-current="page">Войти</a></li>
-      </ul>
+        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+            <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+            <span class="fs-4">PitON</span>
+        </a>
+        <ul class="nav nav-pills">
+            <li class="nav-item"><a href="{% url 'another_login' %}" class="nav-link active" aria-current="page">Войти</a></li>
+        </ul>
     </header>
-  </div>
-    <div class="container">
-        <h1>Вы не авторизованы на нашем сайте</h1>
-        <p>{{ request.user.username }}</p>
     </div>
+        <div class="container">
+            <h1>Вы не авторизованы на нашем сайте</h1>
+            <p>{{ request.user.username }}</p>
+        </div>
 </body>
 {% endif %}
 </html>
