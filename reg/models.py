@@ -4,12 +4,20 @@ from django.core.validators import RegexValidator
 
 # модель для создания компании
 class companyModel(models.Model):
+
+    # ------ эти поля должны быть обязательны для любого документа ----------------------------------------------------
     STATUS = (
         ('1', 'действующая компания'),
         ('2', 'ликвидирована'),
-    )
+    )  # Статус может быть создан до 5 пунктов
 
-    Name_Company = models.CharField('Наименование', max_length=255, unique=True)
+    Numbers = models.CharField('Номер', max_length=10)
+    Name = models.CharField('Наименование', max_length=255, unique=True)
+    Date_born = models.DateField('Дата создания', auto_now=True)
+    Responsible = models.CharField('Ответственный', max_length=100)
+    Status = models.CharField('Статус', max_length=255, default='1', choices=STATUS)
+    # -----------------------------------------------------------------------------------------------------------------
+
     Full_Name_Company = models.CharField('Полное наименование', max_length=255, unique=True)
     inn_validator = RegexValidator(regex=r'^\d{9}$',
                                    message="ИНН должен содержать только цифры и быть длиной 10 символов")
@@ -41,13 +49,10 @@ class companyModel(models.Model):
                                          message="Номер телефона должен "
                                                  "содержать только цифры и быть длиной 11 символов")
     Telephone = models.CharField('Номер телефона', max_length=11, validators=[Telephone_validator])
-    Date_born = models.DateField('Дата создания', auto_now=True)
-    Responsible = models.CharField('Ответственный', max_length=100)
-    Status = models.CharField('Статус', max_length=255, default='действующая компания', choices=STATUS)
 
     # название строчки в таблице
     def __str__(self):
-        return self.Name
+        return self.Name_Company
 
     # название таблицы
     class Meta:
@@ -55,20 +60,25 @@ class companyModel(models.Model):
 
 
 class regModel(models.Model):
+
+    # ------ эти поля должны быть обязательны для любого документа ----------------------------------------------------
     STATUS = (
         ('1', 'создан'),
         ('2', 'согласован'),
         ('3', 'в работе'),
         ('4', 'завершён')
-    )
+    )   # Статус может быть создан до 5 пунктов
 
-    numbers = models.CharField('Номер проекта', max_length=10)
-    NameProg = models.CharField('Наименование', max_length=100)
+    Numbers = models.CharField('Номер', max_length=10)
+    Name = models.CharField('Наименование', max_length=100)
     Date_born = models.DateField('Дата создания', auto_now=True)
     Responsible = models.CharField('Ответственный', max_length=100)
+    Status = models.CharField('Статус', max_length=30, default='1', choices=STATUS)
+    # -----------------------------------------------------------------------------------------------------------------
+
     Customer_company = models.ForeignKey(companyModel,
                                          on_delete=models.CASCADE,
-                                         to_field='Name_Company',
+                                         to_field='Name',
                                          related_name='customer_company',
                                          blank=True,  # Делаем поле необязательным
                                          null=True  # Добавляем null=True для обозначения пустого значения в базе данных
@@ -81,11 +91,10 @@ class regModel(models.Model):
                                        null=True  # Добавляем null=True для обозначения пустого значения в базе данных
                                        )
     Adres_obj = models.TextField('Адрес объекта')
-    Status = models.CharField('Статус', max_length=30, default='создан', choices=STATUS)
 
     # название строчки в таблице
     def __str__(self):
-        return 'Проект №' + self.numbers + ' ' + self.NameProg
+        return f'Проект №{self.Numbers} {self.Name} - {self.get_Status_display()}'
 
     # название таблицы
     class Meta:

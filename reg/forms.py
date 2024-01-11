@@ -5,9 +5,9 @@ from django.forms import ModelForm, TextInput
 class regForm(ModelForm):
     class Meta:
         model = regModel
-        fields = ['NameProg', 'Adres_obj']
+        fields = ['Name', 'Adres_obj']
         widgets = {
-            'NameProg': TextInput(attrs={
+            'Name': TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Введите наименование проекта'
                 }),
@@ -21,26 +21,16 @@ class regForm(ModelForm):
 class sdelkaForm(ModelForm):
     class Meta:
         model = regModel
-        fields = ['Adres_obj', 'NameProg', 'Customer_company']
-        widgets = {
-            'Adres_obj': TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Введите адрес объекта (Страна, Город, Улица, №Дома)'
-                }),
-            'NameProg': TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Введите наименование проекта'
-                }),
-                }
+        fields = '__all__'
 
 class companyForm(ModelForm):
     class Meta:
         model = companyModel
-        fields = ['Name_Company', 'Full_Name_Company', 'INN', 'KPP', 'Legal_address', 'Actual_address',
+        fields = ['Name', 'Full_Name_Company', 'INN', 'KPP', 'Legal_address', 'Actual_address',
                   'OGRN', 'OKPO', 'Checking_account', 'Correspondent_account', 'BIK', 'Bank', 'Name_manager',
                   'Manager', 'Right_of_management', 'Telephone']
         widgets = {
-                    'Name_Company': TextInput(attrs={
+                    'Name': TextInput(attrs={
                             'class': 'form-control',
                             'placeholder': 'Наименование'
                             }),

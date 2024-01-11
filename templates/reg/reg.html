@@ -5,11 +5,11 @@
     <!-- Список всех проектов -->
     {% for el in data_cards %}
     <div
-        {% if el.Status == 'создан' %}
+        {% if el.Status == '1' %}
         class="alert alert-warning" role="alert"
-        {% elif el.Status == 'в работе' %}
+        {% elif el.Status == '2' %}
         class="alert alert-danger" role="alert"
-        {% elif el.Status == 'согласован' %}
+        {% elif el.Status == '3' %}
         class="alert alert-success" role="alert"
         {% else %}
         class="alert alert-light" role="alert"
@@ -17,11 +17,11 @@
         <form method="post">
             {% csrf_token %}
             <button type="submit" class="btn btn-link" name="card" value="{{ el.id }}">
-                Проект №{{ el.numbers }} {{ el.NameProg }}
+                №{{ el.numbers }} {{ el.NameProg }}
             </button>
         </form>
         <p>Дата регистрации: {{ el.Date_born }}</p>
-        <p>Статус:   {{ el.Status }}</p>
+        <p>Статус:   {{ el.get_Status_display }}</p>
         <p>Ответственный: {{ el.Responsible }}</p><br>
     </div>
     {% endfor %}

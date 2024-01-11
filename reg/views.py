@@ -38,7 +38,7 @@ def regis(request):
                 form = form.save(commit=False)
                 form.Responsible = request.user.get_full_name()
                 form.save()
-                form.numbers = form.id
+                form.Numbers = form.id
                 form.save()
                 return redirect('regis')
             else:
@@ -124,6 +124,8 @@ def companyList(request):
                 form = form.save(commit=False)
                 form.Responsible = request.user.get_full_name()
                 form.save()
+                form.Numbers = form.id
+                form.save()
                 return redirect('companyList')
         # # Открываем карточку
         # elif 'card' in request.POST:
@@ -174,7 +176,7 @@ def companyList(request):
 
 def sdelka(request, sdelka_id):
     obj = regModel.objects.get(id=sdelka_id)
-    title = 'Сделка №' + obj.numbers + ' ' + obj.NameProg
+    title = 'Сделка №' + obj.Numbers + ' ' + obj.Name
     date = obj.Date_born
     responsible = obj.Responsible
     date_born = date.strftime('%d.%m.%Y')

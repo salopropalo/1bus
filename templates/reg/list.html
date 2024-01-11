@@ -45,6 +45,7 @@
                     </div>
                 </div>
                 <div class="p-2">
+
                     <!-- Фильтр для списка проектов-->
                     {% if add == True %}
                     <div class="dropdown">
@@ -75,8 +76,29 @@
             </div>
 
 
-        <!-- Вставляем в нашу форму список -->
-        {% block list %}{% endblock %}
+            <!-- Список карточек -->
+            {% for el in data_cards %}
+            <div
+                {% if el.Status == '1' %}
+                class="alert alert-warning" role="alert"
+                {% elif el.Status == '2' %}
+                class="alert alert-danger" role="alert"
+                {% elif el.Status == '3' %}
+                class="alert alert-success" role="alert"
+                {% else %}
+                class="alert alert-light" role="alert"
+                {% endif %}>
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link" name="card" value="{{ el.id }}">
+                        №{{ el.Numbers }} {{ el.Name }}
+                    </button>
+                </form>
+                <p>Дата регистрации: {{ el.Date_born }}</p>
+                <p>Статус:   {{ el.get_Status_display }}</p>
+                <p>Ответственный: {{ el.Responsible }}</p><br>
+            </div>
+            {% endfor %}
 
         </div>
     </div>
