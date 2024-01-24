@@ -52,7 +52,7 @@ class companyModel(models.Model):
 
     # название строчки в таблице
     def __str__(self):
-        return self.Name_Company
+        return self.Name
 
     # название таблицы
     class Meta:

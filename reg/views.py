@@ -13,16 +13,16 @@ def regis(request):
     # для Админа
     if request.user.has_perm('reg.delete_regmodel'):
         dateReg = regModel.objects.all()
-        title = 'Список всех проектов'
+        title = 'Список всех сделок'
         add = True
     # для продавцов
     elif request.user.has_perm('reg.add_regmodel'):
         dateReg = regModel.objects.filter(Responsible=request.user.get_full_name())
-        title = 'Список Ваших проектов'
+        title = 'Список Ваших сделок'
         add = True
     elif request.user.has_perm('reg.view_regmodel'):
         dateReg = regModel.objects.filter(Status='в работе')
-        title = 'Список согласованных проектов'
+        title = 'Список согласованных сделок'
         add = False
     else:
         raise PermissionDenied
@@ -174,21 +174,41 @@ def companyList(request):
     }
     return render(request, 'reg/company.html', content)
 
+
 def sdelka(request, sdelka_id):
     obj = regModel.objects.get(id=sdelka_id)
     title = 'Сделка №' + obj.Numbers + ' ' + obj.Name
     date = obj.Date_born
     responsible = obj.Responsible
     date_born = date.strftime('%d.%m.%Y')
-    print(obj.Customer_company)
-    if obj.Customer_company == None:
+
+    print(companyModel.objects.get(Name='ООО "ПИК "Солярис"'))
+    print(obj)
+
+    if obj.Customer_company is None:
         customer_company = 'Не присвоено'
     else:
-        customer_company = companyModel.objects.get(id=obj.Customer_company_id)
+        customer_company = companyModel.objects.get(Name=obj.Customer_company_id)
+
     adres = obj.Adres_obj
     status = obj.Status
-    form = sdelkaForm
+
     add = True
+
+    # Если был запрос на создание новой сделки, обрабатываем POST запрос
+    if request.method == 'POST':
+        form = sdelkaForm(request.POST)
+
+        # Проверяем что нам вернулось с post запросом со страницы
+        if 'izm' in request.POST:
+            if form.is_valid():
+                obj.Customer_company = form.cleaned_data['Customer_company']
+                obj.save()
+                return redirect('companyList')
+        else:
+            error = 'POST запрос с ошибкой!'
+    else:
+        form = sdelkaForm()
 
     content = {
         'form': form,
@@ -202,3 +222,4 @@ def sdelka(request, sdelka_id):
         'title2': 'Внесение изменений'
     }
     return render(request, 'reg/sdelka.html', content)
+

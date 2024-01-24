@@ -43,10 +43,9 @@
                 <div class="modal-body">
                     <form method="post">
                         {% csrf_token %}
-                        {{ form.Name }}<br>
-                        {{ form.Adres_obj }}<br>
+                        {{ form.as_p }}
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary" name="new_sdelka">Зарегистрировать</button>
+                            <button type="submit" class="btn btn-primary" name="izm">Внести правки</button>
                         </div>
                         <span>{{ error }}</span>
                     </form>

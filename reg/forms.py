@@ -1,5 +1,5 @@
 from .models import regModel, companyModel
-from django.forms import ModelForm, TextInput
+from django.forms import ModelForm, TextInput, Select
 
 # форма для списка сделок
 class regForm(ModelForm):
@@ -21,7 +21,11 @@ class regForm(ModelForm):
 class sdelkaForm(ModelForm):
     class Meta:
         model = regModel
-        fields = '__all__'
+        fields = ['Customer_company', 'Seller_company', 'Adres_obj']
+        widgets = {
+            'Customer_company': Select(attrs={'class': 'form-control'}),
+            'Seller_company': Select(attrs={'class': 'form-control'}),
+        }
 
 class companyForm(ModelForm):
     class Meta:
