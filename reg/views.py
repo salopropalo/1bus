@@ -37,7 +37,6 @@ def regis(request):
             if form.is_valid():
                 form = form.save(commit=False)
                 form.Responsible = request.user.get_full_name()
-                form.save()
                 form.Numbers = form.id
                 form.save()
                 return redirect('regis')
@@ -55,12 +54,11 @@ def regis(request):
         if 'q' in request.GET:
             # Получение вводимой информации в поисковике и запрос в БД
             search_term = request.GET['q']
+            print(search_term, dateReg)
             dateReg = regModel.objects.filter(
-                Q(numbers__iregex=search_term) |
-                Q(NameProg__iregex=search_term) |
+                Q(Numbers__iregex=search_term) |
+                Q(Name__iregex=search_term) |
                 Q(Responsible__iregex=search_term) |
-                Q(Customer_company__Name_Company__iregex=search_term) |
-                Q(Adres_obj__iregex=search_term) |
                 Q(Status__iregex=search_term)
             )
         # сортировка по статусам
@@ -72,8 +70,7 @@ def regis(request):
                 elif request.user.has_perm('reg.add_regmodel'):
                     dateReg = regModel.objects.filter(Responsible=request.user.get_full_name())
                 elif not request.user.has_perm('reg.add_regmodel'):
-                    dateReg = regModel.objects.filter(Status='в работе')
-                    dateReg = dateReg.objects.filter(Status='завершен')
+                    dateReg = regModel.objects.filter(Status__in=['в работе', 'завершён'])
                 else:
                     raise PermissionDenied
             else:
@@ -134,14 +131,14 @@ def companyList(request):
             error = 'POST запрос с ошибкой!'
 
     if request.method == 'GET':
+        print('сообщение', dateReg)
         if 'q' in request.GET:
             # Получение вводимой информации в поисковике и запрос в БД
             search_term = request.GET['q']
             dateReg = companyModel.objects.filter(
                 Q(INN__iregex=search_term) |
                 Q(Responsible__iregex=search_term) |
-                Q(Name_Company__iregex=search_term) |
-                Q(Legal_address__iregex=search_term) |
+                Q(Name__iregex=search_term) |
                 Q(Status__iregex=search_term)
             )
         elif 'sortirovka' in request.GET:
@@ -193,7 +190,30 @@ def sdelka(request, sdelka_id):
     adres = obj.Adres_obj
     status = obj.Status
 
-    add = True
+    for element in regModel.STATUS:
+        if status in element:
+            status_name = element[1]
+            print(status_name, status)
+            break
+        else:
+            status_name = 'Не определён'
+
+    # Если статус переведен из первого состояния, то его нельзя редактировать и кнопки редактирования не будет
+    if status == '1':
+        name_button = 'Отправить на проверку'
+        add = True
+    elif status == '2':
+        name_button = 'Создать Заказ'
+        add = False
+    elif status == '3':
+        name_button = 'Закрыть сделку'
+        add = False
+    elif status == '4':
+        name_button = 'Возобновить работу'
+        add = False
+    else:
+        name_button = 'Ошибка'
+        add = False
 
     # Если был запрос на создание новой сделки, обрабатываем POST запрос
     if request.method == 'POST':
@@ -203,7 +223,10 @@ def sdelka(request, sdelka_id):
         if 'izm' in request.POST:
             if form.is_valid():
                 obj.Customer_company = form.cleaned_data['Customer_company']
+                obj.Seller_company = form.cleaned_data['Seller_company']
+                obj.Adres_obj = form.cleaned_data['Adres_obj']
                 obj.save()
+
                 return redirect('companyList')
         else:
             error = 'POST запрос с ошибкой!'
@@ -218,7 +241,9 @@ def sdelka(request, sdelka_id):
         'customer_company': customer_company,
         'adres': adres,
         'status': status,
+        'status_name': status_name,
         'add': add,
+        'name_button': name_button,
         'title2': 'Внесение изменений'
     }
     return render(request, 'reg/sdelka.html', content)

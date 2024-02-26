@@ -57,7 +57,7 @@
                                 {% csrf_token %}
                                     <li><button type="submit" class="dropdown-item" name="sortirovka" value="всё">всё</button> </li>
                                 {% for el in status_html %}
-                                    <li><button type="submit" class="dropdown-item" name="sortirovka" value="{{ el.1 }}">{{ el.1 }}</button> </li>
+                                    <li><button type="submit" class="dropdown-item" name="sortirovka" value="{{ el.0 }}">{{ el.1 }}</button> </li>
                                 {% endfor %}
                             </form>
                         </ul>

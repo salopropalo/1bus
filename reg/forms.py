@@ -22,6 +22,11 @@ class sdelkaForm(ModelForm):
     class Meta:
         model = regModel
         fields = ['Customer_company', 'Seller_company', 'Adres_obj']
+        labels = {
+            'Customer_company': 'Компания заказчик',
+            'Seller_company': 'Компания продавец',
+            'Adres_obj': 'Адрес объекта',
+        }
         widgets = {
             'Customer_company': Select(attrs={'class': 'form-control'}),
             'Seller_company': Select(attrs={'class': 'form-control'}),

@@ -9,7 +9,7 @@
                     <p class="fs-5">Ответственный: {{ responsible }}</p>
                     <p class="fs-5">Покупатель: {{ customer_company }}</p>
                     <p class="fs-5">Адрес объекта: {{ adres }}</p>
-                    <p class="fs-5">Статус сделки: {{ status }}</p>
+                    <p class="fs-5">Статус сделки: {{ status_name }}</p>
                 </div>
 
                 <!-- Кнопка-триггер модального окна -->
@@ -25,9 +25,12 @@
                 </div>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
+                    <!-- В зависимости от статуса будет та кнопка которая отправляет документ на следующий уровень -->
+                        {% if status != 'Ошибка' %}
                         <button type="button" class="btn btn-success">
-                        Отправить на проверку
+                            {{ name_button }}
                         </button>
+                        {% endif %}
                     </div>
                 </div>
             </div>
