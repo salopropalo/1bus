@@ -2,7 +2,7 @@ from .models import regModel, companyModel
 from django.forms import ModelForm, TextInput, Select
 
 # форма для списка сделок
-class regForm(ModelForm):
+class transactionListForm(ModelForm):
     class Meta:
         model = regModel
         fields = ['Name', 'Adres_obj']
@@ -17,8 +17,8 @@ class regForm(ModelForm):
                 })
                 }
 
-# форма для документа сделка
-class sdelkaForm(ModelForm):
+# форма для карточки сделка
+class transactionForm(ModelForm):
     class Meta:
         model = regModel
         fields = ['Customer_company', 'Seller_company', 'Adres_obj']
@@ -32,6 +32,8 @@ class sdelkaForm(ModelForm):
             'Seller_company': Select(attrs={'class': 'form-control'}),
         }
 
+
+# форма для карточки компаниии
 class companyForm(ModelForm):
     class Meta:
         model = companyModel

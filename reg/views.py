@@ -1,13 +1,14 @@
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect
 from .models import regModel, companyModel
-from .forms import regForm, sdelkaForm, companyForm
+from .forms import transactionListForm, transactionForm, companyForm
 from django.db.models import Q
 
-def glavn(request):
-    return render(request, 'reg/glavn.html', {'title': 'Главная страница'})
+def home(request):
+    return render(request, 'reg/home.html', {'title': 'Главная страница'})
 
-def regis(request):
+# Сделки
+def transactionList(request):
     error = ''
     # Сортировка только тех проектов, которые созданы активным пользователем
     # для Админа
@@ -21,7 +22,7 @@ def regis(request):
         title = 'Список Ваших сделок'
         add = True
     elif request.user.has_perm('reg.view_regmodel'):
-        dateReg = regModel.objects.filter(Status='в работе')
+        dateReg = regModel.objects.filter(Status='3')
         title = 'Список согласованных сделок'
         add = False
     else:
@@ -30,7 +31,7 @@ def regis(request):
     # если был запрос на создание нового проекта, мы заполняем его в базу данных
     if request.method == 'POST':
         print('POST', request.POST)
-        form = regForm(request.POST)
+        form = transactionListForm(request.POST)
 
         # Проверяем что нам вернулось с post запросом со страницы
         if 'modal' in request.POST:
@@ -39,13 +40,13 @@ def regis(request):
                 form.Responsible = request.user.get_full_name()
                 form.Numbers = form.id
                 form.save()
-                return redirect('regis')
+                return redirect('transactionList')
             else:
                 error = 'Что то не так с запросом на создание проекта'
         # Открываем карточку
         elif 'card' in request.POST:
             print(request.POST['card'])
-            return redirect('sdelka', request.POST['card'])
+            return redirect('transaction', request.POST['card'])
         else:
             error = 'POST запрос с ошибкой!'
 
@@ -55,7 +56,7 @@ def regis(request):
             # Получение вводимой информации в поисковике и запрос в БД
             search_term = request.GET['q']
             print(search_term, dateReg)
-            dateReg = regModel.objects.filter(
+            dateReg = dateReg.filter(
                 Q(Numbers__iregex=search_term) |
                 Q(Name__iregex=search_term) |
                 Q(Responsible__iregex=search_term) |
@@ -66,17 +67,17 @@ def regis(request):
             selected_sorting = request.GET['sortirovka']
             if selected_sorting in ['всё']:
                 if request.user.has_perm('reg.delete_regmodel'):
-                    dateReg = regModel.objects.all()
+                    dateReg = dateReg.all()
                 elif request.user.has_perm('reg.add_regmodel'):
-                    dateReg = regModel.objects.filter(Responsible=request.user.get_full_name())
+                    dateReg = dateReg.filter(Responsible=request.user.get_full_name())
                 elif not request.user.has_perm('reg.add_regmodel'):
-                    dateReg = regModel.objects.filter(Status__in=['в работе', 'завершён'])
+                    dateReg = dateReg.filter(Status__in=['3', '4'])
                 else:
                     raise PermissionDenied
             else:
                 dateReg = dateReg.filter(Status=selected_sorting)
 
-    form = regForm()
+    form = transactionListForm()
     content = {
         'status_html': regModel.STATUS,     # статус для формы HTML
         'add': add,                     # статус пользователя для определения его прав на просмотр и изменения
@@ -85,12 +86,12 @@ def regis(request):
         'form': form,                   # данные для отображения в карточках
         'error': error,                 #
         'title2': 'Регистрация нового проекта',  # заголовок страницы
-        'name_str': 'regis'  # заголовок страницы
+        'name_str': 'transactionList'  # заголовок страницы
     }
 
-    return render(request, 'reg/reg.html', content)
+    return render(request, 'reg/list.html', content)
 
-
+# Компании
 def companyList(request):
     error = ''
     # Сортировка только тех проектов, которые созданы активным пользователем
@@ -135,7 +136,7 @@ def companyList(request):
         if 'q' in request.GET:
             # Получение вводимой информации в поисковике и запрос в БД
             search_term = request.GET['q']
-            dateReg = companyModel.objects.filter(
+            dateReg = dateReg.filter(
                 Q(INN__iregex=search_term) |
                 Q(Responsible__iregex=search_term) |
                 Q(Name__iregex=search_term) |
@@ -146,13 +147,13 @@ def companyList(request):
             if selected_sorting in ['всё']:
                 # для группы пользователей у которых есть права на удаление
                 if request.user.has_perm('reg.delete_companymodel'):
-                    dateReg = companyModel.objects.all()
+                    dateReg = dateReg.all()
                 # для группы пользователей у которых есть права на добавление
                 elif request.user.has_perm('reg.add_companymodel'):
-                    dateReg = companyModel.objects.filter(Responsible=request.user.get_full_name())
+                    dateReg = dateReg.filter(Responsible=request.user.get_full_name())
                 # для группы пользователей у которых нет прав на добавление или удаление
                 elif not request.user.has_perm('reg.add_companymodel'):
-                    dateReg = companyModel.objects.filter(Status='действующая компания')
+                    dateReg = dateReg.filter(Status='действующая компания')
                 else:
                     raise PermissionDenied
             else:
@@ -169,11 +170,13 @@ def companyList(request):
         'title2': 'Регистрация новой компании',  # заголовок страницы
         'name_str': 'companyList'
     }
-    return render(request, 'reg/company.html', content)
+    return render(request, 'reg/list.html', content)
 
 
-def sdelka(request, sdelka_id):
-    obj = regModel.objects.get(id=sdelka_id)
+# _____________________________________________________________________________________________________________________
+# Карточка сделки
+def transaction(request, transaction_id):
+    obj = regModel.objects.get(id=transaction_id)
     title = 'Сделка №' + obj.Numbers + ' ' + obj.Name
     date = obj.Date_born
     responsible = obj.Responsible
@@ -217,7 +220,7 @@ def sdelka(request, sdelka_id):
 
     # Если был запрос на создание новой сделки, обрабатываем POST запрос
     if request.method == 'POST':
-        form = sdelkaForm(request.POST)
+        form = transactionListForm(request.POST)
 
         # Проверяем что нам вернулось с post запросом со страницы
         if 'izm' in request.POST:
@@ -231,7 +234,7 @@ def sdelka(request, sdelka_id):
         else:
             error = 'POST запрос с ошибкой!'
     else:
-        form = sdelkaForm()
+        form = transactionListForm()
 
     content = {
         'form': form,

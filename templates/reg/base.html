@@ -17,14 +17,14 @@
         </a>
         <ul class="nav nav-pills">
             <li class="nav-item"><a href="{% url 'home' %}"
-                                    {% if 'glavn' in request.path %}
+                                    {% if 'home' in request.path %}
                                     class="nav-link active"
                                     {% else %}
                                     class="nav-link"
                                     {% endif %}
                                     aria-current="page">Главная</a></li>
-            <li class="nav-item"><a href="{% url 'regis' %}"
-                                    {% if 'regis' in request.path %}
+            <li class="nav-item"><a href="{% url 'transactionList' %}"
+                                    {% if 'transactionList' in request.path %}
                                     class="nav-link active"
                                     {% else %}
                                     class="nav-link"
