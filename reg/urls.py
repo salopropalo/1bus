@@ -10,4 +10,5 @@ urlpatterns = [
     path('companyList', views.companyList, name='companyList'),     # Список компаний
     path('logout', AnotherLogoutView.as_view(), name='logout'),     # Страничка выхода
     path('transaction/<int:transaction_id>', views.transaction, name='transaction'),    # Карточка сделки
+    path('start', include('production.urls'), name='start'),
 ]
