@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import datetime
 from django.core.validators import RegexValidator
 
 
@@ -83,3 +84,47 @@ class conductorsModel(models.Model):
     class Meta:
         verbose_name = 'Количество проводников'
 
+# по идее это должно быть список закаазов  но тут не хватает еще много чего  к примеру нужно что бы были проекты,
+# нужен журнал регистрации всех документов
+class order_registerModel(models.Model):
+
+    # ------ эти поля должны быть обязательны для любого документа или списка ------------------------------------------
+    STATUS = (
+        ('1', 'создан'),
+        ('2', 'согласован'),
+        ('3', 'в работе'),
+        ('4', 'завершён')
+    )   # Статус может быть создан до 5 пунктов
+
+    PROIZVODSTVO = (
+        ('1', 'Питон Кама'),
+        ('2', 'Солярис')
+    )
+
+    Numbers = models.CharField('Номер', max_length=10)
+    Name = models.CharField('Наименование', max_length=100)
+    Date_born = models.DateField('Дата создания', auto_now=True)
+    Responsible = models.CharField('Ответственный', max_length=100)
+    Status = models.CharField('Статус', max_length=30, default='1', choices=STATUS)
+    # -----------------------------------------------------------------------------------------------------------------
+
+    nomer_proekta = models.CharField('Номер проекта', max_length=10)
+    naimenovanie_proekta = models.CharField('Наименование проекта', max_length=40)
+    nomer_zakaza = models.CharField('Номер заказа', max_length=10)
+    proizvodstvo = models.CharField('Тип',  max_length=255, default='1', choices=PROIZVODSTVO)
+
+    def file_upload_path(instance, filename):
+        # Генерируем имя файла в формате "номер проекта-номер заказа-дата сегодня"
+        result_string = datetime.today().strftime("%d%m%y")
+        print(result_string)
+        return f"uploads/calculation/{result_string}-{filename}"
+
+    file = models.FileField(upload_to=file_upload_path)
+
+    # название строчки в таблице
+    def __str__(self):
+        return self.Name
+
+    # название таблицы
+    class Meta:
+        verbose_name = 'Список заказов'

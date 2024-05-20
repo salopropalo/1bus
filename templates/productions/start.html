@@ -1,0 +1,45 @@
+{% extends 'reg/base.html' %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-center"><h1> {{ title }}</h1></div>
+    <div class="row gy-2">
+
+        <!-- Модальное окно -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">{{ title2 }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" enctype="multipart/form-data">  <!-- Добавлен атрибут enctype -->
+                            {% csrf_token %}
+                            {% for la in form %}
+                                {{ la }}<br>
+                            {% endfor %}
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Отправить</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Кнопка-триггер модального окна -->
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Создать РД
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

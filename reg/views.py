@@ -3,9 +3,24 @@ from django.shortcuts import render, redirect
 from .models import regModel, companyModel
 from .forms import transactionListForm, transactionForm, companyForm
 from django.db.models import Q
+import logging
+from django.http import HttpResponse
 
+logger = logging.getLogger(__name__)
 def home(request):
-    return render(request, 'reg/home.html', {'title': 'Главная страница'})
+    title = 'Главная!'
+    content = {
+        #'status_html': regModel.STATUS,  # статус для формы HTML
+        #'add': add,  # статус пользователя для определения его прав на просмотр и изменения
+        'title': title,  # заголовок списка
+        #'data_cards': dateReg,  # данные для отображения в карточках
+        #'form': form,  # данные для отображения в карточках
+        #'error': error,  #
+        #'title2': 'Регистрация нового проекта',  # заголовок страницы
+        #'name_str': 'transactionList'  # заголовок страницы
+    }
+    logger.info("test")
+    return render(request, 'reg/home.html', content)
 
 # Сделки
 def transactionList(request):
