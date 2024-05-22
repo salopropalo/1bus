@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-h6yvc@f17&t9gl3k(5yc^av2-hau_7z+yvd7839=-_19174d0o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '176.113.83.133', 'pitonpro.online']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -150,32 +150,3 @@ LOGIN_REDIRECT_URL = 'home'
 SESSION_COOKIE_AGE = 24 * 60 * 60
 
 REST_FRAMEWORK = {'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']}
-
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'handlers': {
-#         'file': {
-#             'level': 'DEBUG',
-#             'class': 'logging.FileHandler',
-#             'filename': 'debug.log',  # Файл, куда будут записываться логи
-#         },
-#         'console': {
-#             'level': 'DEBUG',
-#             'class': 'logging.StreamHandler',
-#         },
-#     },
-#     'loggers': {
-#         'django': {
-#             'handlers': ['file', 'console'],
-#             'level': 'DEBUG',
-#             'propagate': True,
-#         },
-#         # Добавьте свой логгер для вашего приложения
-#         'your_app_name': {
-#             'handlers': ['file', 'console'],
-#             'level': 'DEBUG',
-#             'propagate': True,
-#         },
-#     },
-# }
