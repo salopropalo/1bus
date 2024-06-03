@@ -4,7 +4,8 @@ import os
 from django.http import HttpResponse
 from django.shortcuts import render
 from .forms import order_registerForm
-from production_management_website.materials.rashet_sekcii import rashet
+from production_management_website.materials.creation_of_documents import rashet
+# from production_management_website.materials.rashet_sekcii import rashet
 import shutil
 from production_management_website.materials.materials_simple import vvod
 from production_management_website.materials.to_exl_main_mat import preobrazovanie
@@ -120,8 +121,11 @@ class FileHandler:
 
         # Сохранение файлов из spisok[0]
         for item in spisok[0]:  # Итерация по списку файлов для сохранения
+            print(item)
             subfolder_index = item[0]  # Индекс подкаталога
+            print(subfolder_index)
             file_name = item[1]  # Имя файла
+
             dest_path = os.path.join(base_path, subfolders[subfolder_index],
                                      file_name)  # Создание нового пути для файла
             save_file(file_name, dest_path, remove_src=True)  # Сохранение файла в новый путь
