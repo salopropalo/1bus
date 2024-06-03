@@ -52,6 +52,7 @@ def transactionList(request):
         if 'modal' in request.POST:
             if form.is_valid():
                 form = form.save(commit=False)
+                form.save()
                 form.Responsible = request.user.get_full_name()
                 form.Numbers = form.id
                 form.save()
