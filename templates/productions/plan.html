@@ -1,10 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Проектная таблица</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .status {
+            background-color: lightgreen;
+        }
+        .delayed {
+            background-color: red;
+            color: white;
+        }
+        .urgent {
+            background-color: yellow;
+        }
+    </style>
 </head>
 <body>
-$END$
+    <table>
+        <thead>
+            <tr>
+                <th>№Проекта</th>
+                <th>№Заказа</th>
+                <th>НаименованиеПроекта</th>
+                <th>ПроизводственнаяПлощадка</th>
+                <th>ЮрЛицо</th>
+                <th>Серия</th>
+                <th>МатПров</th>
+                <th>КолПров</th>
+                <th>НомТок</th>
+                <th>Длина</th>
+                <th>КолСекц</th>
+                <th>КолСтык</th>
+                <th>КолБом</th>
+                <th>Менеджер</th>
+                <th>Срочность выпуска</th>
+                <th>Статус</th>
+                <th>10 июн</th>
+                <th>11 июн</th>
+                <th>12 июн</th>
+                <th>13 июн</th>
+                <th>14 июн</th>
+                <th>15 июн</th>
+                <th>16 июн</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>536</td>
+                <td>130</td>
+                <td>Купол(корп.12,площадка 7)</td>
+                <td>ЕКБ</td>
+                <td>солярис</td>
+                <td>E3</td>
+                <td>Al</td>
+                <td>4</td>
+                <td>1600</td>
+                <td>940</td>
+                <td>457</td>
+                <td>456</td>
+                <td></td>
+                <td>Попов</td>
+                <td class="status">2 Средний</td>
+                <td>1 в работе</td>
+                <td>4</td>
+                <td>4</td>
+                <td>4</td>
+                <td class="delayed">о</td>
+                <td>4</td>
+                <td>4</td>
+                <td>4</td>
+            </tr>
+            <tr>
+                <td>722</td>
+                <td>154</td>
+                <td>Рождествено</td>
+                <td>ЕКБ</td>
+                <td>солярис</td>
+                <td>E3</td>
+                <td>Al</td>
+                <td>4</td>
+                <td>5000(2х2500)</td>
+                <td>8</td>
+                <td>8</td>
+                <td>6</td>
+                <td></td>
+                <td>Соломатин</td>
+                <td class="status">2 Средний</td>
+                <td>1 в работе</td>
+                <td>4</td>
+                <td>4</td>
+                <td>4</td>
+                <td>5</td>
+                <td class="delayed">о</td>
+                <td></td>
+                <td>5</td>
+            </tr>
+            <tr>
+                <td>934</td>
+                <td>148</td>
+                <td>Открытый парк(Химушина) ТП-44053</td>
+                <td>ЕКБ</td>
+                <td>солярис</td>
+                <td>E3</td>
+                <td>Al</td>
+                <td>4</td>
+                <td>5000(2х2500)</td>
+                <td>9</td>
+                <td>8</td>
+                <td>6</td>
+                <td></td>
+                <td>Соломатин</td>
+                <td class="status">2 Средний</td>
+                <td>1 в работе</td>
+                <td>4</td>
+                <td>4</td>
+                <td>4</td>
+                <td class="urgent">у</td>
+                <td>5</td>
+                <td>4</td>
+                <td>5</td>
+            </tr>
+        </tbody>
+    </table>
 </body>
 </html>

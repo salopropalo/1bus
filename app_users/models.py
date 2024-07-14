@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User, Group
 
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     citi = models.CharField(max_length=36, blank=True)
@@ -18,6 +19,3 @@ class Profile(models.Model):
 
         # Добавляем пользователя к созданной или существующей группе
         group.user_set.add(self.user)
-
-
-

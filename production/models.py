@@ -128,3 +128,20 @@ class order_registerModel(models.Model):
     # название таблицы
     class Meta:
         verbose_name = 'Список заказов'
+
+
+# модель для создания конструкторского документа деталь НЕДОДЕЛАНО
+class detailModel(models.Model):
+
+    # ------ эти поля должны быть обязательны для любого документа ----------------------------------------------------
+    STATUS = (
+        ('1', 'действующая компания'),
+        ('2', 'ликвидирована'),
+    )  # Статус может быть создан до 5 пунктов
+
+    Numbers = models.CharField('Номер', max_length=10)
+    Name = models.CharField('Наименование', max_length=255, unique=True)
+    Date_born = models.DateField('Дата создания', auto_now=True)
+    Responsible = models.CharField('Ответственный', max_length=100)
+    Status = models.CharField('Статус', max_length=255, default='1', choices=STATUS)
+    # -----------------------------------------------------------------------------------------------------------------

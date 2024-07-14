@@ -4,28 +4,27 @@ import os
 from django.http import HttpResponse
 from django.shortcuts import render
 from .forms import order_registerForm
-from production_management_website.materials.creation_of_documents import rashet
-# from production_management_website.materials.rashet_sekcii import rashet
+from .materials.creation_of_documents import rashet
 import shutil
-from production_management_website.materials.materials_simple import vvod
-from production_management_website.materials.to_exl_main_mat import preobrazovanie
+from .materials.materials_simple import vvod
+from .materials.to_exl_main_mat import preobrazovanie
 
 
 def start(request):
     title = 'Главное меню!'
+
     if request.method == 'POST':
         form = order_registerForm(request.POST, request.FILES)
+
         if form.is_valid():
             # Сначала сохраняем форму, чтобы получить ID
             instance = form.save(commit=False)
             instance.save()
-
             # Формирование значения для Numbers
             instance.Numbers = datetime.today().strftime("%d%m%y") + '-' + str(instance.id).zfill(2)
             instance.Responsible = request.user.get_full_name()
             instance.Name = "Комплект документов"
             instance.save()
-
             # Логирование данных из формы
             nomer_proekta = instance.nomer_proekta
             naimenovanie_proekta = instance.naimenovanie_proekta
@@ -35,7 +34,6 @@ def start(request):
             print(uploaded_file.path)
             number = instance.Numbers
             print(nomer_proekta, nomer_zakaza, naimenovanie_proekta, proizvodstvo, uploaded_file, number)
-
             spisok = rashet([nomer_zakaza, nomer_proekta, naimenovanie_proekta],
                             uploaded_file.path, proizvodstvo, number).zapusk()
             print(spisok)
@@ -45,13 +43,12 @@ def start(request):
                 response = HttpResponse(archive_file.read(), content_type='application/zip')
                 response['Content-Disposition'] = f'attachment; filename={os.path.basename(archive_path)}'
                 return response
-
-
         else:
             print("Форма не валидна")
             print(form.errors)  # Вывод ошибок формы
             print(request.POST)  # Вывод данных POST-запроса
             # logger.error('Форма не валидна')
+
     else:
         form = order_registerForm()
 

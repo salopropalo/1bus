@@ -104,6 +104,7 @@ class rashet:
                                  'количество': det[14], 'тип': '', 'категория': 'ведомость'}
         return itog
 
+
 class calculation:
     def __init__(self, data, input_data, index, itog, komplekt, spis_kompl, spisok_dla_mater):
         self.dat = data                                                     # обработанный словарь вводных данных
@@ -286,7 +287,7 @@ class calculation:
             coating это атрибут покрытия (окрашенно "s", или не окрашено)."""
         print('РАСЧЕТ ДЕТАЛИ', '| Обознач:', str(detal[0]))
 
-        if detal[0] in ['n', 'fl_100', 'fl_130', 'zts', 'sux', 'mfazcentr', 'torcentr']:
+        if detal[0] in ['n', 'fl_100', 'fl_130', 'zts', 'sux', 'mfazcentr', 'torcentr', 'fl']:
             self.komplekt.append([self.dat['Кол. пров.'], self.dat['Материал'], self.dat['In'],
                                   detal[0], detal[1] * int(self.dat['количество'])])
             return 0
@@ -294,7 +295,7 @@ class calculation:
             #print(self.index)
             self.index = self.index + 1
             kol = detal[1] * self.dat['количество']
-            # print('detal', detal)
+            print('detal', detal)
             itog = getattr(Detali(detal[2], self.dat, coating, kol, self.tip,
                                   [self.A, self.B, self.C], self.spis_kompl), detal[0])()
             # print('itog', itog)
@@ -614,7 +615,11 @@ class calculation:
 
                 for i in dictionary:
                     detali[i][0] = dictionary[i]
-                detali.append(['fl', 2])
+
+                if self.dat['межфазное расстояние фланца'] in [100, '100']:
+                    detali.append(['fl_100', 2])
+                else:
+                    detali.append(['fl_130', 2])
                 #print(detali)
 
 #CR
@@ -2084,6 +2089,7 @@ class calculation:
 
     def pp(self):   # Пружинный подвес
         self.nestandart()
+
 
 class Detali:
     def __init__(self, os, input_data, coating, kol, tip, ABC, spis_kompl):
@@ -4850,6 +4856,7 @@ class Detali:
                                                   + str(s[3]) + ';' + str(znachenie) + ';' + str(self.name)])
                 i += 1
 
+
 class writing_to_exl():
     def __init__(self, atrib, etap, array, last_line, ved):
         self.font0 = xlwt.Font()
@@ -5322,6 +5329,7 @@ class writing_to_exl():
             #tab_spis_det.write(str(tab_q) + '\n')
         #tab_spis_det.close()
 
+
 class calc():
     def __init__(self, input_data, Proizv):
         print(input_data)
@@ -5758,10 +5766,11 @@ class calc():
             self.a['количество средних изоляторов'] = 3
             self.a['длина вывода фланца'] = 210
 
-            if self.a['Производство'] in ['Солярис', 'Solaris']:
+            if self.a['Производство'] in ['Солярис', 'Solaris', '2', 2]:
                 if self.a['Материал'] in ['Al', 'AL', 'Ал', 'АЛ']:
 
                     if str(self.a['межфазное расстояние фланца']) in ['130', 130]:
+
                         # 130 mm 6 mm    3200/4000
                         if self.a['толщина шины'] == 6:
                             print("Межфазное расстояние фланца", self.a['межфазное расстояние фланца'])
@@ -5776,12 +5785,12 @@ class calc():
                             self.a['фланец край'] = 376                                # край
                             self.a['фланец центр'] = 240.2                             # центр (прямая)
                         else:
-                            print('Нестандартный фланец')
+                            print('Нестандартный фланец 1')
                             self.a['стандарт'] = 'нестандарт'
 
                     elif str(self.a['межфазное расстояние фланца']) in ['100', 100]:
 
-                        # 100 mm 8 mm    2500/5000/6400 (Исключительные случаи)
+                        # 100 mm 8 mm 2500/5000/6400 (Исключительные случаи)
                         if self.a['толщина шины'] == 6:
                             self.a['СТП край'] = 'СТП 066Ф-04'                        # край
                             self.a['СТП центр'] = 'СТП 066Ф-03'                       # центр (прямая)
@@ -5794,11 +5803,14 @@ class calc():
                             self.a['фланец край'] = 329.8                             # край
                             self.a['фланец центр'] = 231.6                            # центр (прямая)
                         else:
-                            print('Нестандартный фланец')
+                            print('Нестандартный фланец 2')
                             self.a['стандарт'] = 'нестандарт'
                     else:
-                        print('Нестандартный фланец')
-                        self.a['стандарт'] = 'нестандарт'
+                        print('Нестандартный фланец 3')
+                        print('межфазное расстояние = ', self.a('межфазное расстояние фланца'),
+                              '\nтолщина шины', self.a('толщина шины'))
+                        self.a['стандарт'] = 'нестандарт 3'
+
                 elif self.a['Материал'] in ['Cu', 'CU', 'Ме', 'МЕ', 'М', 'м']:
                     if str(self.a['межфазное расстояние фланца']) in ['130', 130]:
                         # 130 mm 6 mm    3200/4000
@@ -5815,7 +5827,7 @@ class calc():
                             self.a['фланец край'] = 387.1  # край
                             self.a['фланец центр'] = 245.9  # центр (прямая)
                         else:
-                            print('Нестандартный фланец')
+                            print('Нестандартный фланец 4')
                             self.a['стандарт'] = 'нестандарт'
                     elif str(self.a['межфазное расстояние фланца']) in ['100', 100]:
 
@@ -5832,15 +5844,15 @@ class calc():
                             self.a['фланец край'] = 342.1  # край
                             self.a['фланец центр'] = 237.3  # центр (прямая)
                         else:
-                            print('Нестандартный фланец')
+                            print('Нестандартный фланец 5')
                             self.a['стандарт'] = 'нестандарт'
                     else:
-                        print('Нестандартный фланец')
+                        print('Нестандартный фланец 6')
                         self.a['стандарт'] = 'нестандарт'
                 else:
-                    print('Нестандартный фланец')
+                    print('Нестандартный фланец 7')
                     self.a['стандарт'] = 'нестандарт'
-            elif self.a['Производство'] in ['Кама', 'Kama']:
+            elif self.a['Производство'] in ['Кама', 'Kama', '1', 1]:
                 print(self.a['Материал'])
                 if self.a['Материал'] in ['Al', 'AL', 'Ал', 'АЛ']:
                     if str(self.a['межфазное расстояние фланца']) in ['130', 130]:
@@ -5858,7 +5870,7 @@ class calc():
                             self.a['фланец край'] = 376                                # край
                             self.a['фланец центр'] = 239.8                             # центр (прямая)
                         else:
-                            print('Нестандартный фланец')
+                            print('Нестандартный фланец 8')
                             self.a['стандарт'] = 'нестандарт'
 
                     elif str(self.a['межфазное расстояние фланца']) == '100':
@@ -5876,10 +5888,10 @@ class calc():
                             self.a['фланец край'] = 328.1                             # край
                             self.a['фланец центр'] = 231.1                            # центр (прямая)
                         else:
-                            print('Нестандартный фланец')
+                            print('Нестандартный фланец 9')
                             self.a['стандарт'] = 'нестандарт'
                     else:
-                        print('Нестандартный фланец')
+                        print('Нестандартный фланец 10')
                         self.a['стандарт'] = 'нестандарт'
                 elif self.a['Материал'] in ['Cu', 'CU', 'Ме', 'МЕ', 'М', 'м']:
                     if str(self.a['межфазное расстояние фланца']) in ['130', 130]:
@@ -5897,7 +5909,7 @@ class calc():
                             self.a['фланец край'] = 382.8  # край
                             self.a['фланец центр'] = 244.8  # центр (прямая)
                         else:
-                            print('Нестандартный фланец')
+                            print('Нестандартный фланец 11')
                             self.a['стандарт'] = 'нестандарт'
                     elif str(self.a['межфазное расстояние фланца']) in ['100', 100]:
 
@@ -5914,16 +5926,16 @@ class calc():
                             self.a['фланец край'] = 337.8  # край
                             self.a['фланец центр'] = 236.2  # центр (прямая)
                         else:
-                            print('Нестандартный фланец')
+                            print('Нестандартный фланец 12')
                             self.a['стандарт'] = 'нестандарт'
                     else:
-                        print('Нестандартный фланец')
+                        print('Нестандартный фланец 13')
                         self.a['стандарт'] = 'нестандарт'
                 else:
-                    print('Нестандартный фланец')
+                    print('Нестандартный фланец 14')
                     self.a['стандарт'] = 'нестандарт'
             else:
-                print('Нестандартный фланец')
+                print('Нестандартный фланец 15')
                 self.a['стандарт'] = 'нестандарт'
 
 
@@ -6190,6 +6202,7 @@ class sorting():
                 f.write(in_dat2 + '\n')
 
             f.close()
+
 
 class line_raskroi():
 
@@ -6797,7 +6810,6 @@ class line_raskroi():
             f = open(OUT_name_file, 'a')
             f.write(i + '\n')
             f.close()
-
 
 
 class InOut:

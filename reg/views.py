@@ -4,6 +4,7 @@ from .models import regModel, companyModel
 from .forms import transactionListForm, transactionForm, companyForm
 from django.db.models import Q
 import logging
+from datetime import datetime
 from django.http import HttpResponse
 
 logger = logging.getLogger(__name__)
@@ -51,11 +52,12 @@ def transactionList(request):
         # Проверяем что нам вернулось с post запросом со страницы
         if 'modal' in request.POST:
             if form.is_valid():
-                form = form.save(commit=False)
-                form.save()
-                form.Responsible = request.user.get_full_name()
-                form.Numbers = form.id
-                form.save()
+                instance = form.save(commit=False)
+                instance.save()
+                print(request.user.get_full_name())
+                instance.Numbers = datetime.today().strftime("%d%m%y") + '-' + str(instance.id).zfill(2) + 'C'
+                instance.Responsible = request.user.get_full_name()
+                instance.save()
                 return redirect('transactionList')
             else:
                 error = 'Что то не так с запросом на создание проекта'
@@ -135,17 +137,18 @@ def companyList(request):
         # Проверяем что нам вернулось с post запросом со страницы
         if 'modal' in request.POST:
             if form.is_valid():
-                form = form.save(commit=False)
-                form.Responsible = request.user.get_full_name()
-                form.save()
-                form.Numbers = form.id
-                form.save()
+                instance = form.save(commit=False)
+                instance.save()
+                instance.Responsible = request.user.get_full_name()
+                instance.Numbers = datetime.today().strftime("%d%m%y") + '-' + str(instance.id).zfill(2) + 'K'
+                instance.save()
                 return redirect('companyList')
-        # # Открываем карточку
-        # elif 'card' in request.POST:
-        #     return redirect('company', request.POST['card'])
-        else:
-            error = 'POST запрос с ошибкой!'
+            else:
+                # Выводим ошибки формы в консоль
+                print("POST запрос с ошибкой!")
+                print(form.errors)  # выводим ошибки формы
+                return render(request, 'reg/list.html',
+                              {'form': form, 'name_str': 'companyList'})  # вернуться на страницу с формой и передать ошибки
 
     if request.method == 'GET':
         print('сообщение', dateReg)
@@ -198,7 +201,6 @@ def transaction(request, transaction_id):
     responsible = obj.Responsible
     date_born = date.strftime('%d.%m.%Y')
 
-    print(companyModel.objects.get(Name='ООО "ПИК "Солярис"'))
     print(obj)
 
     if obj.Customer_company is None:
