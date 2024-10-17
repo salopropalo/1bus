@@ -78,13 +78,13 @@ class conductorsModel(models.Model):
 
     # название строчки в таблице
     def __str__(self):
-        return self.Name
+        return self.quantity
 
     # название таблицы
     class Meta:
         verbose_name = 'Количество проводников'
 
-# по идее это должно быть список закаазов  но тут не хватает еще много чего  к примеру нужно что бы были проекты,
+# по идее это должно быть список заказов, но тут не хватает еще много чего к примеру, нужно чтобы были проекты,
 # нужен журнал регистрации всех документов
 class order_registerModel(models.Model):
 
@@ -145,3 +145,20 @@ class detailModel(models.Model):
     Responsible = models.CharField('Ответственный', max_length=100)
     Status = models.CharField('Статус', max_length=255, default='1', choices=STATUS)
     # -----------------------------------------------------------------------------------------------------------------
+
+
+class MaterialCalculationModel(models.Model):
+    series = models.ForeignKey(seriesModel, on_delete=models.CASCADE, verbose_name="Серия шинопровода")
+    conductor_material = models.ForeignKey(materialModel, on_delete=models.CASCADE, verbose_name="Материал проводника")
+    nominal_current = models.ForeignKey(nominalModel, on_delete=models.CASCADE, verbose_name="Номинальный ток (А)")
+    number_of_conductors = models.ForeignKey(conductorsModel, on_delete=models.CASCADE,
+                                             verbose_name="Количество проводников")
+    track_length = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Длина трассы (м)")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    Responsible = models.CharField('Ответственный', max_length=100)
+
+    def __str__(self):
+        return f'{self.series.Name} - {self.conductor_material.Name} ({self.nominal_current} А)'
+
+    class Meta:
+        verbose_name = 'Расчет материалов'

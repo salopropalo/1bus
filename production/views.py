@@ -2,65 +2,102 @@ from datetime import datetime
 import os
 
 from django.http import HttpResponse
-from django.shortcuts import render
-from .forms import order_registerForm
+from django.shortcuts import render, redirect
+from .forms import order_registerForm, calculation_of_materialsForm
 from .materials.creation_of_documents import rashet
 import shutil
 from .materials.materials_simple import vvod
 from .materials.to_exl_main_mat import preobrazovanie
+from django.contrib import messages
 
 
 def start(request):
     title = 'Главное меню!'
+    attr = {'order': {'nameModal': 'exampleModalOrder', 'textButton': 'Создать РД'},
+            'materials': {'nameModal': 'exampleModalMaterials', 'textButton': 'Создать расчет материалов'}}
 
     if request.method == 'POST':
-        form = order_registerForm(request.POST, request.FILES)
+        form_type = request.POST.get('form_type')  # здесь 'form_type' - это имя, указанное в кнопке отправки формы
+        print('POST', request.POST.get)
+        print(form_type)
 
-        if form.is_valid():
-            # Сначала сохраняем форму, чтобы получить ID
-            instance = form.save(commit=False)
-            instance.save()
-            # Формирование значения для Numbers
-            instance.Numbers = datetime.today().strftime("%d%m%y") + '-' + str(instance.id).zfill(2)
-            instance.Responsible = request.user.get_full_name()
-            instance.Name = "Комплект документов"
-            instance.save()
-            # Логирование данных из формы
-            nomer_proekta = instance.nomer_proekta
-            naimenovanie_proekta = instance.naimenovanie_proekta
-            nomer_zakaza = instance.nomer_zakaza
-            proizvodstvo = instance.proizvodstvo
-            uploaded_file = instance.file
-            print(uploaded_file.path)
-            number = instance.Numbers
-            print(nomer_proekta, nomer_zakaza, naimenovanie_proekta, proizvodstvo, uploaded_file, number)
-            spisok = rashet([nomer_zakaza, nomer_proekta, naimenovanie_proekta],
-                            uploaded_file.path, proizvodstvo, number).zapusk()
-            print(spisok)
-            archive_path = FileHandler(uploaded_file, nomer_zakaza).save_file_dialog(spisok, instance.Numbers)
-            # Отправка архива пользователю
-            with open(archive_path, 'rb') as archive_file:
-                response = HttpResponse(archive_file.read(), content_type='application/zip')
-                response['Content-Disposition'] = f'attachment; filename={os.path.basename(archive_path)}'
-                return response
-        else:
-            print("Форма не валидна")
-            print(form.errors)  # Вывод ошибок формы
-            print(request.POST)  # Вывод данных POST-запроса
-            # logger.error('Форма не валидна')
+        # Создание ведомости материалов
+        if form_type == 'order':
+            form = order_registerForm(request.POST, request.FILES)
 
-    else:
-        form = order_registerForm()
+            if form.is_valid():
+                # Сначала сохраняем форму, чтобы получить ID
+                instance = form.save(commit=False)
+                instance.save()
+                # Формирование значения для Numbers
+                instance.Numbers = datetime.today().strftime("%d%m%y") + '-' + str(instance.id).zfill(2)
+                instance.Responsible = request.user.get_full_name()
+                instance.Name = "Комплект документов"
+                instance.save()
+                # Логирование данных из формы
+                nomer_proekta = instance.nomer_proekta
+                naimenovanie_proekta = instance.naimenovanie_proekta
+                nomer_zakaza = instance.nomer_zakaza
+                proizvodstvo = instance.proizvodstvo
+                uploaded_file = instance.file
+                print(uploaded_file.path)
+                number = instance.Numbers
+                print(nomer_proekta, nomer_zakaza, naimenovanie_proekta, proizvodstvo, uploaded_file, number)
+                spisok = rashet([nomer_zakaza, nomer_proekta, naimenovanie_proekta],
+                                uploaded_file.path, proizvodstvo, number).zapusk()
+                print(spisok)
+                archive_path = FileHandler(uploaded_file, nomer_zakaza).save_file_dialog(spisok, instance.Numbers)
+                # Отправка архива пользователю
+                with open(archive_path, 'rb') as archive_file:
+                    response = HttpResponse(archive_file.read(), content_type='application/zip')
+                    response['Content-Disposition'] = f'attachment; filename={os.path.basename(archive_path)}'
+                    return response
+            else:
+                print("Форма не валидна")
+                print(form.errors)  # Вывод ошибок формы
+                print(request.POST)  # Вывод данных POST-запроса
+
+        # Создание расчета материалов
+        elif form_type == 'materials':
+            form2 = calculation_of_materialsForm(request.POST)
+
+            if form2.is_valid():
+                # Сначала сохраняем форму, чтобы получить ID
+                instance = form2.save(commit=False)
+                instance.save()
+                # Формирование значения для Numbers
+                instance.Numbers = datetime.today().strftime("%d%m%y") + '-' + str(instance.id).zfill(2)
+                instance.Responsible = request.user.get_full_name()
+                instance.Name = "Расчет материалов"
+                instance.save()
+                # Логирование данных из формы
+                conductor_material = instance.conductor_material
+                nominal_current = instance.nominal_current
+                number_of_conductors = instance.number_of_conductors
+                track_length = instance.track_length
+                print("Расчет материалов выполнен")
+                return redirect('productions/start.html')
+            else:
+                print("Форма не валидна")
+                print(form2.errors)  # Вывод ошибок формы
+                print(request.POST)  # Вывод данных POST-запроса
+
+    form = order_registerForm()
+    form2 = calculation_of_materialsForm()
 
     content = {
         'title': title,
-        'form': form,
+        'title2': 'Введите данные и выберите файл *.xlxs',
+        'title3': 'Введите данные для расчета материалов',
+        'form_order': form,
+        'form_materials': form2,
     }
 
     print("Страница загружена успешно")
     return render(request, 'productions/start.html', content)
 
 
+# обработчик расчета материалов
 class FileHandler:
 
     def __init__(self, fname, line_zakaz):

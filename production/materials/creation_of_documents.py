@@ -5265,8 +5265,9 @@ class writing_to_exl():
             cell.font = Font(name='Century Gothic')
 
             if self.slovar[i]['Наименование'] in ['Крепежная скоба', 'Крышка стыка', 'Пружинный подвес']:
-                cell.value = str(self.slovar[i]['количество']) + ' шт.'
-                spis_dla_vozvrata_2.append(str(self.slovar[i]['количество']) + ' шт.')      # для возвращяемого списка
+                print(self.slovar[i])
+                cell.value = str(self.slovar[i]['Кол, шт']) + ' шт.'
+                spis_dla_vozvrata_2.append(str(self.slovar[i]['Кол, шт']) + ' шт.')      # для возвращяемого списка
             else:
                 cell.value = ves
                 spis_dla_vozvrata_2.append(ves)      # для возвращяемого списка
@@ -5274,6 +5275,7 @@ class writing_to_exl():
             # 12 столбец примечание
             cell = w_rab_mesto.cell(row=y, column=12)
             cell.font = Font(name='Century Gothic')
+
             if self.slovar[i]['Обозначение'] in ['kz', 'op', 'ks', 'pp', 'gp', 'ad', 'ksb']:
                 cell.value = str(self.slovar[i]['Примечание']) + str(self.slovar[i]['Кол, шт']) + ' шт.'
             else:
