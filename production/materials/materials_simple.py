@@ -6,6 +6,7 @@ class vvod:
     def __init__(self, seria, material, nominal, dlina, Nstik, Nsekc, Nkon_zag, Nflanc, Lsvar_izd, KolProv):
         self.seria = seria
         self.material = material
+        print(nominal)
         self.nominal = int(nominal)
         self.nominal_2 = 0      # нужен для медного шинопровода для стенок
         self.dlina = int(dlina)
@@ -409,7 +410,7 @@ class vvod:
         L = round(math.ceil(os * self.KolProv / 3), 2)
         print('Количество шин ', str(L), 'Ном.ток ', str(self.nominal))
 
-        if self.material in ['Алюминий', 'Al']:
+        if self.material in ['Алюминий', 'Al', 'AL']:
             name2 = 'Шина '
         else:
             name2 = 'Шина медная '

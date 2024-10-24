@@ -1,27 +1,40 @@
 {% extends 'reg/base.html' %}
 
 {% block title %}
-{{ title }}
+    {{ title }}
 {% endblock %}
 
 {% block content %}
 <div class="container">
-    <div class="d-flex justify-content-center"><h1> {{ title }}</h1></div>
+    <div class="d-flex justify-content-center">
+        <h1>{{ title }}</h1>
+    </div>
+
     <div class="row gy-2">
 
-        <!-- Модальное окно для создания ЦВ -->
-        <div class="modal fade" id="exampleModalOrder" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <!-- Кнопки для открытия модальных окон -->
+        {% for key, el in attr.items %}
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#{{ el.nameModal }}">
+                        {{ el.textButton }}
+                    </button>
+                </div>
+            </div>
+        {% endfor %}
+
+        <!-- Модальное окно для создания ведомости материалов (order) -->
+        <div class="modal fade" id="exampleModalOrder" tabindex="-1" aria-labelledby="exampleModalOrderLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">{{ title2 }}</h5>
+                        <h5 class="modal-title" id="exampleModalOrderLabel">{{ attr.order.titleModal }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                     </div>
                     <div class="modal-body">
-                        <form method="post" enctype="multipart/form-data">  <!-- Добавлен атрибут enctype -->
+                        <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
-                            <!-- Здесь будет форма для расчета материалов -->
-                            {{ form_order.as_p }}
+                            {{ attr.order.from.as_p }}
                             <div class="modal-footer">
                                 <button type="submit" name="form_type" value="order" class="btn btn-primary">Отправить</button>
                             </div>
@@ -31,19 +44,18 @@
             </div>
         </div>
 
-        <!-- Модальное окно для расчета материалов -->
-        <div class="modal fade" id="exampleModalMaterials" tabindex="0" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <!-- Модальное окно для создания расчета материалов (materials) -->
+        <div class="modal fade" id="exampleModalMaterials" tabindex="-1" aria-labelledby="exampleModalMaterialsLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel1">{{ title3 }}</h5>
+                        <h5 class="modal-title" id="exampleModalMaterialsLabel">{{ attr.materials.titleModal }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                     </div>
                     <div class="modal-body">
-                        <form method="post" enctype="multipart/form-data">  <!-- Добавлен атрибут enctype -->
+                        <form method="post">
                             {% csrf_token %}
-                            <!-- Здесь будет форма для расчета материалов -->
-                            {{ form_materials.as_p }}
+                            {{ attr.materials.from.as_p }}
                             <div class="modal-footer">
                                 <button type="submit" name="form_type" value="materials" class="btn btn-primary">Отправить</button>
                             </div>
@@ -53,25 +65,6 @@
             </div>
         </div>
 
-        <!-- Кнопка-триггер для создания РД -->
-        <div class="input-group mb-3">
-            <div class="input-group-prepend">
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModalOrder">
-                    Создать РД
-                </button>
-            </div>
-        </div>
-
-        <!-- Кнопка-триггер для создания расчета материалов -->
-        <div class="input-group mb-3">
-            <div class="input-group-prepend">
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModalMaterials">
-                    Создать расчет материалов
-                </button>
-            </div>
-        </div>
     </div>
 </div>
-
-
 {% endblock %}
