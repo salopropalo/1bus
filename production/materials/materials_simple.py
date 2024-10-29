@@ -37,7 +37,7 @@ class vvod:
               '/', self.Nsekc, '/', self.Nkon_zag, '/', self.Nflanc, '/', self.Lsvar_izd)
 
         print("Материал", self.material)
-        if self.material in ['Алюминий', 'Al']:
+        if self.material in ['Алюминий', 'Al', 'AL']:
             self.vibor()
         else:
             self.vibor_2()
@@ -637,7 +637,7 @@ class vvod:
         self.itog.append(['Пи', 'Наклейки на стыки ШП', kol * 2, 'шт.'])
         self.itog.append(['П', 'Стенка стыка', L_stenka, 'шт.'])
 
-        if self.material in ['Алюминий', 'Al']:
+        if self.material in ['Алюминий', 'Al', 'AL']:
             name_L_plastina = ''
         else:
             name_L_plastina = ' медная'
@@ -667,7 +667,7 @@ class vvod:
 
         if self.seria in ['CR1'] and self.nominal in [3200, 4000, 1600, 2500]:
 
-            if self.material in ['Алюминий', 'Al']:
+            if self.material in ['Алюминий', 'Al', 'AL']:
                 obem_nominal = {'4000': 18, '3200': 14, '1600': 9.6, '2500': 10.5}
             else:   #медь
                 obem_nominal = {'2000': 9.6, '2500': 10.5, '3200': 16, '4000': 17.4, '5000': 20}
