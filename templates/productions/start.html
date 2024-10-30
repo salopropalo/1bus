@@ -65,6 +65,27 @@
             </div>
         </div>
 
+        <!-- Модальное окно для преобразования маршрутной карты в цеховую ведомость (shop) -->
+        <div class="modal fade" id="exampleModalShop" tabindex="-1" aria-labelledby="exampleModalShopLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalShopLabel">{{ attr.shop.titleModal }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ attr.shop.from.as_p }}
+                            <div class="modal-footer">
+                                <button type="submit" name="form_type" value="shop" class="btn btn-primary">Отправить</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 {% endblock %}
