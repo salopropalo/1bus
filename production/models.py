@@ -1,5 +1,9 @@
 from django.db import models
 from datetime import datetime
+
+from djmoney import money
+from djmoney.models.fields import MoneyField
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.validators import RegexValidator
 
 
@@ -206,3 +210,40 @@ class ProcessingOfShopSheetModel(models.Model):
     # название таблицы
     class Meta:
         verbose_name = 'Список рабочих ведомостей'
+
+# Номенклатура
+class ComponentsModel(models.Model):
+
+    # ------ эти поля должны быть обязательны для любого документа или списка ------------------------------------------
+    STATUS = (
+        ('1', 'новая'),
+        ('2', 'действующая'),
+        ('3', 'в архиве'),
+    )   # Статус может быть создан до 5 пунктов
+
+    CATEGORIES = (
+        ('1', 'комплектующие'),
+        ('2', 'товары')
+    )
+
+    Numbers = models.CharField('Номер', max_length=10)
+    Name = models.CharField('Наименование', max_length=100)
+    Date_born = models.DateField('Дата создания', auto_now=True)
+    Responsible = models.CharField('Ответственный', max_length=100)
+    Status = models.CharField('Статус', max_length=30, default='1', choices=STATUS)
+    # ------------------------------------------------------------------------------------------------------------------
+
+    price = MoneyField('Цена', max_digits=10, decimal_places=2, default_currency='RUB')
+    cost_price = MoneyField('Себестоимость', max_digits=10, decimal_places=2, default_currency='RUB')
+    discount = models.DecimalField(
+        'Скидка (%)',
+        max_digits=5,  # Максимум 3 цифры до запятой и 2 после (например, 100.00)
+        decimal_places=2,
+        default=0.00,  # По умолчанию скидка 0%
+        validators=[
+            MinValueValidator(0.00),  # Минимум 0%
+            MaxValueValidator(100.00)  # Максимум 100%
+        ]
+    )
+    category = models.CharField('Категория', max_length=100, choices=CATEGORIES)
+    file = models.FileField()
