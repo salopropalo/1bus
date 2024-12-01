@@ -670,7 +670,7 @@ class vvod:
             if self.material in ['Алюминий', 'Al', 'AL']:
                 obem_nominal = {'4000': 18, '3200': 14, '1600': 9.6, '2500': 10.5}
             else:   #медь
-                obem_nominal = {'2000': 9.6, '2500': 10.5, '3200': 16, '4000': 17.4, '5000': 20}
+                obem_nominal = {'2000': 9.6, '2500': 10.5, '3200': 16, '4000': 17.4, '5000': 20, '1600': 8.3}
 
             obem = obem_nominal[str(self.nominal)] * self.Nstik  # объем компаунда в стыке в литрах
             # print(obem, 'obem')
@@ -700,7 +700,7 @@ class vvod:
 
     def pos(self, pl):#ПОС порошок
         plosh = self.s * 40 * pl * self.KolProv * 4 + (self.s + 30) * 40 * pl * self.KolProv * 4
-        rash = round(plosh / 1000000 * 0.5, 2)
+        rash = round(plosh / 1000000 * 0.81, 2)
         self.itog.append(['М', 'Порошковый материал ТР-63-25', rash, 'кг.'])
 
     def zel(self, nominal, os):#расчет эпоксидной изоляции
