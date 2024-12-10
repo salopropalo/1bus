@@ -86,7 +86,7 @@ class regModel(models.Model):
                                          )
     Seller_company = models.ForeignKey(companyModel,
                                        on_delete=models.CASCADE,
-                                       to_field='Full_Name_Company',
+                                       to_field='Name',
                                        related_name='seller_company',
                                        blank=True,  # Делаем поле необязательным
                                        null=True  # Добавляем null=True для обозначения пустого значения в базе данных

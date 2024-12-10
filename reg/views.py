@@ -55,7 +55,7 @@ def transactionList(request):
                 instance = form.save(commit=False)
                 instance.save()
                 print(request.user.get_full_name())
-                instance.Numbers = datetime.today().strftime("%d%m%y") + '-' + str(instance.id).zfill(2) + 'C'
+                instance.Numbers = datetime.today().strftime("%m%y") + '-' + str(instance.id).zfill(2) + 'C'
                 instance.Responsible = request.user.get_full_name()
                 instance.save()
                 return redirect('transactionList')
@@ -196,17 +196,20 @@ def companyList(request):
 # Карточка сделки
 def transaction(request, transaction_id):
     obj = regModel.objects.get(id=transaction_id)
-    title = 'Сделка №' + obj.Numbers + ' ' + obj.Name
+    title = 'Сделка №' + obj.Numbers + ' "' + obj.Name + '"'
     date = obj.Date_born
     responsible = obj.Responsible
     date_born = date.strftime('%d.%m.%Y')
 
-    print(obj)
-
     if obj.Customer_company is None:
-        customer_company = 'Не присвоено'
+        customer_company = 'Не выбрано'
     else:
         customer_company = companyModel.objects.get(Name=obj.Customer_company_id)
+
+    if obj.Seller_company is None:
+        seller_company = 'Не выбрано'
+    else:
+        seller_company = companyModel.objects.get(Name=obj.Seller_company_id)
 
     adres = obj.Adres_obj
     status = obj.Status
@@ -260,6 +263,7 @@ def transaction(request, transaction_id):
         'date_born': date_born,
         'responsible': responsible,
         'customer_company': customer_company,
+        'seller_company': seller_company,
         'adres': adres,
         'status': status,
         'status_name': status_name,

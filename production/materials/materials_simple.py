@@ -449,7 +449,7 @@ class vvod:
         print('Направляющая', L, 'шт.')
 
         if self.nominal in [2500, 5000, 6400]:
-            self.itog.append(['П', 'Направляющая ' + str(self.nominal), L, 'шт.'])
+            self.itog.append(['П', 'Направляющая ' + str(self.nominal_2), L, 'шт.'])
         else:
             self.itog.append(['П', 'Направляющая', L, 'шт.'])
 

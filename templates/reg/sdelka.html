@@ -1,26 +1,38 @@
 {% extends 'reg/base.html' %}
 
 {% block content %}
-    <div class="container" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+    <div class="container" xmlns="http://www.w3.org/1999/html">
         <div class="d-flex justify-content-center"><h1> {{ title }}</h1></div>
             <div class="row gy-2">
                 <div class="content">
-                    <p class="fs-5">Дата создания: {{ date_born }}</p>
-                    <p class="fs-5">Ответственный: {{ responsible }}</p>
+                    <div class="container text-left">
+                        <div class="row">
+                            <div class="col">
+                                <p class="fs-8">Дата создания: {{ date_born }}</p>
+                                <p class="fs-8">Создал: {{ responsible }}</p>
+                                <p class="fs-8">Статус сделки: {{ status_name }}</p>
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                    </div>
                     <p class="fs-5">Покупатель: {{ customer_company }}</p>
+                    <p class="fs-5">Продавец: {{ seller_company }}</p>
                     <p class="fs-5">Адрес объекта: {{ adres }}</p>
-                    <p class="fs-5">Статус сделки: {{ status_name }}</p>
+                </div>
+                <div>
+                    <p> </p>
                 </div>
 
                 <!-- Кнопка-триггер модального окна -->
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
                     <!-- Проверяем есть ли пользователь в которую входит пользователь в списке разрешенных групп -->
-                    {% if add == True %}
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                        Редактировать
-                        </button>
-                    {% endif %}
+                        {% if add == True %}
+                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Редактировать
+                            </button>
+                        {% endif %}
                     </div>
                 </div>
 
