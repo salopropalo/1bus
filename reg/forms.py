@@ -33,7 +33,7 @@ class transactionForm(ModelForm):
         }
 
 
-# форма для карточки компаниии
+# форма для карточки компании
 class companyForm(ModelForm):
     class Meta:
         model = companyModel

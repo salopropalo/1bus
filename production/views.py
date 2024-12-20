@@ -90,11 +90,12 @@ def start(request):
                 instance.Numbers = datetime.today().strftime("%d%m%y") + '-' + str(instance.id).zfill(2)
                 instance.Responsible = request.user.get_full_name()
                 instance.Name = "Расчет материалов"
-                instance.save()
+                delivery = request.POST.get('check')
+
 
                 # Выполнение расчета и создание Excel через FileHandler
                 file_handler = FileHandler(numbers=instance.Numbers)
-                archive_path = file_handler.handle_materials(instance)
+                archive_path = file_handler.handle_materials(instance, delivery)
 
                 # Отправляем архив пользователю
                 with open(archive_path, 'rb') as archive_file:
@@ -246,7 +247,7 @@ class FileHandler:
         archive_path = self.create_archive(base_path, os.path.dirname(base_path))
         return archive_path
 
-    def handle_materials(self, instance):
+    def handle_materials(self, instance, delivery):
         """
         Обработка расчета материалов (materials), создание директории и сохранение файла Excel.
 
@@ -278,7 +279,7 @@ class FileHandler:
 
         # Выполнение расчета через vvod и создание Excel-файла
         result = vvod(seria, material, nominal, dlina, Nstik, Nsekc, Nkon_zag, Nflanc, Lsvar_izd, KolProv).fg()
-        preobrazovanie(result, [seria, material, nominal, dlina, Nstik, Nsekc, Nkon_zag, Nflanc, Lsvar_izd])
+        preobrazovanie(result, [seria, material, nominal, dlina, Nstik, Nsekc, Nkon_zag, Nflanc, Lsvar_izd], delivery)
 
         # Сохраняем сгенерированный Excel файл
         excel_filename = f'Расчет материалов_{self.numbers}.xls'

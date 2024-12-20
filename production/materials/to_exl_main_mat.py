@@ -3,7 +3,7 @@ import re
 import xlwt
 import math
 
-def preobrazovanie(itog, data_in):
+def preobrazovanie(itog, data_in, delivery):
 
     font0 = xlwt.Font()
     font0.name = 'Century Gothic'
@@ -379,19 +379,35 @@ def preobrazovanie(itog, data_in):
     kol_mest = math.ceil(sum_mass / 1300)
     we.write(y+1, 6, 'мест:' + str(kol_mest), style1)
     we.write(y + 2, 8, 'стоимость доставки', style1)
-    price_transport = math.ceil(kol_mest / 4) * 80000
+
+    if delivery in ['pickup']:
+        price_transport = 0
+    else:
+        price_transport = math.ceil(kol_mest / 4) * 80000
     we.write(y + 2, 7, price_transport, style1)
     we.write(y + 3, 8, 'цена работ', style1)
 
-    if int(data_in[2]) < 3200:
-         price_work = int(data_in[5]) / 14 * (7500000 / 30)
-    elif 3200 <= int(data_in[2]) < 6400:
-        price_work = int(data_in[5]) / 7 * (7500000 / 30)
+    # считаем стоимость работ: количество секций делим на среднее значение выпуска секций в день и умножаем на частное
+    # из фонда оплаты труда делимое на количество дней в месяце
+    print(data_in)
+    if int(data_in[2]) in [630, 800, 1000]:
+        price_work = float(data_in[5]) / 23 * 6500000 / 30
+    elif int(data_in[2]) in [1250, 1600]:
+        price_work = float(data_in[5]) / 18 * 6500000 / 30
+    elif int(data_in[2]) in [2000, 2500]:
+        price_work = float(data_in[5]) / 16 * 6500000 / 30
+        print(price_work)
+    elif int(data_in[2]) in [3200, 4000]:
+        price_work = float(data_in[5]) / 9 * 6500000 / 30
+    elif int(data_in[2]) in [5000]:
+        price_work = float(data_in[5]) / 8 * 6500000 / 30
+    elif int(data_in[2]) in [6400]:
+        price_work = float(data_in[5]) / 4 * 6500000 / 30
     else:
         price_work = 0
-        print('ошибка в номинале')
 
-    we.write(y + 3, 7, price_work, style1)
+
+    we.write(y + 3, 7, round(price_work,2), style1)
     profit = (price_work + sum_cell) * 0.35
     we.write(y + 4, 8, 'прибыль', style1)
     we.write(y + 4, 7, round(profit, 2), style1)
