@@ -98,10 +98,9 @@
                 <form method="post">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-link" name="card" value="{{ el.id }}">
-                        №{{ el.Numbers }} {{ el.Name }}
+                        №{{ el.Numbers }} "{{ el.Name }}" от {{ el.Date_born }}
                     </button>
                 </form>
-                <p>Дата регистрации: {{ el.Date_born }}</p>
                 <p>Статус: {{ el.get_Status_display }}</p>
                 <p>Ответственный: {{ el.Responsible }}</p><br>
             </div>

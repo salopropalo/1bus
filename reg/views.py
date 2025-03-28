@@ -196,10 +196,12 @@ def companyList(request):
 # Карточка сделки
 def transaction(request, transaction_id):
     obj = regModel.objects.get(id=transaction_id)
-    title = 'Сделка №' + obj.Numbers + ' "' + obj.Name + '"'
+    title = obj.Numbers + ' "' + obj.Name + '"'
     date = obj.Date_born
     responsible = obj.Responsible
     date_born = date.strftime('%d.%m.%Y')
+    now_date = datetime.today().strftime('%d.%m.%Y')
+    now_time = datetime.today().strftime('%H.%M')
 
     if obj.Customer_company is None:
         customer_company = 'Не выбрано'
@@ -269,7 +271,9 @@ def transaction(request, transaction_id):
         'status_name': status_name,
         'add': add,
         'name_button': name_button,
-        'title2': 'Внесение изменений'
+        'title2': 'Внесение изменений',
+        'now_date': now_date,
+        'now_time': now_time,
     }
     return render(request, 'reg/sdelka.html', content)
 

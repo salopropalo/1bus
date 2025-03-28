@@ -4,6 +4,7 @@ from datetime import datetime
 from djmoney import money
 from djmoney.models.fields import MoneyField
 from django.core.validators import MinValueValidator, MaxValueValidator
+from reg.models import companyModel
 from django.core.validators import RegexValidator
 
 
@@ -55,6 +56,7 @@ class materialModel(models.Model):
     class Meta:
         verbose_name = 'Материал'
 
+
 class nominalModel(models.Model):
     Name = models.CharField('Наименование', max_length=10)
     material = models.ForeignKey(materialModel,
@@ -87,6 +89,7 @@ class conductorsModel(models.Model):
     # название таблицы
     class Meta:
         verbose_name = 'Количество проводников'
+
 
 # по идее это должно быть список заказов, но тут не хватает еще много чего к примеру, нужно чтобы были проекты,
 # нужен журнал регистрации всех документов
@@ -167,6 +170,7 @@ class MaterialCalculationModel(models.Model):
     class Meta:
         verbose_name = 'Расчет материалов'
 
+
 class ProcessingOfShopSheetModel(models.Model):
 
     # ------ эти поля должны быть обязательны для любого документа или списка ------------------------------------------
@@ -211,6 +215,20 @@ class ProcessingOfShopSheetModel(models.Model):
     class Meta:
         verbose_name = 'Список рабочих ведомостей'
 
+
+# единицы измерения
+class UnitModel(models.Model):
+    Name = models.CharField('Наименование', max_length=100)
+    Sname = models.CharField('Сокращение', max_length=100)
+    Code = models.DecimalField('Код', max_digits=5, decimal_places=0, null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.Name} - {self.Sname}'
+
+    class Meta:
+        verbose_name = 'Единицы измерения'
+
+
 # Номенклатура
 class ComponentsModel(models.Model):
 
@@ -223,27 +241,38 @@ class ComponentsModel(models.Model):
 
     CATEGORIES = (
         ('1', 'комплектующие'),
-        ('2', 'товары')
+        ('2', 'товары'),
+        ('3', 'хоз. расчеты')
     )
 
-    Numbers = models.CharField('Номер', max_length=10)
+    Numbers = models.CharField('Номер', max_length=30)
     Name = models.CharField('Наименование', max_length=100)
     Date_born = models.DateField('Дата создания', auto_now=True)
     Responsible = models.CharField('Ответственный', max_length=100)
     Status = models.CharField('Статус', max_length=30, default='1', choices=STATUS)
     # ------------------------------------------------------------------------------------------------------------------
 
-    price = MoneyField('Цена', max_digits=10, decimal_places=2, default_currency='RUB')
-    cost_price = MoneyField('Себестоимость', max_digits=10, decimal_places=2, default_currency='RUB')
-    discount = models.DecimalField(
-        'Скидка (%)',
-        max_digits=5,  # Максимум 3 цифры до запятой и 2 после (например, 100.00)
-        decimal_places=2,
-        default=0.00,  # По умолчанию скидка 0%
-        validators=[
-            MinValueValidator(0.00),  # Минимум 0%
-            MaxValueValidator(100.00)  # Максимум 100%
-        ]
-    )
+    price = MoneyField('Цена', max_digits=10, decimal_places=2, default_currency='RUB', null=True)
+    # cost_price = MoneyField('Себестоимость', max_digits=10, decimal_places=2, default_currency='RUB')
+    # discount = models.DecimalField(
+    #     'Скидка (%)',
+    #     max_digits=5,  # Максимум 3 цифры до запятой и 2 после (например, 100.00)
+    #     decimal_places=2,
+    #     default=57.00,  # По умолчанию скидка 0%
+    #     validators=[
+    #         MinValueValidator(0.00),  # Минимум 0%
+    #         MaxValueValidator(100.00)  # Максимум 100%
+    #     ]
+    # )
     category = models.CharField('Категория', max_length=100, choices=CATEGORIES)
-    file = models.FileField()
+    file = models.FileField(null=True, blank=True)
+    weight = models.DecimalField('Масса', max_digits=5, decimal_places=2, null=True, blank=True)
+    unit = models.ForeignKey(UnitModel, on_delete=models.CASCADE, verbose_name='Ед. изм.', null=True, blank=True)
+    Supplier = models.ForeignKey(companyModel, on_delete=models.CASCADE, verbose_name='Поставщик', null=True, blank=True)
+    Supplier_designation = models.CharField('Обозначение поставщика', max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.Name} - {self.Numbers}'
+
+    class Meta:
+        verbose_name = 'Номенклатура'

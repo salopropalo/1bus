@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-h6yvc@f17&t9gl3k(5yc^av2-hau_7z+yvd7839=-_19174d0o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '176.113.83.133', 'pitonpro.online']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '176.113.83.133', 'pitonpro']
 
 
 # Application definition

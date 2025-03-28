@@ -303,18 +303,31 @@ class vvod:
             self.ves_zag_bok = 0.55
             self.ves_flanca = 0.65
         elif self.nominal in [2500, 5000, 6400]:
-            self.stenka_2500 = 1600
-            self.nominal_2 = '2500 (160x8)'
-            self.s = 160
-            self.S_sh = 1266.3 # площадь сечения
-            self.v_sh = 11.3  # вес шины
-            self.v_st = 1.83  # вес стенки
+            self.stenka_2500 = 2000
+            self.nominal_2 = '2000'
+            self.s = 200
+            self.S_sh = 1192.3 # площадь сечения
+            self.v_sh = 10.6  # вес шины
+            self.v_st = 2.225  # вес стенки
             self.pet = str('пленка ПЭТ ширина 200 мм.')
             self.H_zag_tor = 237
             self.ves_zag_tor = 0.6
             self.H_zag_bok = 233
             self.ves_zag_bok = 0.64
             self.ves_flanca = 0.75
+        # elif self.nominal in [2500, 5000, 6400]:
+        #     self.stenka_2500 = 1600
+        #     self.nominal_2 = '2500 (160x8)'
+        #     self.s = 160
+        #     self.S_sh = 1266.3 # площадь сечения
+        #     self.v_sh = 11.3  # вес шины
+        #     self.v_st = 1.83  # вес стенки
+        #     self.pet = str('пленка ПЭТ ширина 200 мм.')
+        #     self.H_zag_tor = 237
+        #     self.ves_zag_tor = 0.6
+        #     self.H_zag_bok = 233
+        #     self.ves_zag_bok = 0.64
+        #     self.ves_flanca = 0.75
         else:
             print("такого номинала нет, введите другое значение")
             exit()
@@ -643,9 +656,13 @@ class vvod:
             name_L_plastina = ' медная'
 
         if self.nominal in [2500, 5000, 6400]:
-            self.itog.append(['П', 'Пластина токопроводящая 2500' + name_L_plastina, L_plastina, 'шт.'])
-            self.itog.append(['Пи', 'Болт М12 со срывной головкой (номинал 2500) по чертежу 000 031-01', kol_b, 'шт.'])
-            self.itog.append(['заг', 'Силикон листовой толщина 8 мм 500х500мм', itog_dempf, 'шт.'])
+            # self.itog.append(['П', 'Пластина токопроводящая 2500' + name_L_plastina, L_plastina, 'шт.'])
+            self.itog.append(['П', 'Пластина токопроводящая' + name_L_plastina, L_plastina, 'шт.'])
+            # self.itog.append(['Пи', 'Болт М12 со срывной головкой (номинал 2500) по чертежу 000 031-01', kol_b, 'шт.'])
+            self.itog.append(['Пи', 'Болт М12 со срывной головкой', kol_b, 'шт.'])
+            # self.itog.append(['заг', 'Силикон листовой толщина 8 мм 500х500мм', itog_dempf, 'шт.'])
+            self.itog.append(['М', 'Силикон листовой 6мм, 500х500мм', itog_dempf, 'шт.'])
+            self.itog.append(['Пи', 'Втулка двухсоставная', kol_b, 'шт.'])
         else:
             self.itog.append(['П', 'Пластина токопроводящая' + name_L_plastina, L_plastina, 'шт.'])
             self.itog.append(['Пи', 'болт со срывной головкой', kol_b, 'шт.'])

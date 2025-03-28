@@ -1,5 +1,7 @@
 from django.db import models
 from django.core.validators import RegexValidator
+from django.utils import timezone
+
 
 
 # модель для создания компании
@@ -72,7 +74,10 @@ class regModel(models.Model):
 
     Numbers = models.CharField('Номер', max_length=10)
     Name = models.CharField('Наименование', max_length=100)
-    Date_born = models.DateField('Дата создания', auto_now=True)
+    Date_born = models.DateField('Дата создания', #auto_now=True,
+                                 default=timezone.now,  # Устанавливает текущую дату при создании
+                                 editable=False        # Делает поле неизменяемым в формах и админке
+                                 )
     Responsible = models.CharField('Ответственный', max_length=100)
     Status = models.CharField('Статус', max_length=30, default='1', choices=STATUS)
     # -----------------------------------------------------------------------------------------------------------------
@@ -91,6 +96,7 @@ class regModel(models.Model):
                                        blank=True,  # Делаем поле необязательным
                                        null=True  # Добавляем null=True для обозначения пустого значения в базе данных
                                        )
+    #List_of_products = models.
     Adres_obj = models.TextField('Адрес объекта')
 
     # название строчки в таблице
@@ -100,6 +106,7 @@ class regModel(models.Model):
     # название таблицы
     class Meta:
         verbose_name = 'Таблица регистрации'
+
 
 # модели для задач
 class taskModel(models.Model):
@@ -136,7 +143,8 @@ class taskModel(models.Model):
     class Meta:
         verbose_name = 'Задачи'
 
-# штатное рассписание
+
+# штатное расписание
 class staffing_tableModel(models.Model):
     # ------ эти поля должны быть обязательны для любого документа или списка ------------------------------------------
     STATUS = (
@@ -152,3 +160,4 @@ class staffing_tableModel(models.Model):
     Responsible = models.CharField('Ответственный', max_length=100)
     Status = models.CharField('Статус', max_length=30, default='1', choices=STATUS)
     # -----------------------------------------------------------------------------------------------------------------
+

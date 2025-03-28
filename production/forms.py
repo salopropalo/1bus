@@ -21,7 +21,7 @@ class order_registerForm(ModelForm):
 class calculation_of_materialsForm(ModelForm):
     class Meta:
         model = MaterialCalculationModel
-        fields = ['series', 'conductor_material', 'nominal_current', 'number_of_conductors', 'track_length']
+        fields = ['series', 'conductor_material', 'number_of_conductors', 'nominal_current', 'track_length']
         widgets = {
             'series': Select(attrs={'class': 'form-control'}),
             'conductor_material': Select(attrs={'class': 'form-control'}),

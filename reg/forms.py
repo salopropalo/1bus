@@ -1,7 +1,7 @@
 from .models import regModel, companyModel
 from django.forms import ModelForm, TextInput, Select
 
-# форма для списка сделок
+# форма для списка сделок в модальном окне создания и редактирования новой карточки сделки
 class transactionListForm(ModelForm):
     class Meta:
         model = regModel
@@ -14,7 +14,15 @@ class transactionListForm(ModelForm):
             'Adres_obj': TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Введите адрес объекта (Страна, Город, Улица, №Дома)'
-                })
+                }),
+            'Customer_company': TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Выберите компанию заказчика'
+            }),
+            'Seller_company': TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Выберите компанию поставщика'
+            })
                 }
 
 # форма для карточки сделка

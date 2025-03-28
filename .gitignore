@@ -1,1 +1,6 @@
-settings.py
+pitonpro/settings.py
+staticfiles/
+production/migrations/
+reg/migrations/
+db.sqlite3.save
+db.sqlite3
