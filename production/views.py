@@ -233,7 +233,7 @@ class FileHandler:
                           params['Lsvar_izd'], 4).fg()
             preobrazovanie(result, [params['seria'], params['material'], params['nominal'], params['dlina'],
                                     params['Nstik'], params['Nsekc'], params['Nkon_zag'],
-                                    params['Nflanc'], params['Lsvar_izd']])
+                                    params['Nflanc'], params['Lsvar_izd']], 'pickup')
             new_name = (f'Расчет материалов Заказ №{self.line_zakaz} Этап №{i} '
                         f'{params["seria"]}-{params["material"]}-{params["nominal"]}-{params["dlina"]}.xls')
             self.save_file("example2.xls", os.path.join(base_path, subfolders[6], new_name), remove_src=True)
