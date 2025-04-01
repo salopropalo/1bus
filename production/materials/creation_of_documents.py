@@ -5506,7 +5506,7 @@ class calc():
             print('ошибка в обозначении')
             self.a['стандарт'] = 'нестандарт'
 
-        if self.a['Материал'] in ['а', 'А', 'a', 'A', 'Al']:
+        if self.a['Материал'] in ['а', 'А', 'a', 'A', 'Al', 'AL']:
             self.a['Материал'] = 'Al'
             self.a['K'] = 0.45
             #self.a['R'] = 10
@@ -5576,7 +5576,7 @@ class calc():
                 else:
                     self.a['толщина изоляции'] = 9.5 / 2
 
-        elif self.a['Материал'] in ['м', 'М', 'm', 'M', 'Cu']:
+        elif self.a['Материал'] in ['м', 'М', 'm', 'M', 'Cu', 'CU']:
             self.a['Материал'] = 'Cu'
             self.a['K'] = 0.7
             #self.a['R'] = 7
@@ -5651,7 +5651,7 @@ class calc():
             self.a['стандарт'] = 'нестандарт'
 
 
-
+        print(self.a['In'])
         if int(self.a['In']) not in rS:
             print("Не указан номинальный ток")
             self.a['стандарт'] = 'нестандарт'
