@@ -50,6 +50,39 @@
                 </div>
             </div>
 
+        <div class="d-flex justify-content-center"><h3 class="mt-4">Список товаров</h3></div>
+        <table class="table table-bordered">
+            <thead class="table-light">
+                <tr class="align-middle">
+                <th>Артикул</th>
+                <th>Наименование</th>
+                <th>Длина</th>
+                <th>Количество</th>
+                <th>Цена</th>
+                <th>Сумма</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in products %}
+                <tr>
+                    <td>{{ item.product.Article }}</td>
+                    <td>{{ item.product.Name }}</td>
+                    <td>{{ item.product.Length }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.product.Price }}</td>
+                    <td>{{ item.get_sum }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="5" class="text-end">Итого:</th>
+                    <th>{{ total_sum }}</th>
+                </tr>
+            </tfoot>
+        </table>
+
+
     <!-- Модальное окно -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">

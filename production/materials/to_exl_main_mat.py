@@ -392,18 +392,18 @@ def preobrazovanie(itog, data_in, delivery):
     # из фонда оплаты труда делимое на количество дней в месяце
     print(data_in)
     if int(data_in[2]) in [630, 800, 1000]:
-        price_work = float(data_in[5]) / 23 * 6500000 / 30
+        price_work = float(data_in[5]) / 23 * 7500000 / 30
     elif int(data_in[2]) in [1250, 1600]:
-        price_work = float(data_in[5]) / 18 * 6500000 / 30
+        price_work = float(data_in[5]) / 18 * 7500000 / 30
     elif int(data_in[2]) in [2000, 2500]:
-        price_work = float(data_in[5]) / 16 * 6500000 / 30
+        price_work = float(data_in[5]) / 16 * 7500000 / 30
         print(price_work)
     elif int(data_in[2]) in [3200, 4000]:
-        price_work = float(data_in[5]) / 9 * 6500000 / 30
+        price_work = float(data_in[5]) / 9 * 7500000 / 30
     elif int(data_in[2]) in [5000]:
-        price_work = float(data_in[5]) / 8 * 6500000 / 30
+        price_work = float(data_in[5]) / 8 * 7500000 / 30
     elif int(data_in[2]) in [6400]:
-        price_work = float(data_in[5]) / 4 * 6500000 / 30
+        price_work = float(data_in[5]) / 4 * 7500000 / 30
     else:
         price_work = 0
 
