@@ -203,7 +203,7 @@ class calculation:
         L1 = '-'
 
         if self.dat['Обозначение'] in ['тв', 'tv']:
-            if svar_det[0] in ['С-СД14']:
+            if svar_det[0] in ['С-СД14', 'С-СД11']:
                 if self.dat['In'] in [3200, 4000, 5000]:
                     C = str(float(svar_det[3][2][0]) - float(self.dat['расстояние от оси до корпуса'])
                             - float(self.dat['ширина стенки']) - 1.5)
@@ -5508,7 +5508,7 @@ class calc():
 
         if self.a['Материал'] in ['а', 'А', 'a', 'A', 'Al', 'AL']:
             self.a['Материал'] = 'Al'
-            self.a['K'] = 0.45
+            self.a['K'] = 0.4
             #self.a['R'] = 10
 
             if self.a['Серия'] in ['Е3', 'E3']:
@@ -5578,7 +5578,7 @@ class calc():
 
         elif self.a['Материал'] in ['м', 'М', 'm', 'M', 'Cu', 'CU']:
             self.a['Материал'] = 'Cu'
-            self.a['K'] = 0.7
+            self.a['K'] = 0.34
             #self.a['R'] = 7
 
             if self.a['Серия'] in ['Е3', 'E3']:
@@ -5650,7 +5650,6 @@ class calc():
             print('Неверно указан Материал ', self.a['Материал'])
             self.a['стандарт'] = 'нестандарт'
 
-
         print(self.a['In'])
         if int(self.a['In']) not in rS:
             print("Не указан номинальный ток")
@@ -5662,25 +5661,30 @@ class calc():
         for i in s:
             self.a[i] = s[i]
 
+        # Нормализация материала
+        material = str(self.a.get('Материал', '')).lower()
+        material_key = None
+        if material in {'al', 'ал', 'AL', 'Al'}:
+            material_key = 'al'
+        elif material in {'cu', 'ме', 'м', 'CU', 'Cu'}:
+            material_key = 'cu'
 
+        if not material_key:
+            self.a['стандарт'] = 'нестандарт'
+            return
 
         # Алюминий 6мм
-        if self.a['Производство'] == '1' and self.a['Материал'] == 'Al' and self.a['толщина шины'] == 6:
-            self.a['R'] = 13
+        if material_key == 'al' and self.a['толщина шины'] == 6: self.a['R'] = 14
         # Алюминий 8мм
-        elif self.a['Производство'] == '1' and self.a['Материал'] == 'Al' and self.a['толщина шины'] == 8:
-            self.a['R'] = 14
+        elif material_key == 'al' and self.a['толщина шины'] == 8: self.a['R'] = 15
         # Медь 6мм
-        elif self.a['Производство'] == '1' and self.a['Материал'] == 'Cu' and self.a['толщина шины'] == 6:
-            self.a['R'] = 11
+        elif material_key == 'cu' and self.a['толщина шины'] == 6: self.a['R'] = 11
         # Медь 8мм
-        elif self.a['Производство'] == '1' and self.a['Материал'] == 'Cu' and self.a['толщина шины'] == 8:
-            self.a['R'] = 12
+        elif material_key == 'cu' and self.a['толщина шины'] == 8: self.a['R'] = 12
         else:
             print(self.a['Производство'], self.a['Материал'], self.a['толщина шины'])
 
         self.a['ширина стенки'] = int(self.a['ширина шины']) + 3
-
 
         # размер между этажами
         if self.a['количество этажей'] == 2:
@@ -5763,17 +5767,6 @@ class calc():
                 'длина вывода фланца': 210,
             })
 
-            # Нормализация материала
-            material = str(self.a.get('Материал', '')).lower()
-            material_key = None
-            if material in {'al', 'ал', 'AL', 'Al'}:
-                material_key = 'al'
-            elif material in {'cu', 'ме', 'м', 'CU', 'Cu'}:
-                material_key = 'cu'
-
-            if not material_key:
-                self.a['стандарт'] = 'нестандарт'
-                return
 
             # Проверка межфазного расстояния
             try:
@@ -5825,7 +5818,7 @@ class calc():
                 self.a['стандарт'] = 'нестандарт'
 
 
-            # bus-8 mm
+            # bus-8 mm. Стандартный вывод шинопровода.
             if self.a['толщина шины'] == 8:
                 self.a['большой гиб'] = 3.7  # большой гиб
                 self.a['малый гиб'] = 0.4  # малый гиб (прямая)
