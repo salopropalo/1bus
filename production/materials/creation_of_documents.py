@@ -974,7 +974,11 @@ class calculation:
                 dictionary = {2: 's27', 3: 's28', 4: 's29', 5: 's30'}
                 for i in dictionary:
                     detali[i][0] = dictionary[i]
-                detali.append(['fl', 2])
+
+                if self.dat['межфазное расстояние фланца'] in [100, '100']:
+                    detali.append(['fl_100', 2])
+                else:
+                    detali.append(['fl_130', 2])
 
         else:   # 3-х проводной
             svar_det_one_floor = [['К-СД4', 'Крышка СБ', 1, ['k2', 1, self.A], ['k7', 1, self.B], ['k2', 1, self.C]],
@@ -1196,10 +1200,12 @@ class calculation:
             if self.dat['Обозначение'] in ['kpfuv']:
                 itog[0][7] = 'kpfuv'
                 detali = [['n', 2], ['sux', 4]]
+
                 if self.dat['межфазное расстояние фланца'] in [100, '100']:
                     detali.append(['fl_100', 2])
                 else:
                     detali.append(['fl_130', 2])
+
                 svar_det_one_floor = [['К-СД9', 'Крышка СБ', 1, ['k3f', 1, x], ['k13', 1, y], ['k2', 1, z]],
                                       ['К-СД10', 'Крышка СБ', 1, ['k4f', 1, x], ['k16', 1, y], ['k1', 1, z]],
                                       ['С-СД9', 'Стенка СБ', 1, ['c2f', 1, x], ['c1a', 1, y], ['u', 1, 0], ['cB', 1, z]],
@@ -1349,7 +1355,13 @@ class calculation:
 
             if self.dat['Обозначение'] in ['klfuv']:
                 itog[0][7] = 'klfuv'
-                detali = [['n', 2], ['sux', 4], ['fl', 2]]
+                detali = [['n', 2], ['sux', 4]]
+
+                if self.dat['межфазное расстояние фланца'] in [100, '100']:
+                    detali.append(['fl_100', 2])
+                else:
+                    detali.append(['fl_130', 2])
+
                 svar_det_one_floor = [['К-СД7', 'Крышка СБ', 1, ['k3f', 1, x], ['k14', 1, y], ['k2', 1, z]],
                                       ['К-СД8', 'Крышка СБ', 1, ['k4f', 1, x], ['k15', 1, y], ['k1', 1, z]],
                                       ['С-СД7', 'Стенка СБ', 1, ['c1f', 1, x], ['c2a', 1, y], ['u', 1, 0], ['cB', 1, z]],
