@@ -421,7 +421,7 @@ class calculation:
                     detali.insert(1, ['kc', 2, self.os[0]])
 
             else:   # 3-х проводной
-                detali = [['kv', 2, self.os[0]], ['c', 2, self.os[0]], ['s1', 2, self.os[0]], ['s', 1, self.os[0]],
+                detali = [['k', 2, self.os[0]], ['c', 2, self.os[0]], ['s1', 2, self.os[0]], ['s', 1, self.os[0]],
                           ['n', 4], ['sux', 4]]
 
                 if self.dat['Обозначение'] in ['пф', 'pf', 'pfk']:
@@ -3214,7 +3214,7 @@ class Detali:
         self.profil(['профиль', 'Крышка с выступом окрашенная 2.82м.', 'КВ_к_2.82', '90 90'], self.L)
         return self.a
 
-    # крышка с выступом с отверситем для втычной розетки для типов 1 и 2
+    # крышка с выступом с отверстием для втычной розетки для типов 1 и 2
     def kv18(self):
         self.B = '-'
         self.C = '-'
@@ -5913,7 +5913,7 @@ class to_pdf_reportlab:
                         s2.append(''.join(s))
             return s2
 
-        if spis[2] in ['Стыковочный блок', 'стыковочный блок']:
+        if spis[2] in ['Стыковочный блок', 'стыковочный блок', 'Стыковочный моноблок']:
             name = '1-' + str(spis[1]) + '.pdf'
             c = canvas.Canvas(name, pagesize=(30, 20))
             c.setFont('GOTHIC3', 6)

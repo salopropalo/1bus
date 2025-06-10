@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-h6yvc@f17&t9gl3k(5yc^av2-hau_7z+yvd7839=-_19174d0o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '176.113.83.133', 'pitonpro']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '176.113.83.133', 'pitonpro.online', 'www.pitonpro.online']
 
 
 # Application definition
@@ -151,3 +151,4 @@ LOGIN_REDIRECT_URL = 'home'
 SESSION_COOKIE_AGE = 24 * 60 * 60
 
 REST_FRAMEWORK = {'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']}
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
