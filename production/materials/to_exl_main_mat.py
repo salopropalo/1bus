@@ -374,19 +374,31 @@ def preobrazovanie(itog, data_in, delivery):
             continue
 
     # записываем итоги
-    y += 1
+    '''записываем данные которые вводили при расчете'''
+    # we2 = wb.add_sheet('Вводные данные')
+    name = ('серия', 'материал проводника', 'номинальный ток', 'длина трассы', 'количество стыков',
+            'количество секций', 'количество концевых заглушек',
+            'количество фланцев', 'длина сварных секций')
+    x = 0
+
+    for i in data_in:
+        we.write(x, 9, name[x], style1)
+        we.write(x, 10, i, style1)  # записываем артикул
+        x += 1
+
     we.write(y, 6, int(sum_mass), style1)
     we.write(y, 7, sum_cell, style1)
     kol_mest = math.ceil(sum_mass / 1300)
     we.write(y+1, 6, 'мест:' + str(kol_mest), style1)
-    we.write(y + 2, 8, 'стоимость доставки', style1)
+    we.write(x, 9, 'доставка', style1)
 
     if delivery in ['pickup']:
         price_transport = 0
     else:
         price_transport = math.ceil(kol_mest / 4) * 80000
-    we.write(y + 2, 7, price_transport, style1)
-    we.write(y + 3, 8, 'цена работ', style1)
+
+    we.write(x, 10, price_transport, style1)
+    we.write(x + 2, 9, 'цена работ', style1)
 
     # считаем стоимость работ: количество секций делим на среднее значение выпуска секций в день и умножаем на частное
     # из фонда оплаты труда делимое на количество дней в месяце
@@ -407,31 +419,16 @@ def preobrazovanie(itog, data_in, delivery):
     else:
         price_work = 0
 
-
-    we.write(y + 3, 7, round(price_work,2), style1)
+    we.write(x + 2, 10, round(price_work, 2), style1)
     profit = (price_work + sum_cell) * 0.35
-    we.write(y + 4, 8, 'прибыль', style1)
-    we.write(y + 4, 7, round(profit, 2), style1)
+    we.write(x + 3, 9, 'прибыль', style1)
+    we.write(x + 3, 10, round(profit, 2), style1)
     set_price = profit + price_work + sum_cell
-    we.write(y + 5, 8, 'цена комплекта', style1)
-    we.write(y + 5, 7, round(set_price, 2), style0)
+    we.write(x + 4, 9, 'итого цена', style1)
+    we.write(x + 4, 10, round(set_price, 2), style0)
     nds = set_price * 0.2
-    we.write(y + 6, 8, 'в том числе НДС', style1)
-    we.write(y + 6, 7, round(nds, 2), style1)
-
-
-
-    '''записываем данные которые вводили при расчете'''
-    # we2 = wb.add_sheet('Вводные данные')
-    name = ('серия', 'материал проводника', 'номинальный ток', 'длина трассы', 'количество стыков',
-            'количество секций', 'количество концевых заглушек',
-            'количество фланцев', 'длина сварных секций')
-    x = 0
-
-    for i in data_in:
-        we.write(x, 9, name[x], style1)
-        we.write(x, 10, i, style1)  # записываем артикул
-        x += 1
+    we.write(x + 5, 9, 'НДС', style1)
+    we.write(x + 5, 10, round(nds, 2), style1)
 
     wb.save('example2.xls')
 
