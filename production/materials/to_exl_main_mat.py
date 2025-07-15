@@ -225,12 +225,12 @@ def preobrazovanie(itog, data_in, delivery):
                 'Ш_2500': 428,
                 'Ш_630': 428,
                 'Ш_800': 428,
-                'ШМ_1000': 1200,
-                'ШМ_1250': 1200,
-                'ШМ_1600': 1200,
-                'ШМ_2000': 1200,
-                'ШМ_2500': 1200,
-                'ШМ_800': 1200,
+                'ШМ_1000': 1080,
+                'ШМ_1250': 1080,
+                'ШМ_1600': 1080,
+                'ШМ_2000': 1080,
+                'ШМ_2500': 1080,
+                'ШМ_800': 1080,
                 'М-Гер': 369.8,
                 'ЭРС-КР': 375,
                 'С_1000_к_2.82': 558,
@@ -398,7 +398,7 @@ def preobrazovanie(itog, data_in, delivery):
         price_transport = math.ceil(kol_mest / 4) * 80000
 
     we.write(x, 10, price_transport, style1)
-    we.write(x + 2, 9, 'цена работ', style1)
+    we.write(x + 1, 9, 'цена работ', style1)
 
     # считаем стоимость работ: количество секций делим на среднее значение выпуска секций в день и умножаем на частное
     # из фонда оплаты труда делимое на количество дней в месяце
@@ -419,16 +419,16 @@ def preobrazovanie(itog, data_in, delivery):
     else:
         price_work = 0
 
-    we.write(x + 2, 10, round(price_work, 2), style1)
+    we.write(x + 1, 10, round(price_work, 2), style1)
     profit = (price_work + sum_cell) * 0.35
-    we.write(x + 3, 9, 'прибыль', style1)
-    we.write(x + 3, 10, round(profit, 2), style1)
+    we.write(x + 2, 9, 'прибыль', style1)
+    we.write(x + 2, 10, round(profit, 2), style1)
     set_price = profit + price_work + sum_cell
-    we.write(x + 4, 9, 'итого цена', style1)
-    we.write(x + 4, 10, round(set_price, 2), style0)
+    we.write(x + 3, 9, 'итого цена', style1)
+    we.write(x + 3, 10, round(set_price, 2), style0)
     nds = set_price * 0.2
-    we.write(x + 5, 9, 'НДС', style1)
-    we.write(x + 5, 10, round(nds, 2), style1)
+    we.write(x + 4, 9, 'НДС', style1)
+    we.write(x + 4, 10, round(nds, 2), style1)
 
     wb.save('example2.xls')
 
