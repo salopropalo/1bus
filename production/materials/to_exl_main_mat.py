@@ -225,12 +225,12 @@ def preobrazovanie(itog, data_in, delivery):
                 'Ш_2500': 428,
                 'Ш_630': 428,
                 'Ш_800': 428,
-                'ШМ_1000': 1080,
-                'ШМ_1250': 1080,
-                'ШМ_1600': 1080,
-                'ШМ_2000': 1080,
-                'ШМ_2500': 1080,
-                'ШМ_800': 1080,
+                'ШМ_1000': 1150,
+                'ШМ_1250': 1150,
+                'ШМ_1600': 1150,
+                'ШМ_2000': 1150,
+                'ШМ_2500': 1150,
+                'ШМ_800': 1150,
                 'М-Гер': 369.8,
                 'ЭРС-КР': 375,
                 'С_1000_к_2.82': 558,
@@ -386,9 +386,34 @@ def preobrazovanie(itog, data_in, delivery):
         we.write(x, 10, i, style1)  # записываем артикул
         x += 1
 
-    we.write(y, 6, int(sum_mass), style1)
-    we.write(y, 7, sum_cell, style1)
-    kol_mest = math.ceil(sum_mass / 1300)
+    # считаем стоимость работ: количество секций делим на среднее значение выпуска секций в день и умножаем на частное
+    # из фонда оплаты труда делимое на количество дней в месяце
+    print(data_in)
+    productivity_map = {
+        630: 22,
+        800: 22,
+        1000: 20,
+        1250: 20,
+        1600: 17,
+        2000: 15,
+        2500: 14,
+        3200: 9,
+        4000: 9,
+        5000: 8,
+        6400: 4
+    }
+    number_of_workers = 12  # число рабочих
+    average_salary = 75000  # средняя зарплата
+    section = int(data_in[2])   # номинальный ток
+    number_of_sections = data_in[5] # количество секций
+    price_time = float(number_of_sections) / (productivity_map.get(section, 1) / 2)       # дней на производство
+    price_work = price_time * (number_of_workers * average_salary * 1.5) / 30     # ФОТ
+    electricity = 60000        # цена электричества
+    rent_of_space = 650 * 700   # аренда площади (цена за метр и площадь)
+    business_expenses = electricity / price_time + rent_of_space / price_time  # хозяйственные расходы
+    we.write(y, 6, int(sum_mass), style1)   # масса профиля
+    we.write(y, 7, sum_cell, style1)        # цена всех комплектующих
+    kol_mest = math.ceil(sum_mass / 1300)   # количество мест
     we.write(y+1, 6, 'мест:' + str(kol_mest), style1)
     we.write(x, 9, 'доставка', style1)
 
@@ -398,37 +423,29 @@ def preobrazovanie(itog, data_in, delivery):
         price_transport = math.ceil(kol_mest / 4) * 80000
 
     we.write(x, 10, price_transport, style1)
-    we.write(x + 1, 9, 'цена работ', style1)
-
-    # считаем стоимость работ: количество секций делим на среднее значение выпуска секций в день и умножаем на частное
-    # из фонда оплаты труда делимое на количество дней в месяце
-    print(data_in)
-    if int(data_in[2]) in [630, 800, 1000]:
-        price_work = float(data_in[5]) / 23 * 7500000 / 30
-    elif int(data_in[2]) in [1250, 1600]:
-        price_work = float(data_in[5]) / 18 * 7500000 / 30
-    elif int(data_in[2]) in [2000, 2500]:
-        price_work = float(data_in[5]) / 16 * 7500000 / 30
-        print(price_work)
-    elif int(data_in[2]) in [3200, 4000]:
-        price_work = float(data_in[5]) / 9 * 7500000 / 30
-    elif int(data_in[2]) in [5000]:
-        price_work = float(data_in[5]) / 8 * 7500000 / 30
-    elif int(data_in[2]) in [6400]:
-        price_work = float(data_in[5]) / 4 * 7500000 / 30
-    else:
-        price_work = 0
-
-    we.write(x + 1, 10, round(price_work, 2), style1)
+    we.write(x + 1, 9, 'дней на производство', style1)
+    we.write(x + 1, 10, round(price_time, 2), style1)
+    we.write(x + 2, 9, 'ФОТ', style1)
+    we.write(x + 2, 10, round(price_work, 2), style1)
+    we.write(x + 3, 9, 'прочие расходы', style1)
+    we.write(x + 3, 10, round(business_expenses, 2), style1)
     profit = (price_work + sum_cell) * 0.35
-    we.write(x + 2, 9, 'прибыль', style1)
-    we.write(x + 2, 10, round(profit, 2), style1)
-    set_price = profit + price_work + sum_cell
-    we.write(x + 3, 9, 'итого цена', style1)
-    we.write(x + 3, 10, round(set_price, 2), style0)
-    nds = set_price * 0.2
-    we.write(x + 4, 9, 'НДС', style1)
-    we.write(x + 4, 10, round(nds, 2), style1)
+    we.write(x + 4, 9, 'прибыль', style1)
+    we.write(x + 4, 10, round(profit, 2), style1)
+    nds = (business_expenses + profit + price_work + sum_cell) * 0.2
+    set_price = business_expenses + profit + price_work + sum_cell + nds
+    we.write(x + 5, 9, 'итого цена', style1)
+    we.write(x + 5, 10, round(set_price, 2), style0)
+    we.write(x + 6, 9, 'исходящий НДС', style1)
+    we.write(x + 6, 10, round(nds, 2), style1)
+    we.write(x + 7, 9, 'входящий НДС', style1)
+    we.write(x + 7, 10, round(sum_cell * 25 / 125, 2), style1)
+    we.write(x + 8, 9, 'НДС к уплате', style1)
+    we.write(x + 8, 10, round(nds - (sum_cell * 25 / 125), 2), style1)
+    we.write(x + 9, 9, 'налог на прибыль', style1)
+    we.write(x + 9, 10, round(profit * 0.25 + (sum_cell * 25 / 125) * 0.25, 2), style1)
+    we.write(x + 10, 9, 'чистая прибыль', style1)
+    we.write(x + 10, 10, round((profit - profit * 0.25) + ((sum_cell * 25 / 125) - (sum_cell * 25 / 125) * 0.25), 2), style1)
 
     wb.save('example2.xls')
 

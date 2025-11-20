@@ -191,7 +191,6 @@ def companyList(request):
     }
     return render(request, 'reg/list.html', content)
 
-
 # _____________________________________________________________________________________________________________________
 # Карточка сделки
 def transaction(request, transaction_id):
