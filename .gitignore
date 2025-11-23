@@ -1,6 +1,15 @@
-pitonpro/settings.py
+1bus/settings.py
 staticfiles/
 production/migrations/
 reg/migrations/
 db.sqlite3.save
 db.sqlite3
+.DS_Store
+.idea/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+/uploads/
+.env
+*.log
