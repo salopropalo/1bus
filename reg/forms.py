@@ -114,3 +114,4 @@ class companyForm(ModelForm):
                             'placeholder': 'Номер телефона'
                             })
                 }
+

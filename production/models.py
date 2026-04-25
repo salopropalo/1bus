@@ -268,11 +268,23 @@ class ComponentsModel(models.Model):
     file = models.FileField(null=True, blank=True)
     weight = models.DecimalField('Масса', max_digits=5, decimal_places=2, null=True, blank=True)
     unit = models.ForeignKey(UnitModel, on_delete=models.CASCADE, verbose_name='Ед. изм.', null=True, blank=True)
-    Supplier = models.ForeignKey(companyModel, on_delete=models.CASCADE, verbose_name='Поставщик', null=True, blank=True)
+    Supplier = models.ForeignKey(companyModel, on_delete=models.CASCADE, verbose_name='Поставщик', null=True,
+                                 blank=True)
     Supplier_designation = models.CharField('Обозначение поставщика', max_length=100, null=True, blank=True)
+    Length = models.CharField('Длина', max_length=100)
+    Label = models.CharField('Обозначение', max_length=100)
+    Tiepe = models.CharField('Тип', max_length=100, null=True, blank=True)
+    series = models.ForeignKey(seriesModel, on_delete=models.CASCADE, verbose_name='Серия', null=True, blank=True)
+    conductor_material = models.ForeignKey(materialModel, on_delete=models.CASCADE, verbose_name='Материал проводника',
+                                           null=True, blank=True)
+    number_of_conductors = models.ForeignKey(conductorsModel, on_delete=models.CASCADE,
+                                             verbose_name='Количество проводников', null=True, blank=True)
+    rated_current = models.ForeignKey(nominalModel, on_delete=models.CASCADE, verbose_name='Номинальный ток', null=True,
+                                      blank=True)
 
     def __str__(self):
         return f'{self.Name} - {self.Numbers}'
 
     class Meta:
         verbose_name = 'Номенклатура'
+

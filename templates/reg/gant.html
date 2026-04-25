@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Гантт-диаграмма</title>
+<style>
+  body { font-family: Arial, sans-serif; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { border: 1px solid #ccc; text-align: center; padding: 4px; }
+  th { background: #f2f2f2; font-size: 12px; }
+  .bar {
+    height: 20px;
+    background-color: steelblue;
+    border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+
+<h2>Диаграмма Ганта (заказы)</h2>
+
+<table>
+  <tr>
+    <th>Заказ</th>
+    <!-- дни с 18.08 по 15.09 -->
+    <!-- Август -->
+    <th>18</th><th>19</th><th>20</th><th>21</th><th>22</th><th>23</th>
+    <th>24</th><th>25</th><th>26</th><th>27</th><th>28</th><th>29</th>
+    <th>30</th><th>31</th>
+    <!-- Сентябрь -->
+    <th>01</th><th>02</th><th>03</th><th>04</th><th>05</th><th>06</th><th>07</th>
+    <th>08</th><th>09</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th>
+  </tr>
+
+  <!-- Первый заказ -->
+  <tr>
+    <td>Заказ 1<br>(18.08–23.08)</td>
+    <td colspan="6"><div class="bar"></div></td>
+    <td colspan="23"></td>
+  </tr>
+
+  <!-- Второй заказ -->
+  <tr>
+    <td>Заказ 2<br>(22.08–07.09)</td>
+    <td colspan="4"></td>
+    <td colspan="17"><div class="bar"></div></td>
+    <td colspan="8"></td>
+  </tr>
+
+  <!-- Третий заказ -->
+  <tr>
+    <td>Заказ 3<br>(01.09–15.09)</td>
+    <td colspan="14"></td>
+    <td colspan="15"><div class="bar"></div></td>
+  </tr>
+</table>
+
+</body>
+</html>

@@ -54,11 +54,11 @@ class vvod:
             print('направляющие')
             self.napr(self.Nsekc)  # направляющие
             print('пленка')
-            self.plenka(self.dlina)  # пленка
+            #self.plenka(self.dlina)  # пленка
             print('изоляция')
             self.zel(self.nominal, self.dlina)  # изоляция
             print('порошок ПОС')
-            self.pos(self.Nstik)  # порошок ПОС
+            #self.pos(self.Nstik)  # порошок ПОС
             print('стыки')
             self.stik(self.Nstik)  # стыки
             print('крышки стыка количество')
@@ -75,14 +75,14 @@ class vvod:
             print('расчет количества герметика')
             self.germetik(self.dlina)  # расчет количества герметика
             print('заклепки')
-            self.zak(self.dlina)  # заклепки
+            #self.zak(self.dlina)  # заклепки
             print('количесвто болтов м6')
             self.bolt_m6(self.Nsekc)  # количесвто болтов м6
             print('Конец')
             return self.itog
         else:
             self.stik(self.Nstik)  # стыки
-            self.pos(self.Nstik)  # порошок ПОС
+            #self.pos(self.Nstik)  # порошок ПОС
             self.sh(self.dlina)  # шина
             self.kompaund(self.dlina)   # Расчет компаунда и наполнителей
             return self.itog
@@ -555,10 +555,10 @@ class vvod:
             itog_dempf = kol_demp * procent_dempf
             #self.itog.append(['заг', 'Демпфер 20-30мм 4мм', kol_demp, 'шт.'])
             ves_demp = round(kol_demp * 0.008085, 2)  # вес всех демпферов
-            isol_sr = kol * (self.KolProv - 1) * 2  # количество изоляторов средних
-            isol_kr = kol * 4  # количество изоляторов крайних
-            ves_izol_sr = 0.24
-            ves_izol_kr = 0.235
+            isol_sr = kol * (self.KolProv - 1)  # количество изоляторов средних
+            isol_kr = kol * 2  # количество изоляторов крайних
+            ves_izol_sr = 0.380
+            ves_izol_kr = 0.380
             naz_sr = 'Изолятор 2000А  (Ср.)'  # название изолятора
             naz_kr = 'Изолятор 2000А  (Кр.)'  # название изолятора
         elif self.nominal in [5000]:
@@ -715,22 +715,27 @@ class vvod:
             #print('kv pesok', kv_pes)
             #self.itog.append(['М стык', 'Кварцевая мука', kv_pes, 'кг.'])
 
-    def pos(self, pl):#ПОС порошок
+    '''def pos(self, pl):#ПОС порошок
         plosh = self.s * 40 * pl * self.KolProv * 4 + (self.s + 30) * 40 * pl * self.KolProv * 4
         rash = round(plosh / 1000000 * 0.81, 2)
-        self.itog.append(['М', 'Порошковый материал ТР-63-25', rash, 'кг.'])
+        self.itog.append(['М', 'Порошковый материал ТР-63-25', rash, 'кг.'])'''
 
     def zel(self, nominal, os):#расчет эпоксидной изоляции
         per = self.s * 2 + 6
-        plosh = per * 0.001 * os * self.KolProv
+        if self.nominal in [3200, 4000, 1600, 2500]:
+            plosh = per * 0.001 * os * self.KolProv * 2
+        elif self.nominal in [6400, 7500]:
+            plosh = per * 0.001 * os * self.KolProv * 3
+        else:
+            plosh = per * 0.001 * os * self.KolProv
         ves = round(plosh * 0.35, 2)
         self.itog.append(['М', 'Краска порошковая ОХТЭК - 3ГЛ RAL 6024 ТР9 (для шин, зеленая)', ves, 'кг.'])
 
-    def plenka(self, os):   # пленка
+    '''def plenka(self, os):   # пленка
         L1 = round(self.s * 0.001 * os * 5 * 0.000125 * 1380, 2)
         L2 = round(40 * 0.001 * os * 2 * 0.000125 * 1380, 2)
         self.itog.append(['М', self.pet, L1, 'кг.'])
-        self.itog.append(['М', 'пленка ПЭТ ширина 40 мм.', L2, 'кг.'])
+        self.itog.append(['М', 'пленка ПЭТ ширина 40 мм.', L2, 'кг.'])'''
 
     def zaglishka(self, kol):
         zaglushka1 = self.ves_zag_tor * 2 * kol  # расчетвеса торцевой заглушки
@@ -772,7 +777,7 @@ class vvod:
         kol_ger = round(ves / 0.65, 1)
         self.itog.append(['М', 'Герметик полиуретановый "Соудал "Соудафлекс 40 FC" 600 мл, серый', kol_ger, 'шт.'])
 
-    def zak(self, L):
+    '''def zak(self, L):
         if self.nominal in [630, 800, 1000, 1250, 1600, 2000]:
             k_zak = round(L / 150 * 2, 2)
         elif self.nominal in [2500, 3200, 4000]:
@@ -782,7 +787,7 @@ class vvod:
         #6400
         else:
             k_zak = round(L / 150 * 3 / 1000, 1)
-        self.itog.append(['ст', 'Заклепка вытяжная AFT 4,8х12 мм Алюм/Сталь станд.бортик (0,5/5,0zac) ZAC', k_zak, 'тыс. шт.'])
+        self.itog.append(['ст', 'Заклепка вытяжная AFT 4,8х12 мм Алюм/Сталь станд.бортик (0,5/5,0zac) ZAC', k_zak, 'тыс. шт.'])'''
 
     def bolt_m6(self, kol):
         if self.nominal > 2500:

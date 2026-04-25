@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Аккаунт не активен</title>
+    <style>
+        body {
+            text-align: center;
+            padding-top: 50px;
+            font-family: sans-serif;
+        }
+        img {
+            max-width: 400px;
+            border-radius: 20px;
+            box-shadow: 0 0 10px #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ваш аккаунт не активен</h1>
+    <p>Пожалуйста, свяжитесь с администратором.</p>
+    <img src="{% staticfiles 'images/inactive.png' %}" alt="Неактивный пользователь">
+</body>
+</html>

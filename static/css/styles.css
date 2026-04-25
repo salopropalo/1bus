@@ -1,0 +1,42 @@
+@media print {
+    .no-print {
+        display: none !important;
+    }
+}
+
+/* Подключение шрифта Bebas Neue с кириллицей */
+@font-face {
+    font-family: 'Bebas Neue Cyrillic';
+    src: url('//static/fonts/BebasNeueCyrillic.woff2') format('woff2'),
+         url('//static/fonts/BebasNeueCyrillic.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Применение шрифта к вашему логотипу */
+.fs-4 {
+    font-family: 'Bebas Neue Cyrillic', 'Arial Narrow', Arial, sans-serif !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.8px;
+    transform: scaleY(1.6); /* Растягивает по вертикали на 60% */
+    display: inline-block;
+    transform-origin: center;
+}
+
+/* Дополнительные стили */
+.nav-link.active {
+    background-color: #0d6efd;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Стили для логотипа */
+header img {
+    max-height: 80px;
+    width: auto;
+    margin-right: 10px;
+}
