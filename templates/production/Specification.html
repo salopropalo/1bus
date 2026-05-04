@@ -1,10 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'reg/base.html' %}
+{% load static %}
 
-</body>
-</html>
+{% block content %}
+{% if request.user.is_active %}
+    <div class="d-flex justify-content-center"><h3 class="mt-4">Спецификация</h3></div>
+        <table class="table table-bordered">
+            <thead class="table-light">
+                <tr class="align-middle">
+                <th>№</th>
+                <th>Артикул</th>
+                <th>Наименование</th>
+                <th>Линия</th>
+                <th>Номер сделки</th>
+                <th>Количество</th>
+                <th>Ед.изм</th>
+                <th>{{ Numbers }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in products %}
+                <tr>
+                    <td>{{ item.product.Article }}</td>
+                    <td>В-AL-4-630-I-30</td>
+                    <td>{{ item.product.Length }}</td>
+                    <td>A</td>
+                    <td>10</td>
+                    <th>шт.</th>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="5" class="text-end">Итого:</th>
+                    <th>{{ total_sum }}</th>
+                </tr>
+            </tfoot>
+        </table>
+{% endif %}
+
+{% endblock %}

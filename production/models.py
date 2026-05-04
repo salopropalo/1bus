@@ -6,11 +6,25 @@ from djmoney.models.fields import MoneyField
 from django.core.validators import MinValueValidator, MaxValueValidator
 from reg.models import companyModel
 from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
+
+# единицы измерения
+class UnitModel(models.Model):
+    id = models.AutoField(primary_key=True)
+    Name = models.CharField('Наименование', max_length=100)
+    Sname = models.CharField('Сокращение', max_length=100)
+    Code = models.DecimalField('Код', max_digits=5, decimal_places=0, null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.Name}'
+
+    class Meta:
+        verbose_name = 'Единицы измерения'
 
 
 # серии
 class seriesModel(models.Model):
-    Name = models.CharField('Наименование', max_length=10, unique=True)
+    Name = models.CharField('Наименование', max_length=10, unique=True, primary_key=True)
     Standard = models.CharField('Стандарт', max_length=100)
     Description = models.CharField('Описание', max_length=255)
 
@@ -39,7 +53,7 @@ class materialModel(models.Model):
         ('3', 'ферромагнетик')
     )
 
-    Name = models.CharField('Наименование', max_length=50, unique=True)
+    Name = models.CharField('Наименование', max_length=50, unique=True, primary_key=True)
     Designation = models.CharField('Обозначение', max_length=100)
     tip = models.CharField('Тип',  max_length=255, default='1', choices=TIP)
     Magnetic = models.CharField('Магнитные свойства', max_length=255, default='1', choices=MAGNETIC, null=True)
@@ -58,16 +72,7 @@ class materialModel(models.Model):
 
 
 class nominalModel(models.Model):
-    Name = models.CharField('Наименование', max_length=10)
-    material = models.ForeignKey(materialModel,
-                                         on_delete=models.CASCADE,
-                                         to_field='Name',
-                                         related_name='material',
-                                         blank=True,  # Делаем поле необязательным
-                                         null=True  # Добавляем null=True для обозначения пустого значения в базе данных
-                                         )
-    size = models.CharField('Габариты', max_length=15)
-    link = models.FileField('файл')
+    Name = models.CharField('Наименование', max_length=10, primary_key=True)
 
     # название строчки в таблице
     def __str__(self):
@@ -80,7 +85,7 @@ class nominalModel(models.Model):
 
 class conductorsModel(models.Model):
     Name = models.CharField('Наименование', max_length=10)
-    quantity = models.CharField('Количество проводников', max_length=1)
+    quantity = models.CharField('Количество проводников', max_length=1, primary_key=True)
 
     # название строчки в таблице
     def __str__(self):
@@ -89,6 +94,36 @@ class conductorsModel(models.Model):
     # название таблицы
     class Meta:
         verbose_name = 'Количество проводников'
+
+# Название номенклатуры
+class NameNomenclature(models.Model):
+    CATEGORIES = (
+        ('1', 'секции'),
+        ('2', 'комплектующие'),
+        ('3', 'НКУ')
+    )
+    # Обозначение: только заглавные латинские буквы, не более 3 символов
+    Numbers = models.CharField('Обозначение',
+                              max_length=10,
+                              validators=[RegexValidator(
+                                  regex=r'^[A-Z]{1,10}$',
+                                  message='Обозначение должно содержать только заглавные латинские '
+                                          'буквы (A-Z) и не более 10 символов')],
+                              help_text='Только заглавные латинские буквы, '
+                                        'не более 3 символов (например: I, LV, KLF)',
+                              primary_key=True)
+    Name = models.CharField('Наименование', max_length=100)  # Увеличил до 100 для полных наименований
+    unit = models.ForeignKey(UnitModel, on_delete=models.CASCADE, verbose_name='Ед. изм.',
+                             null=True, blank=True)
+    category = models.CharField('Категория', max_length=100, choices=CATEGORIES)
+    # название строчки в таблице
+    def __str__(self):
+        return self.Name
+
+    class Meta:
+        verbose_name = 'Наименование и обозначение номенклатуры'
+        verbose_name_plural = 'Наименования и обозначения номенклатуры'
+        ordering = ['Name']
 
 
 # по идее это должно быть список заказов, но тут не хватает еще много чего к примеру, нужно чтобы были проекты,
@@ -137,35 +172,29 @@ class order_registerModel(models.Model):
         verbose_name = 'Список заказов'
 
 
-# модель для создания конструкторского документа деталь НЕДОДЕЛАНО
-class detailModel(models.Model):
-
-    # ------ эти поля должны быть обязательны для любого документа ----------------------------------------------------
-    STATUS = (
-        ('1', 'действующая компания'),
-        ('2', 'ликвидирована'),
-    )  # Статус может быть создан до 5 пунктов
-
-    Numbers = models.CharField('Номер', max_length=10)
-    Name = models.CharField('Наименование', max_length=255, unique=True)
-    Date_born = models.DateField('Дата создания', auto_now=True)
-    Responsible = models.CharField('Ответственный', max_length=100)
-    Status = models.CharField('Статус', max_length=255, default='1', choices=STATUS)
-    # -----------------------------------------------------------------------------------------------------------------
-
-
 class MaterialCalculationModel(models.Model):
-    series = models.ForeignKey(seriesModel, on_delete=models.CASCADE, verbose_name="Серия шинопровода")
-    conductor_material = models.ForeignKey(materialModel, on_delete=models.CASCADE, verbose_name="Материал проводника")
-    nominal_current = models.ForeignKey(nominalModel, on_delete=models.CASCADE, verbose_name="Номинальный ток (А)")
-    number_of_conductors = models.ForeignKey(conductorsModel, on_delete=models.CASCADE,
+    series = models.ForeignKey(seriesModel,
+                               on_delete=models.CASCADE,
+                               to_field='Name',
+                               verbose_name="Серия шинопровода")
+    conductor_material = models.ForeignKey(materialModel,
+                                           on_delete=models.CASCADE,
+                                           to_field='Name',
+                                           verbose_name="Материал проводника")
+    nominal_current = models.ForeignKey(nominalModel,
+                                        on_delete=models.CASCADE,
+                                        to_field='Name',
+                                        verbose_name="Номинальный ток (А)")
+    number_of_conductors = models.ForeignKey(conductorsModel,
+                                             on_delete=models.CASCADE,
+                                             to_field='quantity',
                                              verbose_name="Количество проводников")
     track_length = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Длина трассы (м)")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     Responsible = models.CharField('Ответственный', max_length=100)
 
     def __str__(self):
-        return f'{self.series.Name} - {self.conductor_material.Name} ({self.nominal_current} А)'
+        return f'{self.series.Name} - {self.conductor_material.Name} ({self.nominal_current.Name} А)'
 
     class Meta:
         verbose_name = 'Расчет материалов'
@@ -216,75 +245,64 @@ class ProcessingOfShopSheetModel(models.Model):
         verbose_name = 'Список рабочих ведомостей'
 
 
-# единицы измерения
-class UnitModel(models.Model):
-    Name = models.CharField('Наименование', max_length=100)
-    Sname = models.CharField('Сокращение', max_length=100)
-    Code = models.DecimalField('Код', max_digits=5, decimal_places=0, null=True, blank=True)
-
-    def __str__(self):
-        return f'{self.Name} - {self.Sname}'
-
-    class Meta:
-        verbose_name = 'Единицы измерения'
-
-
 # Номенклатура
 class ComponentsModel(models.Model):
 
-    # ------ эти поля должны быть обязательны для любого документа или списка ------------------------------------------
-    STATUS = (
-        ('1', 'новая'),
-        ('2', 'действующая'),
-        ('3', 'в архиве'),
-    )   # Статус может быть создан до 5 пунктов
-
-    CATEGORIES = (
-        ('1', 'комплектующие'),
-        ('2', 'товары'),
-        ('3', 'хоз. расчеты')
-    )
-
-    Numbers = models.CharField('Номер', max_length=30)
-    Name = models.CharField('Наименование', max_length=100)
-    Date_born = models.DateField('Дата создания', auto_now=True)
-    Responsible = models.CharField('Ответственный', max_length=100)
-    Status = models.CharField('Статус', max_length=30, default='1', choices=STATUS)
-    # ------------------------------------------------------------------------------------------------------------------
-
-    price = MoneyField('Цена', max_digits=10, decimal_places=2, default_currency='RUB', null=True)
-    # cost_price = MoneyField('Себестоимость', max_digits=10, decimal_places=2, default_currency='RUB')
-    # discount = models.DecimalField(
-    #     'Скидка (%)',
-    #     max_digits=5,  # Максимум 3 цифры до запятой и 2 после (например, 100.00)
-    #     decimal_places=2,
-    #     default=57.00,  # По умолчанию скидка 0%
-    #     validators=[
-    #         MinValueValidator(0.00),  # Минимум 0%
-    #         MaxValueValidator(100.00)  # Максимум 100%
-    #     ]
-    # )
-    category = models.CharField('Категория', max_length=100, choices=CATEGORIES)
+    Numbers = models.CharField('Номер', max_length=30, primary_key=True)
+    Name = models.ForeignKey(NameNomenclature,
+                             on_delete=models.CASCADE,
+                             verbose_name='Наименование',
+                             null=True, blank=True)
+    price = MoneyField('Цена без НДС',
+                       max_digits=10,
+                       decimal_places=2,
+                       default_currency='RUB',
+                       null=True)
     file = models.FileField(null=True, blank=True)
     weight = models.DecimalField('Масса', max_digits=5, decimal_places=2, null=True, blank=True)
-    unit = models.ForeignKey(UnitModel, on_delete=models.CASCADE, verbose_name='Ед. изм.', null=True, blank=True)
-    Supplier = models.ForeignKey(companyModel, on_delete=models.CASCADE, verbose_name='Поставщик', null=True,
-                                 blank=True)
-    Supplier_designation = models.CharField('Обозначение поставщика', max_length=100, null=True, blank=True)
-    Length = models.CharField('Длина', max_length=100)
-    Label = models.CharField('Обозначение', max_length=100)
-    Tiepe = models.CharField('Тип', max_length=100, null=True, blank=True)
-    series = models.ForeignKey(seriesModel, on_delete=models.CASCADE, verbose_name='Серия', null=True, blank=True)
-    conductor_material = models.ForeignKey(materialModel, on_delete=models.CASCADE, verbose_name='Материал проводника',
+
+    A = models.CharField('Длина', max_length=100, null=True, blank=True)
+    B = models.CharField('Длина', max_length=100, null=True, blank=True)
+    C = models.CharField('Длина', max_length=100, null=True, blank=True)
+    Length = models.CharField('Длина', max_length=100, null=True, blank=True)
+    series = models.ForeignKey(seriesModel, on_delete=models.CASCADE, verbose_name='Серия',
+                               null=True, blank=True)
+    conductor_material = models.ForeignKey(materialModel,
+                                           on_delete=models.CASCADE,
+                                           verbose_name='Материал проводника',
                                            null=True, blank=True)
-    number_of_conductors = models.ForeignKey(conductorsModel, on_delete=models.CASCADE,
-                                             verbose_name='Количество проводников', null=True, blank=True)
-    rated_current = models.ForeignKey(nominalModel, on_delete=models.CASCADE, verbose_name='Номинальный ток', null=True,
-                                      blank=True)
+    number_of_conductors = models.ForeignKey(conductorsModel,
+                                             on_delete=models.CASCADE,
+                                             verbose_name='Количество проводников',
+                                             null=True, blank=True)
+    rated_current = models.ForeignKey(nominalModel,
+                                      on_delete=models.CASCADE,
+                                      verbose_name='Номинальный ток',
+                                      null=True, blank=True)
 
     def __str__(self):
-        return f'{self.Name} - {self.Numbers}'
+        return f'{self.Name.Name if self.Name else "Без имени"} - {self.Numbers}'
 
     class Meta:
         verbose_name = 'Номенклатура'
 
+
+# спецификация
+class Specification(models.Model):
+    transaction = models.ForeignKey('reg.regModel',
+                                    on_delete=models.CASCADE,
+                                    verbose_name='Сделка',
+                                    related_name='specifications')
+    article = models.ForeignKey('ComponentsModel',
+                               on_delete=models.CASCADE,
+                               verbose_name='Артикул',
+                               to_field='Numbers')
+    line = models.CharField('Линия', max_length=100, null=True, blank=True)
+    quantity = models.IntegerField('Количество', null=True, blank=True)
+
+    def __str__(self):
+        return f'Спецификация для {self.transaction.Name}'
+
+    class Meta:
+        verbose_name = 'Спецификация'
+        verbose_name_plural = 'Спецификации'

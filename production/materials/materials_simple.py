@@ -42,7 +42,7 @@ class vvod:
         else:
             self.vibor_2()
 
-        if self.seria in ['E3']:
+        if self.seria in ['B']:
             print('крышка и стенка крашенная')
             self.kr_st_kraska(int(self.dlina) - int(self.Lsvar_izd))  # крышка и стенка крашенная
             print('крышка и стенка некрашенная')
@@ -169,7 +169,7 @@ class vvod:
             self.ves_zag_bok = 0.43
             self.ves_flanca = 0.23
         elif self.nominal in [1600, 3200]:
-            if self.seria in ['E3']:
+            if self.seria in ['B']:
                 self.nominal_2 = 1600
                 self.s = 160
                 self.S_sh = 952.3 # площадь сечения
@@ -188,7 +188,7 @@ class vvod:
                 self.v_sh = 2.77
                 self.ves_flanca = 0.65
         elif self.nominal in [2000, 4000]:
-            if self.seria in ['E3']:
+            if self.seria in ['B']:
                 self.nominal_2 = 2000
                 self.s = 200
                 self.S_sh = 1192.3 # площадь сечения

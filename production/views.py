@@ -2,17 +2,18 @@ from datetime import datetime
 import os
 
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
-from openpyxl import Workbook  # Импортируйте необходимую библиотеку
-
-from . import materials
 from .forms import order_registerForm, calculation_of_materialsForm, ProcessingOfShopSheetForm
 from .materials.creation_of_documents import rashet
 import shutil
 from .materials.materials_simple import vvod
 from .materials.to_exl_main_mat import preobrazovanie
-from django.contrib import messages
 from .materials.tools import exl_to_list, list_to_dict, writeToExl
+from .models import seriesModel
+
+from django.shortcuts import render
+
+from django.apps import apps
+regModel = apps.get_model('reg', 'regModel')
 
 
 def start(request):
@@ -167,7 +168,7 @@ def start(request):
     }
 
     print("Страница загружена успешно")
-    return render(request, 'productions/start.html', content)
+    return render(request, 'production/start.html', content)
 
 
 class FileHandler:

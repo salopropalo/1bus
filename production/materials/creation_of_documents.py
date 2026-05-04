@@ -45,7 +45,7 @@ class rashet:
         for i in di:
             RabVed = {}      # Словарь для раб. ведомости
             SpisKomplekt = []  # список для направляющих, сухарей, фланцев.
-            self.spisok_dla_mater[i] = {'seria': 'E3', 'material': 'Al', 'nominal': 630, 'dlina': 0,
+            self.spisok_dla_mater[i] = {'seria': 'B', 'material': 'Al', 'nominal': 630, 'dlina': 0,
                                         'Nstik': 0, 'Nsekc': 0, 'Nkon_zag': 0, 'Nflanc': 0, 'Lsvar_izd': 0}
 
             for input_data in di[i]:  # начинаем перебор построчно
@@ -89,7 +89,7 @@ class rashet:
         # print(spisok_strok)
 
         for i in spisok_strok:
-            dat = calc(['E3', '55', i[1], i[0], i[2], '', i[3], '', '', i[4]], self.Proiz).calc_nom()
+            dat = calc(['B', '55', i[1], i[0], i[2], '', i[3], '', '', i[4]], self.Proiz).calc_nom()
             self.index += 1
             kol = int(i[4])
             det = Detali(0, dat, '', kol, [0, 0], [0, 0, 0], self.spis_kompl)
@@ -386,8 +386,8 @@ class calculation:
                  self.dat['Кол. пров.'], self.dat['Наименование'], 'pt',
                  self.L, self.L1, self.A, self.B, self.C,
                  self.dat['количество'], 'спецификация']]
-#E3
-        if self.dat['Серия'] in ['Е3', 'E3']:
+#B
+        if self.dat['Серия'] in ['Е3', 'B']:
 
             if str(self.dat['Кол. пров.']) in ['4', '3+1']:
                 detali = [['kv', 2, self.os[0]], ['c', 2, self.os[0]], ['s1', 2, self.os[0]], ['s2', 2, self.os[0]],
@@ -715,7 +715,7 @@ class calculation:
 
             self.prints(itog)
             return True
-        #E3
+        #B
         else:
             def one(x, y):
 
@@ -1911,7 +1911,7 @@ class calculation:
             self.nestandart()
             self.spisok_dla_mater['Nsekc'] = self.spisok_dla_mater['Nsekc'] + int(self.dat['количество'])
 
-        #E3
+        #B
         else:
 
             if str(self.dat['Кол. пров.']) in ['4', '3+1'] and self.dat['In'] < 2600:
@@ -5166,7 +5166,7 @@ class writing_to_exl():
         w_rab_mesto.page_setup.fitToHeight = False
         self.kolontitul(name_sheet)
 
-        # ves E3
+        # ves B
         vesEAl = {630: 7.6, 800: 8.8, 1000: 10.8, 1250: 13.2, 1600: 17.1, 2000: 20.3, 2500: 24.5, 3200: 32, 4000: 38.3,
                 5000: 46.6, 6400: 71}
         vesECu = {800: 15.9, 1000: 17.8, 1250: 24.8, 1600: 31.8, 2000: 43.9, 2500: 57.1, 3200: 63.1, 4000: 87.2}
@@ -5204,7 +5204,7 @@ class writing_to_exl():
             sss = ['УВ', 'УГ', 'УВФ', 'УГФ', 'ЗВ', 'ЗГ', 'КП', 'КЛ', 'ЗВФ', 'ЗГФ', 'ТВ', 'ТГ', 'П', 'ПФ',
                    'ОМ', 'ОМФ', 'ТС', 'uv', 'ug', 'uvf', 'ugf', 'zv', 'zg', 'kp', 'kl', 'zvf', 'zgf', 'tv', 'tg',
                    'pt', 'pf', 'pr', 'prf']
-            if self.slovar[i]['Серия'] == 'E3' and self.slovar[i]['Обозначение'] in sss:
+            if self.slovar[i]['Серия'] == 'B' and self.slovar[i]['Обозначение'] in sss:
 
                 if self.slovar[i]['Мат. Пров.'] == 'Al' and int(self.slovar[i]['Ном. ток, А']) in vesEAl:
                     ves = round(dlina * vesEAl[int(self.slovar[i]['Ном. ток, А'])] / 1000, 2)
@@ -5214,7 +5214,7 @@ class writing_to_exl():
                     ves = '-'
 
             # Вес стыков
-            elif self.slovar[i]['Серия'] == 'E3' and self.slovar[i]['Обозначение'] in ['СБ', 'sb']:
+            elif self.slovar[i]['Серия'] == 'B' and self.slovar[i]['Обозначение'] in ['СБ', 'sb']:
                 if self.slovar[i]['Мат. Пров.'] == 'Al' and int(self.slovar[i]['Ном. ток, А']) in vesStikAl:
                     ves = round(vesStikAl[int(self.slovar[i]['Ном. ток, А'])], 2)
                 elif self.slovar[i]['Мат. Пров.'] == 'Cu' and int(self.slovar[i]['Ном. ток, А']) in vesStikCu:
@@ -5370,7 +5370,7 @@ class calc():
 
     def calc_nom(self):        # размер фланца
 
-        if self.a['Серия'] in ['Е3', 'E3']:
+        if self.a['Серия'] in ['Е3', 'B']:
             self.a['толщина стенки'] = 20
             self.a['толщина изоляции'] = 0.5
             self.a['ширина крышки'] = 115
@@ -5523,7 +5523,7 @@ class calc():
             self.a['K'] = 0.4
             #self.a['R'] = 10
 
-            if self.a['Серия'] in ['Е3', 'E3']:
+            if self.a['Серия'] in ['Е3', 'B']:
                 rS = {250: {'ширина шины': 40, 'толщина шины': 6, 'количество этажей': 1,
                             'межфазное расстояние фланца': 100, 'количество втулок': 1},
                       400: {'ширина шины': 40, 'толщина шины': 6, 'количество этажей': 1,
@@ -5593,7 +5593,7 @@ class calc():
             self.a['K'] = 0.34
             #self.a['R'] = 7
 
-            if self.a['Серия'] in ['Е3', 'E3']:
+            if self.a['Серия'] in ['Е3', 'B']:
                 rS = {630: {'ширина шины': 40, 'толщина шины': 6, 'количество этажей': 1,
                             'межфазное расстояние фланца': 100, 'количество втулок': 1},
                       800: {'ширина шины': 40, 'толщина шины': 6, 'количество этажей': 1,

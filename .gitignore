@@ -2,8 +2,6 @@
 staticfiles/
 production/migrations/
 reg/migrations/
-db.sqlite3.save
-db.sqlite3
 .DS_Store
 .idea/
 __pycache__/

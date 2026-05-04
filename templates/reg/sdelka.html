@@ -1,5 +1,5 @@
 {% extends 'reg/base.html' %}
-
+{% load static %}
 {% block content %}
     <div class="container" xmlns="http://www.w3.org/1999/html">
         <div class="d-flex justify-content-center"><h1>Сделка № {{ title }} от {{ date_born }}г.</h1></div>
@@ -31,13 +31,13 @@
                     <div class="input-group-prepend">
                     <!-- Проверяем есть ли пользователь в которую входит пользователь в списке разрешенных групп -->
                         {% if add == True %}
-                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            <button type="button" class="btn btn-success" data-bs-toggle="modal" 
+                                    data-bs-target="#exampleModal">
                             Редактировать
                             </button>
                         {% endif %}
                     </div>
                 </div>
-
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
                     <!-- В зависимости от статуса будет та кнопка которая отправляет документ на следующий уровень -->
@@ -49,7 +49,7 @@
                     </div>
                 </div>
             </div>
-
+    
         <div class="d-flex justify-content-center"><h3 class="mt-4">Список товаров</h3></div>
         <table class="table table-bordered">
             <thead class="table-light">
@@ -83,7 +83,7 @@
         </table>
 
 
-    <!-- Модальное окно -->
+    <!-- Модальное окно кнопка "Редактировать"-->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">

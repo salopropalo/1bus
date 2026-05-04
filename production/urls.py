@@ -1,8 +1,10 @@
-# reg/urls.py
-from django.urls import path, include
-
+# production/urls.py
+from django.urls import path
 from . import views
 
+app_name = 'production'
+
 urlpatterns = [
-    path('', views.start, name='start'),                         # Главная страница для производства
+    path('', views.start, name='start'),
+
 ]

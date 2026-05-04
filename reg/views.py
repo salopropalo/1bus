@@ -251,7 +251,6 @@ def transaction(request, transaction_id):
                 obj.Seller_company = form.cleaned_data['Seller_company']
                 obj.Adres_obj = form.cleaned_data['Adres_obj']
                 obj.save()
-
                 return redirect('companyList')
         else:
             error = 'POST запрос с ошибкой!'
