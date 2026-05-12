@@ -10,6 +10,7 @@ from datetime import datetime
 from collections import defaultdict
 from decimal import Decimal
 from django.shortcuts import get_object_or_404
+from itertools import groupby
 from django import template
 from django.http import HttpResponse
 
@@ -213,8 +214,8 @@ def transaction(request, transaction_id):
     nominal = list(nominalModel.objects.all().values_list('Name', flat=True))
     conductors = list(conductorsModel.objects.all().values_list('quantity', flat=True))
     material = list(materialModel.objects.all().values_list('Designation', flat=True))
-    nomenclature = NameNomenclature.objects.all()
-    categories = NameNomenclature._meta.get_field('category').choices
+    # Сортировка номенклатуры по категориям
+    nomenclature = NameNomenclature.objects.all().order_by('category', 'Name')
 
     # -------- РАСЧЁТ СПЕЦИФИКАЦИИ ----------
     specifications = Specification.objects.filter(transaction=obj).select_related(
@@ -232,7 +233,6 @@ def transaction(request, transaction_id):
     total_length = Decimal('0.00')
 
     items_by_line = defaultdict(list)
-    existing_lines = sorted(set(items_by_line.keys()))
 
     for spec in specifications:
         article = spec.article
@@ -282,6 +282,8 @@ def transaction(request, transaction_id):
 
         # Группировка
         items_by_line[line].append(spec)
+
+    existing_lines = sorted(set(items_by_line.keys()))
 
     # Формируем line_list для шаблона
     line_list = [
@@ -362,7 +364,6 @@ def transaction(request, transaction_id):
         'conductors': conductors,
         'material': material,
         'nomenclature': nomenclature,
-        'categories': categories,
         'existing_lines': existing_lines,
         # Данные спецификации
         'line_list': line_list,
