@@ -8,7 +8,6 @@ import shutil
 from .materials.materials_simple import vvod
 from .materials.to_exl_main_mat import preobrazovanie
 from .materials.tools import exl_to_list, list_to_dict, writeToExl
-from .models import seriesModel
 
 from django.shortcuts import render
 

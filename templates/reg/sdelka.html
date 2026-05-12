@@ -1,17 +1,39 @@
 {% extends 'reg/base.html' %}
 {% load static %}
+{% load custom_filters %}
 {% block content %}
     <div class="container" xmlns="http://www.w3.org/1999/html">
-        <div class="d-flex justify-content-center"><h1>Сделка № {{ title }} от {{ date_born }}г.</h1></div>
+        <div class="d-flex justify-content-center"><h1>Сделка № {{ title }}</h1></div>
             <div class="row gy-2">
                 <div class="content">
                     <div class="container text-left">
+                        <div class="row justify-content-between mb-3 mt-3">
+                            <div class="col-auto">
+                                <!-- Кнопка Редактировать - слева -->
+                                {% if add == True %}
+                                    <button type="button" class="btn btn-danger" 
+                                            data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                        Редактировать
+                                    </button>
+                                {% endif %}
+                            </div>
+    
+                            <div class="col-auto">
+                                <!-- Кнопка статуса - справа -->
+                                {% if status != 'Ошибка' %}
+                                    <button type="button" class="btn btn-success">
+                                        {{ name_button }}
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <!-- Атрибуты сделки -->
                         <div class="row">
                             <div class="col">
-                                <p class="fs-8">Создал: {{ responsible }}</p>
+                                <p class="fs-5">Создал: {{ responsible }}</p>
                             </div>
                             <div class="col">
-                                <p class="fs-8">Статус: {{ status_name }}</p>
+                                <p class="fs-5">Статус: {{ status_name }}</p>
                             </div>
                         </div>
                         <div class="row">
@@ -22,87 +44,226 @@
                                 <p class="fs-5">Продавец: {{ seller_company }}</p>
                             </div>
                         </div>
-                    </div>
-                    <p class="fs-5">Адрес объекта: {{ adres }}</p>
-                </div>
-
-                <!-- Кнопка-триггер модального окна -->
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                    <!-- Проверяем есть ли пользователь в которую входит пользователь в списке разрешенных групп -->
-                        {% if add == True %}
-                            <button type="button" class="btn btn-success" data-bs-toggle="modal" 
-                                    data-bs-target="#exampleModal">
-                            Редактировать
-                            </button>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                    <!-- В зависимости от статуса будет та кнопка которая отправляет документ на следующий уровень -->
-                        {% if status != 'Ошибка' %}
-                        <button type="button" class="btn btn-success">
-                            {{ name_button }}
-                        </button>
-                        {% endif %}
+                        <div class="row">
+                            <div class="col">
+                                <p class="fs-5">Адрес объекта: {{ adres }}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+        <!-- Спецификация -->
+        <div class="d-flex justify-content-center"><h1>Спецификация</h1></div>
+        <div class="modal-body p-0">
+            <div class="d-flex flex-column h-100">
+                <!-- Таблица -->
+                <div class="flex-grow-1 overflow-auto">
+                    <table class="table table-striped">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Артикул</th>
+                                <th>Наименование</th>
+                                <th>Длина (мм)</th>
+                                <th>Масса (кг)</th>
+                                <th>Количество</th>
+                                <th>Цена (₽)</th>
+                                <th>Сумма (₽)</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for line_data in line_list %}
+                                <!-- Заголовок линии -->
+                                <th colspan="9">
+                                    Комплект {{ line_data.grouper }} | 
+                                    Количество товарных позиций: {{ line_counts|get_item:line_data.grouper|default:0 }} |
+                                    Длина: {{ line_length|get_item:line_data.grouper|default:0|mm_to_m|floatformat:2 }} м |
+                                    Масса: {{ line_weight|get_item:line_data.grouper|default:0|floatformat:2 }} кг |
+                                    Сумма: {{ line_totals|get_item:line_data.grouper|default:0|thousands_space }} ₽
+                                </th>
+                                <!-- Позиции в линии -->
+                                {% for item in line_data.list %}
+                                <tr>
+                                    <td>{{ item.article.Numbers|default:"—" }}</td>
+                                    <td>{{ item.article.Name.Name|default:"—" }}</td>
+                                    <td>{{ item.article.Length|default:"0" }}</td>
+                                    <td>{{ item.article.weight|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>{{ item.article.price.amount|floatformat:2 }}</td>
+                                    <td>{{ item.total|floatformat:2 }}</td> 
+                                    <td>
+                                        <!-- Здесь можно добавить кнопку удаления, если нужно -->
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="9" class="text-center">Нет позиций в спецификации</td>
+                                </tr>
+                                {% endfor %}
+                            {% empty %}
+                            <tr>
+                                <td colspan="9" class="text-center">Спецификация пуста. Добавьте первую позицию.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <th colspan="2" class="text-start">Итого по всем линиям:</th>
+                                <th>{{ total_length|mm_to_m|floatformat:2 }} м</th>
+                                <th>{{ total_weight|floatformat:2 }} кг</th>
+                                <th>{{ total_quantity }}</th>
+                                <td></td>
+                                <th>{{ total_sum|thousands_space }} ₽</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <div style="text-align: right; margin-top: 10px;">
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Добавить позицию
+                </button>
+            </div>
+        </div>
     
-        <div class="d-flex justify-content-center"><h3 class="mt-4">Список товаров</h3></div>
-        <table class="table table-bordered">
-            <thead class="table-light">
-                <tr class="align-middle">
-                <th>Артикул</th>
-                <th>Наименование</th>
-                <th>Длина</th>
-                <th>Количество</th>
-                <th>Цена</th>
-                <th>Сумма</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in products %}
-                <tr>
-                    <td>{{ item.product.Article }}</td>
-                    <td>{{ item.product.Name }}</td>
-                    <td>{{ item.product.Length }}</td>
-                    <td>{{ item.quantity }}</td>
-                    <td>{{ item.product.Price }}</td>
-                    <td>{{ item.get_sum }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-            <tfoot>
-                <tr>
-                    <th colspan="5" class="text-end">Итого:</th>
-                    <th>{{ total_sum }}</th>
-                </tr>
-            </tfoot>
-        </table>
-
-
-    <!-- Модальное окно кнопка "Редактировать"-->
+    <!-- Модальное окно добавления позиции -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">{{ title2 }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-                </div>
-                <div class="modal-body">
-                    <form method="post">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary" name="izm">Внести правки</button>
+                <form method="post" id="addSpecificationForm">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Добавить позицию в спецификацию</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <!-- Номинальный ток -->
+                            <div class="col-md-4">
+                                <label class="form-label">Номинальный ток, А</label>
+                                <select name="rated_current" class="form-select" id="rated_current" required>
+                                    <option value="">Выберите...</option>
+                                    {% for item in nominal %}
+                                        <option value="{{ item }}">{{ item }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <!-- Количество проводников -->
+                            <div class="col-md-4">
+                                <label class="form-label">Кол. проводников</label>
+                                <select name="conductors" class="form-select" id="conductors" required>
+                                    <option value="">Выберите...</option>
+                                    {% for item in conductors %}
+                                        <option value="{{ item }}">{{ item }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <!-- Материал проводника -->
+                            <div class="col-md-4">
+                                <label class="form-label">Мат-ал провод.</label>
+                                <select name="material" class="form-select" id="material" required>
+                                    <option value="">Выберите...</option>
+                                    {% for item in material %}
+                                        <option value="{{ item }}">{{ item }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <!-- Наименование (артикул) -->
+                            <div class="col-md-6">
+                                <label class="form-label">Наименование (артикул)</label>
+                                <select name="nomenclature" class="form-select" id="nomenclature" required>
+                                    <option value="">Выберите...</option>
+                                    {% for item in nomenclature %}
+                                        <option value="{{ item.Numbers }}">{{ item.Name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <!-- Линия: ввод с подсказкой из существующих -->
+                            <div class="col-md-3">
+                                <label class="form-label">Линия</label>
+                                <input list="linesList" name="line" class="form-control" placeholder="Выберите или введите новую" id="lineInput">
+                                <datalist id="linesList">
+                                    {% for line in existing_lines %}
+                                        <option value="{{ line }}">
+                                    {% endfor %}
+                                </datalist>
+                            </div>
+                            
+                            <!-- Количество -->
+                            <div class="col-md-3">
+                                <label class="form-label">Количество, шт</label>
+                                <input type="number" name="quantity" class="form-control" min="1" value="1" required>
+                            </div>
                         </div>
-                        <span>{{ error }}</span>
-                    </form>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="submit" name="add_specification" class="btn btn-primary">Добавить</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-    </div>
+    
+    <script>
+        // Сохранение последних выбранных значений для rated_current, conductors, material
+        const STORAGE_KEYS = {
+            rated_current: 'last_rated_current',
+            conductors: 'last_conductors',
+            material: 'last_material'
+        };
+    
+        // Функция загрузки сохранённых значений
+        function loadLastValues() {
+            const ratedCurrentSelect = document.getElementById('rated_current');
+            const conductorsSelect = document.getElementById('conductors');
+            const materialSelect = document.getElementById('material');
+            
+            const lastRated = sessionStorage.getItem(STORAGE_KEYS.rated_current);
+            const lastConductors = sessionStorage.getItem(STORAGE_KEYS.conductors);
+            const lastMaterial = sessionStorage.getItem(STORAGE_KEYS.material);
+            
+            if (lastRated && ratedCurrentSelect) {
+                ratedCurrentSelect.value = lastRated;
+            }
+            if (lastConductors && conductorsSelect) {
+                conductorsSelect.value = lastConductors;
+            }
+            if (lastMaterial && materialSelect) {
+                materialSelect.value = lastMaterial;
+            }
+        }
+        
+        // Функция сохранения текущих значений при отправке формы
+        function saveCurrentValues() {
+            const ratedCurrentSelect = document.getElementById('rated_current');
+            const conductorsSelect = document.getElementById('conductors');
+            const materialSelect = document.getElementById('material');
+            
+            if (ratedCurrentSelect.value) {
+                sessionStorage.setItem(STORAGE_KEYS.rated_current, ratedCurrentSelect.value);
+            }
+            if (conductorsSelect.value) {
+                sessionStorage.setItem(STORAGE_KEYS.conductors, conductorsSelect.value);
+            }
+            if (materialSelect.value) {
+                sessionStorage.setItem(STORAGE_KEYS.material, materialSelect.value);
+            }
+        }
+        
+        // Восстанавливаем значения при загрузке страницы
+        document.addEventListener('DOMContentLoaded', loadLastValues);
+        
+        // Перед отправкой формы сохраняем выбранные параметры
+        const form = document.getElementById('addSpecificationForm');
+        if (form) {
+            form.addEventListener('submit', function() {
+                saveCurrentValues();
+            });
+        }
+    </script>
 {% endblock %}

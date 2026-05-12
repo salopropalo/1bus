@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (seriesModel, materialModel, nominalModel, conductorsModel, ComponentsModel, UnitModel,
-                     MaterialCalculationModel, NameNomenclature)
+                     MaterialCalculationModel, NameNomenclature, Specification)
 admin.site.register(UnitModel)
 
 @admin.register(seriesModel)
@@ -43,3 +43,8 @@ class NameNomenclatureAdmin(admin.ModelAdmin):
     list_filter = ['Name', 'Numbers', 'category']
     search_fields = ['Name']
 
+@admin.register(Specification)
+class SpecificationAdmin(admin.ModelAdmin):
+    list_display = ['transaction', 'article', 'line', 'quantity']
+    search_fields = ['article']
+    list_per_page = 100

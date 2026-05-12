@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <!-- Локальный Bootstrap CSS -->
+    <link rel="stylesheet" 
+          href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" 
+          type="text/css" 
+          href="{% static 'css/styles.css' %}">
+    <!-- Локальный Bootstrap JS -->
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</head>
+
+{% if request.user.is_active %}
+<body>
+    <div class="no-print">
+        <div class="container">
+            <header class="d-flex flex-wrap align-items-center py-3 mb-4 border-bottom">
+                <!-- Логотип и название (одна ссылка) -->
+                <a href="/home" class="d-flex align-items-center text-dark text-decoration-none">
+                    <img src="{% static 'images/perviy_shinomontazh_logo_blue2.png' %}"
+                         alt="Первый Шинопровод"
+                         height="80"
+                         class="d-inline-block align-text-top me-2">
+                </a>
+
+                <!-- Меню справа -->
+                <ul class="nav nav-pills ms-auto">
+                    <li class="nav-item"><a href="{% url 'home' %}"
+                                            {% if 'home' in request.path %}
+                                            class="nav-link active"
+                                            {% else %}
+                                            class="nav-link"
+                                            {% endif %}
+                                            aria-current="page">Главная</a></li>
+                    <li class="nav-item"><a href="{% url 'transactionList' %}"
+                                            {% if 'transactionList' in request.path %}
+                                            class="nav-link active"
+                                            {% else %}
+                                            class="nav-link"
+                                            {% endif %}>Сделки</a></li>
+                    <li class="nav-item"><a href="{% url 'companyList' %}"
+                                        {% if 'companyList' in request.path %}
+                                        class="nav-link active"
+                                        {% else %}
+                                        class="nav-link"
+                                        {% endif %}>Компании</a></li>
+                    <li class="nav-item"><a href="{% url 'production:start' %}"
+                                        {% if 'start' in request.path %}
+                                        class="nav-link active"
+                                        {% else %}
+                                        class="nav-link"
+                                        {% endif %}>Производство</a></li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Выход</a>
+                        <form id="logout-form" method="post" action="{% url 'logout' %}" style="display: none;">
+                            {% csrf_token %}
+                        </form>
+                    </li>
+                </ul>
+            </header>
+        </div>
+    </div>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+
+{% else %}
+<body>
+    <div class="container">
+        <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+                <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+                <span class="fs-4">PitON</span>
+            </a>
+            <ul class="nav nav-pills">
+                <li class="nav-item"><a href="{% url 'another_login' %}" class="nav-link active" aria-current="page">Войти</a></li>
+            </ul>
+        </header>
+    </div>
+    <div class="container">
+        <h1>Вы не авторизованы на нашем сайте</h1>
+        <p>{{ request.user.username }}</p>
+    </div>
+</body>
+{% endif %}
+</html>

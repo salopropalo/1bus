@@ -3,8 +3,14 @@ from django.shortcuts import render, redirect
 from .models import regModel, companyModel
 from .forms import transactionListForm, transactionForm, companyForm
 from django.db.models import Q
+from production.models import (Specification, seriesModel, nominalModel, conductorsModel, materialModel,
+                               NameNomenclature, ComponentsModel)
 import logging
 from datetime import datetime
+from collections import defaultdict
+from decimal import Decimal
+from django.shortcuts import get_object_or_404
+from django import template
 from django.http import HttpResponse
 
 logger = logging.getLogger(__name__)
@@ -194,36 +200,106 @@ def companyList(request):
 # _____________________________________________________________________________________________________________________
 # Карточка сделки
 def transaction(request, transaction_id):
-    obj = regModel.objects.get(id=transaction_id)
-    title = obj.Numbers + ' "' + obj.Name + '"'
-    date = obj.Date_born
+    obj = get_object_or_404(
+        regModel.objects.select_related('Customer_company', 'Seller_company'),
+        id=transaction_id
+    )
+    title = obj.Name
     responsible = obj.Responsible
-    date_born = date.strftime('%d.%m.%Y')
     now_date = datetime.today().strftime('%d.%m.%Y')
     now_time = datetime.today().strftime('%H.%M')
 
-    if obj.Customer_company is None:
-        customer_company = 'Не выбрано'
-    else:
-        customer_company = companyModel.objects.get(Name=obj.Customer_company_id)
+    # Данные для фильтров (номиналы, проводники, материалы)
+    nominal = list(nominalModel.objects.all().values_list('Name', flat=True))
+    conductors = list(conductorsModel.objects.all().values_list('quantity', flat=True))
+    material = list(materialModel.objects.all().values_list('Designation', flat=True))
+    nomenclature = NameNomenclature.objects.all()
+    categories = NameNomenclature._meta.get_field('category').choices
 
-    if obj.Seller_company is None:
-        seller_company = 'Не выбрано'
-    else:
-        seller_company = companyModel.objects.get(Name=obj.Seller_company_id)
+    # -------- РАСЧЁТ СПЕЦИФИКАЦИИ ----------
+    specifications = Specification.objects.filter(transaction=obj).select_related(
+        'article', 'article__Name'
+    )
 
+    line_counts = defaultdict(int)
+    line_totals = defaultdict(Decimal)
+    line_weight = defaultdict(Decimal)
+    line_length = defaultdict(Decimal)
+
+    total_quantity = 0
+    total_sum = Decimal('0.00')
+    total_weight = Decimal('0.00')
+    total_length = Decimal('0.00')
+
+    items_by_line = defaultdict(list)
+    existing_lines = sorted(set(items_by_line.keys()))
+
+    for spec in specifications:
+        article = spec.article
+        if not article:
+            continue
+
+        quantity = spec.quantity or 0
+
+        # Цена и сумма (преобразуем Money -> Decimal)
+        price_amount = article.price.amount if article.price else Decimal('0.00')
+        item_total = price_amount * quantity
+        item_total_decimal = Decimal(str(item_total))  # страховка
+
+        # Вес
+        weight_val = article.weight if article.weight is not None else Decimal('0.00')
+        item_weight = weight_val * quantity
+
+        # Длина – универсальная обработка
+        length_val = Decimal('0.00')
+        if article.Length is not None:
+            if isinstance(article.Length, Decimal):
+                length_val = article.Length
+            else:
+                try:
+                    length_str = str(article.Length).strip().replace(',', '.')
+                    length_val = Decimal(length_str)
+                except (ValueError, TypeError):
+                    length_val = Decimal('0.00')
+        item_length = length_val * quantity
+
+        # Накопление по линии
+        line = spec.line or 'Без линии'
+        line_counts[line] += quantity
+        line_totals[line] += item_total_decimal
+        line_weight[line] += item_weight
+        line_length[line] += item_length
+
+        # Общие итоги
+        total_quantity += quantity
+        total_sum += item_total_decimal
+        total_weight += item_weight
+        total_length += item_length
+
+        # Добавляем поля в объект спецификации для шаблона
+        spec.total = item_total_decimal
+        spec.price_display = price_amount  # если нужно отдельно вывести цену
+
+        # Группировка
+        items_by_line[line].append(spec)
+
+    # Формируем line_list для шаблона
+    line_list = [
+        {'grouper': line, 'list': items}
+        for line, items in items_by_line.items()
+    ]
+    # ---------------------------------------
+
+    # Данные о компаниях
+    customer_company = obj.Customer_company if obj.Customer_company else 'Не выбрано'
+    seller_company = obj.Seller_company if obj.Seller_company else 'Не выбрано'
     adres = obj.Adres_obj
     status = obj.Status
 
-    for element in regModel.STATUS:
-        if status in element:
-            status_name = element[1]
-            print(status_name, status)
-            break
-        else:
-            status_name = 'Не определён'
+    # Определение статуса
+    status_name = next((el[1] for el in regModel.STATUS if status in el), 'Не определён')
 
-    # Если статус переведен из первого состояния, то его нельзя редактировать и кнопки редактирования не будет
+    # Кнопки в зависимости от статуса
     if status == '1':
         name_button = 'Отправить на проверку'
         add = True
@@ -240,27 +316,37 @@ def transaction(request, transaction_id):
         name_button = 'Ошибка'
         add = False
 
-    # Если был запрос на создание новой сделки, обрабатываем POST запрос
+    # Обработка POST (изменение сделки или добавление спецификации)
     if request.method == 'POST':
-        form = transactionListForm(request.POST)
-
-        # Проверяем что нам вернулось с post запросом со страницы
         if 'izm' in request.POST:
+            form = transactionListForm(request.POST)
             if form.is_valid():
                 obj.Customer_company = form.cleaned_data['Customer_company']
                 obj.Seller_company = form.cleaned_data['Seller_company']
                 obj.Adres_obj = form.cleaned_data['Adres_obj']
                 obj.save()
-                return redirect('companyList')
-        else:
-            error = 'POST запрос с ошибкой!'
-    else:
-        form = transactionListForm()
+                return redirect('transaction', transaction_id=obj.id)  # исправлено: редирект на эту же сделку
+        elif 'add_specification' in request.POST:
+            # Создание новой позиции спецификации
+            material_val = request.POST.get('material', '').strip()
+            conductors_val = request.POST.get('conductors', '').strip()
+            rated_current = request.POST.get('rated_current', '').strip()
+            nomenclature_val = request.POST.get('nomenclature', '').strip()
+            article = f"B-{material_val}-{conductors_val}-{rated_current}-{nomenclature_val}"
+            # Здесь желательно проверить существование артикула в ComponentsModel
+            Specification.objects.create(
+                transaction=obj,
+                article_id=article,
+                line=request.POST.get('line', ''),
+                quantity=request.POST.get('quantity', 1)
+            )
+            return redirect('transaction', transaction_id=transaction_id)
 
-    content = {
+    form = transactionListForm()
+
+    context = {
         'form': form,
         'title': title,
-        'date_born': date_born,
         'responsible': responsible,
         'customer_company': customer_company,
         'seller_company': seller_company,
@@ -272,6 +358,22 @@ def transaction(request, transaction_id):
         'title2': 'Внесение изменений',
         'now_date': now_date,
         'now_time': now_time,
+        'nominal': nominal,
+        'conductors': conductors,
+        'material': material,
+        'nomenclature': nomenclature,
+        'categories': categories,
+        'existing_lines': existing_lines,
+        # Данные спецификации
+        'line_list': line_list,
+        'line_counts': dict(line_counts),
+        'line_totals': dict(line_totals),
+        'line_weight': dict(line_weight),
+        'line_length': dict(line_length),
+        'total_sum': total_sum,
+        'total_quantity': total_quantity,
+        'total_weight': total_weight,
+        'total_length': total_length,
     }
-    return render(request, 'reg/sdelka.html', content)
+    return render(request, 'reg/sdelka.html', context)
 

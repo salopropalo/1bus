@@ -61,7 +61,6 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu" aria-labelledby="dropdownMenu2">
                             <form method="get">
-                                {% csrf_token %}
                                 <li><button type="submit" class="dropdown-item" name="sortirovka" value="всё">всё</button></li>
                                 {% for el in status_html %}
                                     <li><button type="submit" class="dropdown-item" name="sortirovka" value="{{ el.0 }}">{{ el.1 }}</button></li>
@@ -98,7 +97,7 @@
                 <form method="post">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-link" name="card" value="{{ el.id }}">
-                        №{{ el.Numbers }} "{{ el.Name }}" от {{ el.Date_born }}
+                        № {{ el.Name }} от {{ el.Date_born }}
                     </button>
                 </form>
                 <p>Статус: {{ el.get_Status_display }}</p>

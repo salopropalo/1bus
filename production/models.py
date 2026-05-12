@@ -71,6 +71,7 @@ class materialModel(models.Model):
         verbose_name = 'Материал'
 
 
+# номинальный ток
 class nominalModel(models.Model):
     Name = models.CharField('Наименование', max_length=10, primary_key=True)
 
@@ -83,6 +84,7 @@ class nominalModel(models.Model):
         verbose_name = 'Номинал'
 
 
+# количество проводников
 class conductorsModel(models.Model):
     Name = models.CharField('Наименование', max_length=10)
     quantity = models.CharField('Количество проводников', max_length=1, primary_key=True)
@@ -94,6 +96,7 @@ class conductorsModel(models.Model):
     # название таблицы
     class Meta:
         verbose_name = 'Количество проводников'
+
 
 # Название номенклатуры
 class NameNomenclature(models.Model):
@@ -126,8 +129,7 @@ class NameNomenclature(models.Model):
         ordering = ['Name']
 
 
-# по идее это должно быть список заказов, но тут не хватает еще много чего к примеру, нужно чтобы были проекты,
-# нужен журнал регистрации всех документов
+# список заказов пока (не задействован)
 class order_registerModel(models.Model):
 
     # ------ эти поля должны быть обязательны для любого документа или списка ------------------------------------------
@@ -172,6 +174,7 @@ class order_registerModel(models.Model):
         verbose_name = 'Список заказов'
 
 
+# список расчетов
 class MaterialCalculationModel(models.Model):
     series = models.ForeignKey(seriesModel,
                                on_delete=models.CASCADE,
@@ -200,6 +203,7 @@ class MaterialCalculationModel(models.Model):
         verbose_name = 'Расчет материалов'
 
 
+# список рабочих ведомостей (не задействован)
 class ProcessingOfShopSheetModel(models.Model):
 
     # ------ эти поля должны быть обязательны для любого документа или списка ------------------------------------------
@@ -264,7 +268,7 @@ class ComponentsModel(models.Model):
     A = models.CharField('Длина', max_length=100, null=True, blank=True)
     B = models.CharField('Длина', max_length=100, null=True, blank=True)
     C = models.CharField('Длина', max_length=100, null=True, blank=True)
-    Length = models.CharField('Длина', max_length=100, null=True, blank=True)
+    Length = models.DecimalField('Длина', max_digits=10, decimal_places=2, null=True, blank=True)
     series = models.ForeignKey(seriesModel, on_delete=models.CASCADE, verbose_name='Серия',
                                null=True, blank=True)
     conductor_material = models.ForeignKey(materialModel,
@@ -287,7 +291,7 @@ class ComponentsModel(models.Model):
         verbose_name = 'Номенклатура'
 
 
-# спецификация
+# спецификация сделки
 class Specification(models.Model):
     transaction = models.ForeignKey('reg.regModel',
                                     on_delete=models.CASCADE,
