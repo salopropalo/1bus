@@ -99,6 +99,9 @@ class regModel(models.Model):
     #List_of_products = models.
     Adres_obj = models.TextField('Адрес объекта')
 
+    # Скидка
+    sales = models.IntegerField('Скидка', default=0, blank=True, null=True, max_length=2)
+
     # название строчки в таблице
     def __str__(self):
         return f'Проект №{self.Numbers} {self.Name} - {self.get_Status_display()}'

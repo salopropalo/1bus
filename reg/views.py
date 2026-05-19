@@ -207,6 +207,9 @@ def transaction(request, transaction_id):
     )
     name = obj.Name
     number = obj.Numbers
+    sales = obj.sales or 0
+    nds = Decimal('0.22')
+    discount_multiplier = Decimal(str((100 - sales) / 100))  # скидка: 10% → 0.90
     responsible = obj.Responsible
     now_date = datetime.today().strftime('%d.%m.%Y')
     now_time = datetime.today().strftime('%H.%M')
@@ -235,6 +238,7 @@ def transaction(request, transaction_id):
     total_sum = Decimal('0.00')
     total_weight = Decimal('0.00')
     total_length = Decimal('0.00')
+    total_nds = Decimal('0.00')
 
     items_by_line = defaultdict(list)
 
@@ -245,10 +249,22 @@ def transaction(request, transaction_id):
 
         quantity = spec.quantity or 0
 
-        # Цена и сумма (преобразуем Money -> Decimal)
-        price_amount = article.price.amount if article.price else Decimal('0.00')
-        item_total = price_amount * quantity
-        item_total_decimal = Decimal(str(item_total))  # страховка
+        # 1. Цена без НДС со скидкой
+        base_price = article.price.amount if article.price else Decimal('0.00')
+        price_no_nds = base_price * discount_multiplier
+
+        # 2. НДС за единицу
+        nds_per_unit = price_no_nds * nds
+
+        # 3. Цена с НДС за единицу
+        price_with_nds = price_no_nds + nds_per_unit
+
+        # 4. Сумма строки (с НДС, со скидкой)
+        item_total = price_with_nds * quantity
+        item_total_decimal = Decimal(str(item_total))
+
+        # НДС всей строки
+        item_nds_total = nds_per_unit * quantity
 
         # Вес
         weight_val = article.weight if article.weight is not None else Decimal('0.00')
@@ -273,6 +289,7 @@ def transaction(request, transaction_id):
         line_totals[line] += item_total_decimal
         line_weight[line] += item_weight
         line_length[line] += item_length
+        total_nds += item_nds_total
 
         # Общие итоги
         total_quantity += quantity
@@ -281,8 +298,10 @@ def transaction(request, transaction_id):
         total_length += item_length
 
         # Добавляем поля в объект спецификации для шаблона
+        spec.price_no_nds = price_no_nds
+        spec.nds_per_unit = nds_per_unit
+        spec.price_with_nds = price_with_nds
         spec.total = item_total_decimal
-        spec.price_display = price_amount  # если нужно отдельно вывести цену
 
         # Группировка
         items_by_line[line].append(spec)
@@ -323,7 +342,6 @@ def transaction(request, transaction_id):
         add = False
 
     # Обработка POST (изменение сделки или добавление спецификации)
-    # Обработка POST запросов
     if request.method == 'POST':
         # 1. Отмена позиций
         if 'apply_cancel' in request.POST:
@@ -389,6 +407,9 @@ def transaction(request, transaction_id):
         'total_quantity': total_quantity,
         'total_weight': total_weight,
         'total_length': total_length,
+        'sales': sales,
+        'total_nds': total_nds,
+        'nds_rate': 22,
     }
     return render(request, 'reg/sdelka.html', context)
 

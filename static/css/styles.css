@@ -46,3 +46,9 @@ header img {
         opacity: 0.6;
         background-color: #f8d7da !important;
     }
+
+@media print {
+    .no-print, .d-print-none {
+        display: none !important;
+    }
+}

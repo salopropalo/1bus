@@ -22,13 +22,11 @@ def mm_to_m(value):
 def thousands_space(value):
     """Форматирует число с пробелом как разделителем тысяч и запятой для дробной части."""
     try:
-        # Приводим к Decimal для точности
-        d = Decimal(str(value))
-        # Форматируем с разделителями: целая часть - пробелы, дробная - 2 знака
-        # Используем функцию format
-        formatted = f'{d:,.2f}'  # даёт запятые как разделители тысяч и точку для дробной части
-        # Заменяем запятые на пробелы, а точки на запятые (для российского формата)
+        # Убираем пробелы и заменяем запятую на точку (на случай если пришла строка после floatformat)
+        cleaned = str(value).strip().replace(' ', '').replace(',', '.')
+        d = Decimal(cleaned)
+        formatted = f'{d:,.2f}'
         formatted = formatted.replace(',', ' ').replace('.', ',')
         return formatted
-    except (ValueError, TypeError):
+    except (ValueError, TypeError, Exception):
         return '0,00'
