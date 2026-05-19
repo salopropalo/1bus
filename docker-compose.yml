@@ -1,0 +1,47 @@
+services:
+  db:
+    image: postgres:15
+    container_name: postgres_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_DB: 1bus
+      POSTGRES_USER: antonkuznecov
+      POSTGRES_PASSWORD: sam-aan2020
+    ports:
+      - "5432:5432"   # проброс порта для внешнего подключения, необязательно
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U myuser -d mydb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    env_file:
+      - .env
+    container_name: django_app
+    ports:
+      - "8080:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app   # для разработки: монтируем код, чтобы изменения подхватывались
+      - static_volume:/app/static   # если собираете статику
+      - media_volume:/app/media     # если есть медиафайлы
+    environment:
+      - DJANGO_SETTINGS_MODULE=1bus.settings   # замените на ваш модуль настроек
+      - DEBUG=1
+      - DB_NAME=1bus
+      - DB_USER=antonkuznecov
+      - DB_PASSWORD=sam-aan2020
+      - DB_HOST=db
+      - DB_PORT=5432
+    stdin_open: true
+    tty: true
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:

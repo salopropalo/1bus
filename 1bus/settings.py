@@ -79,6 +79,17 @@ WSGI_APPLICATION = '1bus.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
+'''DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),  # никакого запасного пароля
+        'HOST': os.environ.get('DB_HOST', 'localhost'),  # localhost — не секрет, можно оставить
+        'PORT': os.environ.get('DB_PORT', '5432'),       # порт тоже не секрет
+    }
+}'''
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -89,7 +100,6 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

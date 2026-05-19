@@ -5,8 +5,9 @@ from django.forms import ModelForm, TextInput, Select
 class transactionListForm(ModelForm):
     class Meta:
         model = regModel
-        fields = ['Name', 'Adres_obj']
+        fields = ['Numbers', 'Name', 'Adres_obj']
         widgets = {
+            'Numbers': TextInput(attrs={'class': 'form-control'}),
             'Name': TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Введите наименование проекта'

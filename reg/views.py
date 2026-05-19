@@ -205,7 +205,8 @@ def transaction(request, transaction_id):
         regModel.objects.select_related('Customer_company', 'Seller_company'),
         id=transaction_id
     )
-    title = obj.Name
+    name = obj.Name
+    number = obj.Numbers
     responsible = obj.Responsible
     now_date = datetime.today().strftime('%d.%m.%Y')
     now_time = datetime.today().strftime('%H.%M')
@@ -214,11 +215,14 @@ def transaction(request, transaction_id):
     nominal = list(nominalModel.objects.all().values_list('Name', flat=True))
     conductors = list(conductorsModel.objects.all().values_list('quantity', flat=True))
     material = list(materialModel.objects.all().values_list('Designation', flat=True))
+    def transaction(request, transaction_id):
+        obj = get_object_or_404(regModel.objects.select_related('Customer_company', 'Seller_company'),
+                                id=transaction_id)
     # Сортировка номенклатуры по категориям
     nomenclature = NameNomenclature.objects.all().order_by('category', 'Name')
 
     # -------- РАСЧЁТ СПЕЦИФИКАЦИИ ----------
-    specifications = Specification.objects.filter(transaction=obj).select_related(
+    specifications = Specification.objects.filter(transaction=obj, status='active').select_related(
         'article', 'article__Name'
     )
 
@@ -319,8 +323,17 @@ def transaction(request, transaction_id):
         add = False
 
     # Обработка POST (изменение сделки или добавление спецификации)
+    # Обработка POST запросов
     if request.method == 'POST':
-        if 'izm' in request.POST:
+        # 1. Отмена позиций
+        if 'apply_cancel' in request.POST:
+            cancelled_ids = request.POST.get('cancelled_ids', '')
+            if cancelled_ids:
+                ids_list = [int(id_str) for id_str in cancelled_ids.split(',') if id_str.strip().isdigit()]
+                Specification.objects.filter(id__in=ids_list, transaction=obj).update(status='cancelled')
+            return redirect('transaction', transaction_id=transaction_id)
+        # 2. Изменение сделки
+        elif 'izm' in request.POST:
             form = transactionListForm(request.POST)
             if form.is_valid():
                 obj.Customer_company = form.cleaned_data['Customer_company']
@@ -348,7 +361,8 @@ def transaction(request, transaction_id):
 
     context = {
         'form': form,
-        'title': title,
+        'name': name,
+        'number': number,
         'responsible': responsible,
         'customer_company': customer_company,
         'seller_company': seller_company,

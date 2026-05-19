@@ -293,6 +293,13 @@ class ComponentsModel(models.Model):
 
 # спецификация сделки
 class Specification(models.Model):
+    STATUS_CHOICES = (
+        ('active', 'В работе'),
+        ('cancelled', 'Отменён'),
+    )
+    # ... существующие поля ...
+    status = models.CharField('Статус', max_length=20, choices=STATUS_CHOICES, default='active')
+
     transaction = models.ForeignKey('reg.regModel',
                                     on_delete=models.CASCADE,
                                     verbose_name='Сделка',

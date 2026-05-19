@@ -40,3 +40,9 @@ header img {
     width: auto;
     margin-right: 10px;
 }
+
+.cancelled-row td, .cancelled-row th {
+        text-decoration: line-through;
+        opacity: 0.6;
+        background-color: #f8d7da !important;
+    }
