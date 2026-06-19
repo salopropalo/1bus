@@ -1,0 +1,92 @@
+<!-- Модальное окно добавления позиции -->
+{% load static %}
+{% load custom_filters %}
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="post" id="addSpecificationForm">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Добавить позицию в спецификацию</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <!-- Номинальный ток -->
+                        <div class="col-md-4">
+                            <label class="form-label">Номинальный ток, А</label>
+                            <select name="rated_current" class="form-select" id="rated_current" required>
+                                <option value="">Выберите...</option>
+                                {% for item in nominal %}
+                                    <option value="{{ item }}">{{ item }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Количество проводников -->
+                        <div class="col-md-4">
+                            <label class="form-label">Кол. проводников</label>
+                            <select name="conductors" class="form-select" id="conductors" required>
+                                <option value="">Выберите...</option>
+                                {% for item in conductors %}
+                                    <option value="{{ item }}">{{ item }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Материал проводника -->
+                        <div class="col-md-4">
+                            <label class="form-label">Мат-ал провод.</label>
+                            <select name="material" class="form-select" id="material" required>
+                                <option value="">Выберите...</option>
+                                {% for item in material %}
+                                    <option value="{{ item }}">{{ item }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Наименование (артикул) с группировкой через regroup -->
+                        <div class="col-md-6">
+                            <label class="form-label">Наименование (артикул)</label>
+                            <select name="nomenclature" class="form-select" id="nomenclature" required>
+                                <option value="">Выберите...</option>
+                                {% regroup nomenclature by get_category_display as categories %}
+                                {% for category in categories %}
+                                    <optgroup label="{{ category.grouper }}">
+                                        {% for item in category.list %}
+                                            <option value="{{ item.Numbers }}">{{ item.Name }}</option>
+                                        {% endfor %}
+                                    </optgroup>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Линия: выбор существующей или создание новой -->
+                        <div class="col-md-3">
+                            <label class="form-label">Линия</label>
+                            <select name="line_select" class="form-select" id="lineSelect">
+                                <option value="">Выберите существующую линию</option>
+                                {% for line in existing_lines %}
+                                    <option value="{{ line }}">{{ line }}</option>
+                                {% endfor %}
+                                <option value="__new__">➕ Новая линия</option>
+                            </select>
+                            <input type="text" name="line_new" class="form-control mt-2" id="lineNewInput"
+                                   style="display: none;" placeholder="Введите название новой линии">
+                        </div>
+
+                        <!-- Количество -->
+                        <div class="col-md-3">
+                            <label class="form-label">Количество, шт</label>
+                            <input type="number" name="quantity" class="form-control" min="1" value="1" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" name="add_specification" class="btn btn-primary">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

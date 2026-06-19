@@ -12,6 +12,8 @@ class AnotherLoginView(LoginView):
 class AnotherLogoutView(LogoutView):
     next_page = '/'
 
+def blocked_view(request):
+    return render(request, 'users/blocked_user.html')
 
 def logout_view(request):
     logout(request)
@@ -24,7 +26,7 @@ def login_view(request):
         if auth_form.is_valid():
             username = auth_form.cleaned_data['username']
             password = auth_form.cleaned_data['password']
-            user = authenticate(username=username, password=password)
+            user = authenticate(request, username=username, password=password)
 
             if user:
                 if user.is_active:

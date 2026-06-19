@@ -1,16 +1,24 @@
 from django.contrib import admin
 from .models import regModel, companyModel
-#регистрация таблиц из баз данных
-# Register your models here.
 
-#Добавляем таблицу из models.py
-admin.site.register(regModel)
+@admin.register(regModel)
+class regModelAdmin(admin.ModelAdmin):
+    list_display = ['Numbers', 'Name', 'Responsible', 'Status', 'Customer_company', 'Date_born']
+    list_filter = ['Status', 'delivery_type', 'guarantee', 'delivery_term']
+    search_fields = ['Numbers', 'Name', 'Responsible']
+    fields = [
+        'Numbers',
+        'Name',
+        'Responsible',
+        'Status',
+        'Customer_company',
+        'Seller_company',
+        'Adres_obj',
+        'sales',
+        'delivery_term',
+        'payment_terms',
+        'delivery_type',
+        'guarantee',
+    ]
+
 admin.site.register(companyModel)
-
-'''class NewFileAdmin(admin.ModelAdmin):
-    exclude = ('Responsible', )
-
-    def save_model(self, request, obj, form, change):
-        if not obj.pk:
-            obj.Responsible = request.user
-        super().save_model(request, obj, form, change)'''

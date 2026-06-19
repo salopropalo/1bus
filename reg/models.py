@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import RegexValidator
 from django.utils import timezone
-
+import uuid
 
 
 # модель для создания компании
@@ -69,8 +69,30 @@ class regModel(models.Model):
         ('1', 'создан'),
         ('2', 'согласован'),
         ('3', 'в работе'),
-        ('4', 'завершён')
+        ('4', 'завершён'),
+        ('5', 'отменен')
     )   # Статус может быть создан до 5 пунктов
+
+    DELIVERY_TERMS = (
+        ('3-4', '3-4 недели'),
+        ('4-6', '4-6 недель'),
+        ('6-8', '6-8 недель'),
+        ('8-12', '8-12 недель'),
+        ('12-16', '12-16 недель'),
+        ('20', '20 недель'),
+    )
+
+    DELIVERY_CHOICES = (
+        ('self', 'Самовывоз'),
+        ('delivery', 'Доставка'),
+    )
+
+    GUARANTEE_CHOICES = (
+        ('12', '12 месяцев'),
+        ('24', '24 месяца'),
+        ('36', '36 месяцев'),
+        ('60', '60 месяцев'),
+    )
 
     Numbers = models.CharField('Номер', max_length=10)
     Name = models.CharField('Наименование', max_length=100)
@@ -80,6 +102,7 @@ class regModel(models.Model):
                                  )
     Responsible = models.CharField('Ответственный', max_length=100)
     Status = models.CharField('Статус', max_length=30, default='1', choices=STATUS)
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     # -----------------------------------------------------------------------------------------------------------------
 
     Customer_company = models.ForeignKey(companyModel,
@@ -100,7 +123,15 @@ class regModel(models.Model):
     Adres_obj = models.TextField('Адрес объекта')
 
     # Скидка
-    sales = models.IntegerField('Скидка', default=0, blank=True, null=True, max_length=2)
+    sales = models.IntegerField('Скидка', default=0, blank=True, null=True)
+    delivery_term = models.CharField('Срок поставки', max_length=10, choices=DELIVERY_TERMS, default='4-6', null=True,
+                                     blank=True)
+    payment_terms = models.TextField('Условия оплаты', null=True, blank=True,
+                                     default='40% аванс, 40% перед отгрузкой, 20% отсрочка после отгрузки не более 10 дней')
+    delivery_type = models.CharField('Тип доставки', max_length=10, choices=DELIVERY_CHOICES, default='delivery',
+                                     null=True, blank=True)
+    guarantee = models.CharField('Гарантия', max_length=5, choices=GUARANTEE_CHOICES, default='24', null=True,
+                                 blank=True)
 
     # название строчки в таблице
     def __str__(self):
@@ -109,58 +140,3 @@ class regModel(models.Model):
     # название таблицы
     class Meta:
         verbose_name = 'Таблица регистрации'
-
-
-# модели для задач
-class taskModel(models.Model):
-
-    # ------ эти поля должны быть обязательны для любого документа или списка ------------------------------------------
-    STATUS = (
-        ('1', 'новая'),
-        ('2', 'в работе'),
-        ('3', 'закрыта'),
-        ('4', 'возобновлена')
-    )  # Статус может быть создан до 5 пунктов
-
-    Numbers = models.CharField('Номер', max_length=10)
-    Name = models.CharField('Наименование', max_length=100)
-    Date_born = models.DateField('Дата создания', auto_now=True)
-    Director = models.CharField('Постановщик', max_length=100)
-    Responsible = models.CharField('Ответственный', max_length=100)
-    Status = models.CharField('Статус', max_length=30, default='1', choices=STATUS)
-    # -----------------------------------------------------------------------------------------------------------------
-    startTime = models.DateTimeField('Время начала выполнения задачи', null=True, blank=True)
-    endTime = models.DateTimeField('Время завершения задачи', null=True, blank=True)
-    totalTime = models.DurationField('Общее время выполнения задачи', null=True, blank=True)
-
-    def save(self, *args, **kwargs):
-        if self.startTime and self.endTime:
-            self.totalTime = self.endTime - self.startTime
-        super(taskModel, self).save(*args, **kwargs)
-
-    # название строчки в таблице
-    def __str__(self):
-        return f'Задача №{self.Numbers} {self.Director}'
-
-    # название таблицы
-    class Meta:
-        verbose_name = 'Задачи'
-
-
-# штатное расписание
-class staffing_tableModel(models.Model):
-    # ------ эти поля должны быть обязательны для любого документа или списка ------------------------------------------
-    STATUS = (
-        ('1', 'испытательный срок'),
-        ('2', 'в штате'),
-        ('3', 'отстранен'),
-        ('4', 'уволен')
-    )  # Статус может быть создан до 5 пунктов
-
-    Numbers = models.CharField('Номер', max_length=10)
-    Name = models.CharField('Наименование', max_length=100)
-    Date_born = models.DateField('Дата создания', auto_now=True)
-    Responsible = models.CharField('Ответственный', max_length=100)
-    Status = models.CharField('Статус', max_length=30, default='1', choices=STATUS)
-    # -----------------------------------------------------------------------------------------------------------------
-

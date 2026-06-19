@@ -3976,7 +3976,7 @@ class Detali:
         self.B = '-'
         self.C = '-'
         self.L = float(self.os) - float(self.R_sh) * 2
-        self.L1 = float(self.L) + self.L1_sh_m * 2
+        self.L1 = float(self.L) + self.L1_sh_m * 2 + 2 # +2 Руслан попросил добавить
         self.oboznachenie = 'Ш2-01'
         self.naimenovanie = 'Шина (' + str(self.stp_L2) + ')'
         s = self.print_rezult()

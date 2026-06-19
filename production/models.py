@@ -26,7 +26,7 @@ class UnitModel(models.Model):
 class seriesModel(models.Model):
     Name = models.CharField('Наименование', max_length=10, unique=True, primary_key=True)
     Standard = models.CharField('Стандарт', max_length=100)
-    Description = models.CharField('Описание', max_length=255)
+    Description = models.CharField('Описание', max_length=2000)
 
     # название строчки в таблице
     def __str__(self):
@@ -317,3 +317,78 @@ class Specification(models.Model):
     class Meta:
         verbose_name = 'Спецификация'
         verbose_name_plural = 'Спецификации'
+
+# Закупочная номенклатура
+class PurchaseItem(models.Model):
+    CATEGORY_CHOICES = (
+        ('М', 'Материал'),
+        ('П', 'Профиль'),
+        ('ПИ', 'Покупные изделия'),
+        ('СИ', 'Стандартные изделия'),
+        ('РИ', 'Расходные матералы'),
+        ('Я', 'Прочее'),
+    )
+    USE_CHOICES = (
+        ('А', 'Секции'),
+        ('Б', 'Стыки'),
+        ('В', 'НКУ'),
+        ('Г', 'Комплектующие'),
+        ('Д', 'Прочее'),
+    )
+    article = models.CharField('Артикул', max_length=50, primary_key=True)
+    name = models.CharField('Наименование', max_length=255)
+    weight = models.DecimalField('Вес (кг)', max_digits=8, decimal_places=3, null=True, blank=True)
+    weight_unit = models.DecimalField('Вес на ед. изм.', max_digits=8, decimal_places=3, null=True, blank=True)
+    size = models.DecimalField('Размеры (мм)', max_digits=8, decimal_places=3, null=True, blank=True)
+    category = models.CharField('Категория', choices=CATEGORY_CHOICES, default='active')
+    use = models.CharField('Назначение', choices=USE_CHOICES, default='active')
+    unit = models.ForeignKey(UnitModel,
+                             on_delete=models.CASCADE,
+                             related_name='unit',
+                             verbose_name='Единица измерения')
+
+    def save(self, *args, **kwargs):
+        if self.size and self.weight:
+            self.weight = round(self.size * self.weight_unit, 3)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.article} - {self.name}'
+
+    class Meta:
+        verbose_name = 'Закупочная номенклатура'
+        verbose_name_plural = 'Закупочная номенклатура'
+
+
+# Цены поставщиков — отдельная таблица
+class SupplierPrice(models.Model):
+    item = models.ForeignKey(
+        PurchaseItem,
+        on_delete=models.CASCADE,
+        related_name='supplier_prices',
+        verbose_name='Номенклатура'
+    )
+    supplier = models.ForeignKey(
+        'reg.companyModel',
+        on_delete=models.CASCADE,
+        to_field='Name',
+        verbose_name='Поставщик'
+    )
+    price = MoneyField(
+        'Цена без НДС',
+        max_digits=10,
+        decimal_places=2,
+        default_currency='RUB',
+        null=True
+    )
+    is_primary = models.BooleanField('Основной поставщик', default=False)
+    supplier_designation = models.CharField('Обозначение поставщика', max_length=255, null=True, blank=True)
+    note = models.CharField('Примечание', max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.supplier} — {self.item.article} — {self.price}'
+
+    class Meta:
+        verbose_name = 'Цена поставщика'
+        verbose_name_plural = 'Цены поставщиков'
+        unique_together = ['item', 'supplier']  # один поставщик — одна цена на позицию

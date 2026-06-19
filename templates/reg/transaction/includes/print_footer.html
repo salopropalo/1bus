@@ -1,0 +1,38 @@
+<!-- Подвал только для печати -->
+{% load static %}
+{% load custom_filters %}
+<div class="d-none d-print-block mt-5">
+    <hr>
+    <p>Наше предложение является комплексным и готовым к реализации. Мы уверены, что выбранное оборудование станет надежной основой энергосистемы Вашего объекта.</p>
+    <p>Предложение действует в течение двух недель. Готовы ответить на любые технические вопросы и оперативно подготовить проектную документацию при необходимости.</p>
+
+    <div class="mt-4" style="position: relative;">
+        <!-- Текст -->
+        <table style="width: 400px;">
+            <tr>
+                <td colspan="2"><strong>Генеральный директор</strong></td>
+            </tr>
+            <tr>
+                <td>ООО «Первый Шинопровод»</td>
+                <td class="text-end">Кузнецов А.А.</td>
+            </tr>
+            <tr><td colspan="2" style="height: 20px;"></td></tr>
+            <tr>
+                <td colspan="2">Телефон: 8-922-602-33-52</td>
+            </tr>
+            <tr>
+                <td colspan="2">Email: info@1bus.pro</td>
+            </tr>
+        </table>
+
+        <!-- Печать и подпись поверх текста -->
+        <div style="position: absolute; top: 0px; left: 0;">
+            <img src="{% static 'images/podpis.png' %}"
+                 alt="Подпись"
+                 style="position: absolute; top: -20px; left: 250px; height: 80px; opacity: 0.85;">
+            <img src="{% static 'images/pechat.png' %}"
+                 alt="Печать"
+                 style="position: absolute; top: 30px; left: 230px; height: 120px; opacity: 0.85;">
+        </div>
+    </div>
+</div>

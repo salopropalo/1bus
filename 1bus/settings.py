@@ -44,11 +44,13 @@ INSTALLED_APPS = [
     'app_users',
     'reg',
     'production',
+    'axes'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'axes.middleware.AxesMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -119,6 +121,15 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesStandaloneBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+# Настройки блокировки
+AXES_FAILURE_LIMIT = 3        # блокировать после 5 неудачных попыток
+AXES_COOLOFF_TIME = 1         # разблокировать через 1 час
+AXES_LOCKOUT_URL = '/blocked/'  # редирект на страницу блокировки при неудачных попытках ввести пароль
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/

@@ -1,5 +1,6 @@
 from .models import regModel, companyModel
 from django.forms import ModelForm, TextInput, Select
+from django.forms.widgets import Select, Textarea, NumberInput
 
 # форма для списка сделок в модальном окне создания и редактирования новой карточки сделки
 class transactionListForm(ModelForm):
@@ -26,21 +27,41 @@ class transactionListForm(ModelForm):
             })
                 }
 
-# форма для карточки сделка
 class transactionForm(ModelForm):
     class Meta:
         model = regModel
-        fields = ['Customer_company', 'Seller_company', 'Adres_obj']
+        fields = [
+            'Customer_company',
+            'Seller_company',
+            'Adres_obj',
+            'sales',
+            'delivery_type',
+            'guarantee',
+            'payment_terms',
+            'delivery_term',
+        ]
         labels = {
+            'Status': 'Статус',
             'Customer_company': 'Компания заказчик',
-            'Seller_company': 'Компания продавец',
+            'Seller_company': 'Компания покупатель',
             'Adres_obj': 'Адрес объекта',
+            'sales': 'Скидка (%)',
+            'delivery_type': 'Тип доставки',
+            'guarantee': 'Гарантия',
+            'payment_terms': 'Условия оплаты',
+            'delivery_term': 'Срок поставки',
         }
         widgets = {
+            'Status': Select(attrs={'class': 'form-control'}),
             'Customer_company': Select(attrs={'class': 'form-control'}),
             'Seller_company': Select(attrs={'class': 'form-control'}),
+            'Adres_obj': Textarea(attrs={'class': 'form-control', 'rows': 2}),
+            'sales': NumberInput(attrs={'class': 'form-control', 'min': 0, 'max': 99}),
+            'delivery_type': Select(attrs={'class': 'form-control'}),
+            'guarantee': Select(attrs={'class': 'form-control'}),
+            'payment_terms': Textarea(attrs={'class': 'form-control', 'rows': 2}),
+            'delivery_term': Select(attrs={'class': 'form-control'}),
         }
-
 
 # форма для карточки компании
 class companyForm(ModelForm):

@@ -1,0 +1,54 @@
+{% load static %}
+{% load custom_filters %}
+<div class="d-flex justify-content-center d-print-none"><h1>Сделка №{{ number }} {{ name }}</h1></div>
+    <div class="row gy-2 d-print-none">
+        <div class="content">
+            <div class="container text-left">
+                <div class="row justify-content-between mb-3 mt-3">
+                    <div class="col-auto">
+                        <!-- Кнопка Редактировать - слева -->
+                        {% if add == True %}
+                            <button type="button" class="btn btn-danger"
+                                    data-bs-toggle="modal" data-bs-target="#editModal">
+                                Редактировать
+                            </button>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-auto">
+                        <!-- Кнопка статуса - справа -->
+                        {% if status != 'Ошибка' %}
+                            <button type="button" class="btn btn-success">
+                                {{ name_button }}
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- Атрибуты сделки (не для печати) -->
+                <div class="row">
+                    <div class="col">
+                        <p class="fs-5">Создал: {{ responsible }}</p>
+                    </div>
+                    <div class="col">
+                        <p class="fs-5">Статус: {{ status_name }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <p class="fs-5">Покупатель: {{ customer_company }}</p>
+                    </div>
+                    <div class="col">
+                        <p class="fs-5">Продавец: {{ seller_company }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <p class="fs-5">Адрес объекта: {{ adres }}</p>
+                    </div><div class="col">
+                        <p class="fs-5">Скидка: {{ sales }}%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

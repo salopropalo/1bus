@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (seriesModel, materialModel, nominalModel, conductorsModel, ComponentsModel, UnitModel,
-                     MaterialCalculationModel, NameNomenclature, Specification)
+                     MaterialCalculationModel, NameNomenclature, Specification, PurchaseItem, SupplierPrice)
 admin.site.register(UnitModel)
 
 @admin.register(seriesModel)
@@ -48,3 +48,13 @@ class SpecificationAdmin(admin.ModelAdmin):
     list_display = ['transaction', 'article', 'line', 'quantity']
     search_fields = ['article']
     list_per_page = 100
+
+class SupplierPriceInline(admin.TabularInline):
+    model = SupplierPrice
+    extra = 1
+
+@admin.register(PurchaseItem)
+class PurchaseItemAdmin(admin.ModelAdmin):
+    list_display = ['article', 'name', 'weight', 'size', 'unit', 'weight_unit', 'category', 'use']
+    search_fields = ['article', 'name']
+    inlines = [SupplierPriceInline]

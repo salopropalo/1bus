@@ -1,0 +1,25 @@
+{% extends 'reg/base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+    <div class="container print-no-padding">
+
+        {% include 'reg/transaction/includes/print_header.html' %}
+
+        {% include 'reg/transaction/includes/header.html' %}
+
+        {% include 'reg/transaction/includes/specification_table.html' %}
+
+        {% include 'reg/transaction/includes/footer_buttons.html' %}
+
+        {% include 'reg/transaction/includes/print_footer.html' %}
+
+        {% include 'reg/transaction/includes/modal_add_specification.html' %}
+
+        {% include 'reg/transaction/includes/modal_edit.html' %}
+
+    </div>
+
+    <script src="{% static 'js/transaction.js' %}"></script>
+
+{% endblock %}

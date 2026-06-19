@@ -1,0 +1,23 @@
+{% extends 'reg/base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+    <div class="container print-no-padding" xmlns="http://www.w3.org/1999/html">
+    
+        <!-- Шапка только для печати — всегда вверху -->
+        <div class="d-none d-print-block mb-4">
+            <div class="d-flex align-items-center mb-2">
+                <img src="{% static 'images/perviy_shinomontazh_logo_blue2.png' %}" 
+                     alt="Первый Шинопровод" height="60" class="me-3">
+                <div style="font-size: 0.4rem; line-height: 1.4; " class="d-none d-print-block ms-auto align-self-start">
+                    <strong>ООО «Первый Шинопровод»</strong><br>
+                    Свердловская обл., г. Екатеринбург, ул. Мраморская, д 4.<br>
+                    ИНН: 6679186268, КПП: 667901001, ОГРН: 1256600038958<br>
+                    р/с: 40702810710001967218<br>
+                    Банк АО «Банк», БИК: 44525974, К/с: 30101810145250000974<br>
+                    Тел.: 8-922-602-33-52, E-mail: info@1bus.pro
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

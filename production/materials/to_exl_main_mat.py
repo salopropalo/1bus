@@ -308,7 +308,7 @@ def write_financial_data(worksheet, row: int, data_in: List, sum_mass: float,
     fot = production_days * daily_salary_cost
 
     # Хозяйственные расходы
-    business_expenses = ((ELECTRICITY + RENT_PER_M2 * AREA_M2) / 20 * production_days)
+    business_expenses = ((ELECTRICITY + RENT_PER_M2 * AREA_M2) / 20 * (production_days/5*7))
 
     # Возврат инвестиций
     # daily_investment_return = INVESTMENT_TOTAL / WORKING_DAYS_YEAR
