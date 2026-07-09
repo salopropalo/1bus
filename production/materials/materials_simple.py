@@ -682,7 +682,7 @@ class vvod:
         self.itog.append(['М', 'Лента клеевая 2-х сторонняя 15мм*50м 90080', L_skotch_dvoinoi, 'м.п.'])
         self.itog.append(['Пи', 'Силикагель фасованный (20 гр)', kol, 'шт.'])
 
-        if self.seria in ['CR1'] and self.nominal in [3200, 4000, 1600, 2500]:
+        if self.seria in ['C'] and self.nominal in [3200, 4000, 1600, 2500]:
 
             if self.material in ['Алюминий', 'Al', 'AL']:
                 obem_nominal = {'4000': 18, '3200': 14, '1600': 9.6, '2500': 10.5}
@@ -808,5 +808,5 @@ class vvod:
         self.itog.append(['ПИ', 'кронштейн', kol_klips, 'шт.'])
 
 if __name__ == '__main__':  # Если мы запускаем файл напрямую, а не импортируем
-    a = vvod('CR1', 'Алюминий', 2500, 135, 70, 70, 0, 32, 135)
+    a = vvod('C', 'Алюминий', 2500, 135, 70, 70, 0, 32, 135)
     print(a.fg())

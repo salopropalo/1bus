@@ -434,7 +434,7 @@ class calculation:
                     else:
                         detali.append(['fl_130', 2])
 #CR
-        elif self.dat['Серия'] in ['CR1', 'CR2']:
+        elif self.dat['Серия'] in ['C', 'C2']:
 
             if str(self.dat['Кол. пров.']) in ['4', '3+1']:
                 detali = [['s_01', 4, self.os[0]], ['torcentr', 2], ['mfazcentr', round(int(self.L) / 400, 0)]]
@@ -623,7 +623,7 @@ class calculation:
                 #print(detali)
 
 #CR
-            if self.dat['Серия'] in ['CR1', 'CR2']:
+            if self.dat['Серия'] in ['C', 'C2']:
 
                 if self.dat['Обозначение'] in ['угф', 'ugf']:
                     detali = [['s23', 1, [self.A, self.B, 1]],
@@ -648,8 +648,8 @@ class calculation:
                       ['s38', 1, [self.A, self.B]],
                       ['s8', 1, [self.A, self.B]]]
 
-        if self.dat['Серия'] in ['CR1', 'CR2']:
-            print('CR1 нет сварных деталей!!!')
+        if self.dat['Серия'] in ['C', 'C2']:
+            print('C нет сварных деталей!!!')
         else:
 
             for i in svar_det_one_floor:
@@ -689,8 +689,8 @@ class calculation:
                  self.L, self.L1, self.A, self.B, self.C,
                  self.dat['количество'], 'спецификация']]
 
-        # CR
-        if self.dat['Серия'] in ['CR1', 'CR2']:
+        # C
+        if self.dat['Серия'] in ['C', 'C2']:
 
             if self.dat['Обозначение'] in ["uvf", "увф"]:
                 detali = [['torcentr', 2], ['mfazcentr', round((int(self.os[0]) + int(self.os[1])) / 200, 0)]]
@@ -921,7 +921,7 @@ class calculation:
                                   #['С-СД4', 1, ['c3', 1, self.os[0]], ['c3a', 1, self.os[1]], ['u', 1], ['cA', 1, self.os[2]]],
                                   #['С-СД4', 1, ['c3', 1, self.os[2]], ['c3a', 1, self.os[1]], ['u', 1], ['cA', 1, self.os[0]]]]
 
-            if self.dat['Серия'] in ['CR1', 'CR']:
+            if self.dat['Серия'] in ['C', 'C2']:
                 detali = [['torcentr', 2], ['mfazcentr', round((int(self.os[0]) + int(self.os[1]) +
                                                                 int(self.os[2])) / 200, 0)],
                           ['s46_1', 1, [self.A, self.B, self.C]],
@@ -993,7 +993,7 @@ class calculation:
                       ['s15', 1, [self.A, self.B, self.C]],
                       ['s16', 1, [self.A, self.B, self.C]]]
 
-        if self.dat['Серия'] in ['CR1', 'CR']:
+        if self.dat['Серия'] in ['C', 'C2']:
             print('Нет сварных детлей')
         else:
 
@@ -1906,8 +1906,8 @@ class calculation:
                  self.L, self.L1, self.A, self.B, self.C,
                  self.dat['количество'], 'спецификация']]
 
-        # CR  нестандарт не производим
-        if self.dat['Серия'] in ['CR1', 'CR2']:
+        # C  нестандарт не производим
+        if self.dat['Серия'] in ['C', 'C2']:
             self.nestandart()
             self.spisok_dla_mater['Nsekc'] = self.spisok_dla_mater['Nsekc'] + int(self.dat['количество'])
 
@@ -2419,7 +2419,7 @@ class Detali:
         self.print_rezult()
         return self.a
 
-    # Центователи для CR1
+    # Центователи для C
     def torcentr(self):
         self.L = float(self.H) + 40
         self.L1 = 100
@@ -3508,7 +3508,7 @@ class Detali:
         self.B = '-'
         Alfa = (180 - int(self.C)) / 2
 
-        if self.seria in ['CR1', 'CR2']:
+        if self.seria in ['C', 'C2']:
             self.L = round(float(self.os) - float(self.R_kor) + (float('100') / 2 + float(self.S_stenka)) * math.tan(math.radians(Alfa)), 1)
         else:
             self.L = round(float(self.os) - float(self.R_kor) + (float(self.H_paketa) / 2 + float(self.S_stenka)) * math.tan(math.radians(Alfa)), 1)
@@ -3536,7 +3536,7 @@ class Detali:
         self.B = '-'
         Alfa = (180 - int(self.C)) / 2
 
-        if self.seria in ['CR1', 'CR2']:
+        if self.seria in ['C', 'C2']:
             self.L = round(float(self.os) - float(self.R_kor) - 100 / 2 * math.tan(math.radians(Alfa)), 1)
         else:
             self.L = round(float(self.os) - float(self.R_kor) - float(self.H_paketa) / 2 * math.tan(math.radians(Alfa)), 1)
@@ -3867,7 +3867,7 @@ class Detali:
         self.A = '-'
         self.B = '-'
         self.C = '-'
-        if self.seria in ['CR1']:
+        if self.seria in ['C']:
             if self.name in ['ув', 'uv']:
                 if self.os[1] == 'x':
                     self.L = float(self.os[0]) - self.R_sh - self.H / 2
@@ -4476,7 +4476,7 @@ class Detali:
         self.profil(['профиль', 'Шина ' + s, 'Ш_' + s, '90 90'], self.L1)
         return self.a
 
-    # для комбинированных и для CR
+    # для комбинированных и для C
     def s23(self):  # шина гнутая внутренняя большой гиб
         beta = (180 - int(self.C)) / 2
         self.X = float(float(self.os[0]) + (float(self.S_sh_izol) * 3 + int(self.S_sh) * 2) * (math.tan(math.radians(beta))))
@@ -4633,7 +4633,7 @@ class Detali:
         self.B = '-'
         self.C = '-'
 
-        if self.seria in ['CR1']:
+        if self.seria in ['C']:
             self.L = round(float(self.os) + 210 - self.R_sh, 1)
             self.L1 = round(float(self.os) + self.L1Edge - self.R_sh, 1)
         else:
@@ -4654,7 +4654,7 @@ class Detali:
         self.A = '-'
         self.B = '-'
         self.C = '-'
-        if self.seria in ['CR1']:
+        if self.seria in ['C']:
             self.L = round(float(self.os) + 210 - self.R_sh, 1)
             self.L1 = round(float(self.os) + self.L1Centre - self.R_sh, 1)
         else:
@@ -4736,7 +4736,7 @@ class Detali:
         self.profil(['профиль', 'Шина ' + s, 'Ш_' + s, '90 90'], self.L1)
         return self.a
 
-    # для Z-образной для CR1
+    # для Z-образной для C
     def s46_1(self):  # Шина внешняя крайняя
         self.X = float(float(self.os[0]) - float(self.R_sh) + float(self.S_sh_izol) * 3 + int(self.S_sh) * 2)
         self.Y = float(float(self.os[2]) - float(self.R_sh) - float(self.S_sh_izol) * 3 - int(self.S_sh))
@@ -5378,14 +5378,14 @@ class calc():
             self.a['толщина крышки средней'] = 40
             self.a['расстояние от оси до шины'] = 18.5
             self.a['расстояние от оси до корпуса'] = 116
-        elif self.a['Серия'] in ['CR1', 'CR', 'CRM']:
+        elif self.a['Серия'] in ['C', 'CRM']:
             self.a['толщина стенки'] = 25
             self.a['ширина крышки'] = 125
             self.a['толщина крышки'] = 33
             self.a['толщина крышки средней'] = 40
             self.a['расстояние от оси до шины'] = 17.5
             self.a['расстояние от оси до корпуса'] = 127.5
-        elif self.a['Серия'] in ['CR2']:    # CR1 в корпусе
+        elif self.a['Серия'] in ['C2']:    # C в корпусе
             self.a['толщина стенки'] = 25
             self.a['ширина крышки'] = 125
             self.a['толщина крышки'] = 33
@@ -5553,7 +5553,7 @@ class calc():
                       6400: {'ширина шины': 200, 'толщина шины': 8, 'количество этажей': 3,
                              'межфазное расстояние фланца': 130, 'количество втулок': 6}}
 
-            elif self.a['Серия'] in ['CR1', 'CR', 'CRM', 'CR2']:
+            elif self.a['Серия'] in ['C', 'CRM', 'C2']:
                 rS = {250: {'ширина шины': 40, 'толщина шины': 6, 'количество этажей': 1,
                             'межфазное расстояние фланца': 100, 'количество втулок': 1},
                       400: {'ширина шины': 40, 'толщина шины': 6, 'количество этажей': 1,
@@ -5625,7 +5625,7 @@ class calc():
                       6402: {'ширина шины': 200, 'толщина шины': 6, 'количество этажей': 3,
                              'межфазное расстояние фланца': 130, 'количество втулок': 6}}
 
-            if self.a['Серия'] in ['CR1', 'CR', 'CRM', 'CR2']:
+            if self.a['Серия'] in ['C', 'CRM', 'C2']:
                 rS = {250: {'ширина шины': 30, 'толщина шины': 6, 'количество этажей': 1,
                             'межфазное расстояние фланца': 100, 'количество втулок': 1},
                       400: {'ширина шины': 30, 'толщина шины': 6, 'количество этажей': 1,
@@ -5845,7 +5845,7 @@ class calc():
                 self.a['СТП центр вывод'] = 'СТП 06'
                 self.a['толщина пакета'] = 30
 
-            if self.a['Серия'] in ['CR1', 'CR', 'CRM', 'CR2']:
+            if self.a['Серия'] in ['C', 'CRM', 'C2']:
                 self.a['большой гиб'] = 0  # большой гиб
                 self.a['малый гиб'] = 0  # малый гиб
         else:

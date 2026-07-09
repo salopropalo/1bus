@@ -39,6 +39,7 @@ header img {
     background-color: #f8d7da !important;
 }
 
+
 @media print {
     @page {
         size: A4 landscape;
@@ -54,6 +55,7 @@ header img {
     .no-print, .d-print-none {
         display: none !important;
     }
+
     .d-print-block {
         display: block !important;
     }
@@ -61,20 +63,25 @@ header img {
         width: 100%;
         margin: 0;
     }
+
     .table {
         width: 100% !important;
         font-size: 6pt !important;
     }
+
     .table td, .table th {
         padding: 1px 2px !important;  /* уменьшаем отступы внутри ячеек */
     }
+
     .container {
         max-width: 100% !important;
         padding: 0 10mm !important;
     }
+
     .d-print-table-row {
         display: table-row !important;
     }
+
     /* Убираем sticky шапку сайта */
     .sticky-top {
         position: static !important;
@@ -94,14 +101,20 @@ header img {
         display: none !important;
     }
 
+    .busway-img {
+        width: 100%;        /* на всю ширину контейнера */
+        max-width: 300px;   /* но не больше 500px */
+        height: auto;
+    }
+
     .print-no-padding {
         padding-bottom: 0 !important;
     }
 
     /* Отступ с красной строки и текст прижат влево */
     .text-paragraph {
-    text-indent: 2em !important;
-    text-align: justify !important;
-    margin-bottom: 0.5rem;
+        text-indent: 2em !important;
+        text-align: justify !important;
+        margin-bottom: 0.5rem;
     }
 }

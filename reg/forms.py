@@ -6,9 +6,8 @@ from django.forms.widgets import Select, Textarea, NumberInput
 class transactionListForm(ModelForm):
     class Meta:
         model = regModel
-        fields = ['Numbers', 'Name', 'Adres_obj']
+        fields = ['Name', 'Adres_obj']
         widgets = {
-            'Numbers': TextInput(attrs={'class': 'form-control'}),
             'Name': TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Введите наименование проекта'
@@ -43,7 +42,7 @@ class transactionForm(ModelForm):
         labels = {
             'Status': 'Статус',
             'Customer_company': 'Компания заказчик',
-            'Seller_company': 'Компания покупатель',
+            'Seller_company': 'Компания продавец',
             'Adres_obj': 'Адрес объекта',
             'sales': 'Скидка (%)',
             'delivery_type': 'Тип доставки',

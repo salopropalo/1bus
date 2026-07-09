@@ -13,18 +13,13 @@ from django.shortcuts import get_object_or_404
 
 logger = logging.getLogger(__name__)
 
+#def lending(request):
+#    return render(request, 'syte_1bus_tilda/1bus.pro/index.html')
 
 def home(request):
-    title = 'Главная!'
+    title = 'Задачи!'
     content = {
-        #'status_html': regModel.STATUS,  # статус для формы HTML
-        #'add': add,  # статус пользователя для определения его прав на просмотр и изменения
-        'title': title,  # заголовок списка
-        #'data_cards': dateReg,  # данные для отображения в карточках
-        #'form': form,  # данные для отображения в карточках
-        #'error': error,  #
-        #'title2': 'Регистрация нового проекта',  # заголовок страницы
-        #'name_str': 'transactionList'  # заголовок страницы
+        'title': title,
     }
     logger.info("test")
     return render(request, 'reg/home.html', content)

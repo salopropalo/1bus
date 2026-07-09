@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_analytics_simple',
+    'rest_framework',
     'app_users',
     'reg',
     'production',
@@ -56,7 +58,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_analytics_simple.middleware.AnalyticsMiddleware',
 ]
+
+ANALYTICS_LANGUAGE = 'ru'
 
 ROOT_URLCONF = '1bus.urls'
 
