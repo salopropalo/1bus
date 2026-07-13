@@ -38,6 +38,7 @@ class transactionForm(ModelForm):
             'guarantee',
             'payment_terms',
             'delivery_term',
+            'Status'
         ]
         labels = {
             'Status': 'Статус',

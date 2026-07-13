@@ -13,16 +13,15 @@ from django.shortcuts import get_object_or_404
 
 logger = logging.getLogger(__name__)
 
-#def lending(request):
-#    return render(request, 'syte_1bus_tilda/1bus.pro/index.html')
 
-def home(request):
+# Задачи для пользователя
+def tasks(request):
     title = 'Задачи!'
     content = {
         'title': title,
     }
     logger.info("test")
-    return render(request, 'reg/home.html', content)
+    return render(request, 'reg/tasks.html', content)
 
 
 # Сделки список

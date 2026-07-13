@@ -5,7 +5,7 @@ from . import views
 from app_users.views import AnotherLogoutView
 
 urlpatterns = [
-    path('home', views.home, name='home'),  # Главная страница с задачами
+    path('tasks', views.tasks, name='tasks'),  # Cтраница с задачами
     #path('lending', views.lending, name='lending'), # Страница на которую попадаешь по умолчанию
     path('transactionList', views.transactionList, name='transactionList'),  # Список сделок
     path('companyList', views.companyList, name='companyList'),  # Список компаний
