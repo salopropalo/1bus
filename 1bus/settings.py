@@ -10,14 +10,19 @@ https://docs.djangoproject.com/en/4.1/topics/settings/pip install --upgrade pip
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 
-ssh root@176.113.83.133 -p22
-mxFH7sBL58
+ssh root@45.143.92.240 -p22
+hEB95oBsZ9
+
 """
 import os
 from pathlib import Path
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Определяем окружение: 'production' или 'development' (по умолчанию dev)
+ENVIRONMENT = os.environ.get('DJANGO_ENV', 'development')
 
 
 # Quick-start development settings - unsuitable for production
@@ -26,10 +31,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-h6yvc@f17&t9gl3k(5yc^av2-hau_7z+yvd7839=-_19174d0o'
 
+
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '176.113.83.133', '1bus.pro', 'www.1bus.pro']
+
 
 
 # Application definition

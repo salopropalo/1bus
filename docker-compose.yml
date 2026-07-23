@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   db:
     image: postgres:15
@@ -9,37 +11,40 @@ services:
       POSTGRES_USER: antonkuznecov
       POSTGRES_PASSWORD: sam-aan2020
     ports:
-      - "5432:5432"   # проброс порта для внешнего подключения, необязательно
+      - "5432:5432"   # если нужно внешнее подключение – оставьте, иначе удалите
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U myuser -d mydb"]
+      test: ["CMD-SHELL", "pg_isready -U antonkuznecov -d 1bus"]
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: always
 
   web:
     build: .
+    container_name: django_app
     env_file:
       - .env
-    container_name: django_app
-    ports:
-      - "8080:8000"
+    volumes:
+      - static_volume:/app/static   # только для статики, код не монтируем
+      - media_volume:/app/media     # для медиа
     depends_on:
       db:
         condition: service_healthy
+    restart: always
+    # Команда запуска берётся из Dockerfile (CMD)
+
+  nginx:
+    image: nginx:1.21
+    container_name: nginx_proxy
     volumes:
-      - .:/app   # для разработки: монтируем код, чтобы изменения подхватывались
-      - static_volume:/app/static   # если собираете статику
-      - media_volume:/app/media     # если есть медиафайлы
-    environment:
-      - DJANGO_SETTINGS_MODULE=1bus.settings   # замените на ваш модуль настроек
-      - DEBUG=1
-      - DB_NAME=1bus
-      - DB_USER=antonkuznecov
-      - DB_PASSWORD=sam-aan2020
-      - DB_HOST=db
-      - DB_PORT=5432
-    stdin_open: true
-    tty: true
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - static_volume:/static
+      - media_volume:/media
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+    restart: always
 
 volumes:
   postgres_data:
