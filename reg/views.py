@@ -357,6 +357,10 @@ def transaction(request, transaction_uuid):
             rated_current = request.POST.get('rated_current', '').strip()
             nomenclature_val = request.POST.get('nomenclature', '').strip()
             article = f"B-{material_val}-{conductors_val}-{rated_current}-{nomenclature_val}"
+
+            if nomenclature_val in ('S', 'SA', 'SB', 'SC', 'SD', 'SE', 'SF'):
+                article = f"B-{nomenclature_val}"
+
             Specification.objects.create(
                 transaction=obj,
                 article_id=article,

@@ -123,7 +123,14 @@ class regModel(models.Model):
     Adres_obj = models.TextField('Адрес объекта')
 
     # Скидка
-    sales = models.IntegerField('Скидка', default=0, blank=True, null=True)
+    sales = models.DecimalField(
+        'Скидка',
+        max_digits=10,
+        decimal_places=3,
+        default=0,
+        blank=True,
+        null=True
+    )
     delivery_term = models.CharField('Срок поставки', max_length=10, choices=DELIVERY_TERMS, default='4-6', null=True,
                                      blank=True)
     payment_terms = models.TextField('Условия оплаты', null=True, blank=True,
