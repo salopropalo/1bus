@@ -1,38 +1,56 @@
 <!-- Подвал только для печати -->
 {% load static %}
-{% load custom_filters %}
-<div class="d-none d-print-block mt-5">
+{% load filters %}
+<div class="mt-5">
     <hr>
     <p>Наше предложение является комплексным и готовым к реализации. Мы уверены, что выбранное оборудование станет надежной основой энергосистемы Вашего объекта.</p>
     <p>Предложение действует в течение двух недель. Готовы ответить на любые технические вопросы и оперативно подготовить проектную документацию при необходимости.</p>
 
-    <div class="mt-4" style="position: relative;">
-        <!-- Текст -->
-        <table style="width: 400px;">
+    <div style="position:relative; width:420px;">
+
+        <table style="width:420px">
             <tr>
-                <td colspan="2"><strong>Генеральный директор</strong></td>
+                <td style="width:300px">
+                    <strong>{{ seller_company.Name_manager }}</strong>
+                </td>
+                <td></td>
             </tr>
+
             <tr>
-                <td>ООО «Первый Шинопровод»</td>
-                <td class="text-end">Кузнецов А.А.</td>
+                <td>{{ seller_company.Name }}</td>
+                <td class="text-end">{{ seller_company.Manager|initials }}</td>
             </tr>
-            <tr><td colspan="2" style="height: 20px;"></td></tr>
+
             <tr>
-                <td colspan="2">Телефон: 8-922-602-33-52</td>
+                <td colspan="2" style="height:45px"></td>
             </tr>
+
             <tr>
-                <td colspan="2">Email: info@1bus.pro</td>
+                <td>{{ seller_company.Telephone|phone }}</td>
+                <td class="text-end">{{ seller_company.Email }}</td>
             </tr>
         </table>
 
-        <!-- Печать и подпись поверх текста -->
-        <div style="position: absolute; top: 0px; left: 0;">
-            <img src="{% static 'images/podpis.png' %}"
-                 alt="Подпись"
-                 style="position: absolute; top: -20px; left: 250px; height: 80px; opacity: 0.85;">
-            <img src="{% static 'images/pechat.png' %}"
-                 alt="Печать"
-                 style="position: absolute; top: 30px; left: 230px; height: 120px; opacity: 0.85;">
-        </div>
+        {% if seller_company.Signature %}
+        <img src="{{ seller_company.Signature.url }}"
+             style="
+                 position:absolute;
+                 left:230px;
+                 top:10px;
+                 height:70px;
+                 z-index:20;">
+        {% endif %}
+
+        {% if seller_company.Stamp %}
+        <img src="{{ seller_company.Stamp.url }}"
+             style="
+                 position:absolute;
+                 left:190px;
+                 top:50px;
+                 height:110px;
+                 opacity:.95;
+                 z-index:10;">
+        {% endif %}
+
     </div>
 </div>

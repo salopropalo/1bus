@@ -1,15 +1,20 @@
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from .models import regModel, companyModel
 from .forms import transactionListForm, transactionForm, companyForm
 from django.db.models import Q
 from production.models import (Specification, seriesModel, nominalModel, conductorsModel, materialModel,
                                NameNomenclature)
 import logging
+import os
 from datetime import datetime
 from collections import defaultdict
 from decimal import Decimal
-from django.shortcuts import get_object_or_404
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from weasyprint import HTML
+from django.conf import settings
+from django.contrib.staticfiles import finders
 
 logger = logging.getLogger(__name__)
 
@@ -64,8 +69,8 @@ def transactionList(request):
                 error = 'Что то не так с запросом на создание проекта'
         # Открываем карточку
         elif 'card' in request.POST:
-            card_id = request.POST['card']
-            transaction = get_object_or_404(regModel, id=card_id)
+            card_uuid = request.POST['card']
+            transaction = get_object_or_404(regModel, uuid=card_uuid)
             return redirect('transaction', transaction_uuid=transaction.uuid)
         else:
             error = 'POST запрос с ошибкой!'
@@ -114,6 +119,7 @@ def transactionList(request):
 
 # Компании список
 def companyList(request):
+    print('POST', request.POST)
     error = ''
     # Сортировка только тех проектов, которые созданы активным пользователем
     # для Админа
@@ -150,8 +156,16 @@ def companyList(request):
                 # Выводим ошибки формы в консоль
                 print("POST запрос с ошибкой!")
                 print(form.errors)  # выводим ошибки формы
+                # вернуться на страницу с формой и передать ошибки
                 return render(request, 'reg/list.html',
-                              {'form': form, 'name_str': 'companyList'})  # вернуться на страницу с формой и передать ошибки
+                              {'form': form, 'name_str': 'companyList'})
+        # Открываем карточку компании
+        elif 'card' in request.POST:
+            card_uuid = request.POST['card']
+            card = get_object_or_404(companyModel, uuid=card_uuid)
+            return redirect('company_card', company_uuid=card.uuid)
+        else:
+            error = 'POST запрос с ошибкой!'
 
     if request.method == 'GET':
         print('сообщение', dateReg)
@@ -180,7 +194,6 @@ def companyList(request):
                     raise PermissionDenied
             else:
                 dateReg = dateReg.filter(Status=selected_sorting)
-
     form = companyForm
     content = {
         'status_html': companyModel.STATUS,  # статус для формы HTML
@@ -195,14 +208,14 @@ def companyList(request):
     return render(request, 'reg/list.html', content)
 
 
-# _____________________________________________________________________________________________________________________
 # Контекст для сделки
 def get_transaction_context(obj):
     sales = obj.sales or 0
+    Adres_obj = obj.Adres_obj or 0
     nds = Decimal('0.22')
     discount_multiplier = Decimal(str((100 - sales) / 100))
 
-    series_b = seriesModel.objects.filter(Name='B').first()
+    series = seriesModel.objects.filter(Name=obj.Series).first()
     nominal = list(nominalModel.objects.all().values_list('Name', flat=True))
     conductors = list(conductorsModel.objects.all().values_list('quantity', flat=True))
     material = list(materialModel.objects.all().values_list('Designation', flat=True))
@@ -289,13 +302,16 @@ def get_transaction_context(obj):
         name_button = 'Ошибка'
         add = False
 
+    seller_title = ""
+    seller = obj.Seller_company
+
     return {
-        'series': series_b,
+        'series': series,
         'name': obj.Name,
         'number': obj.Numbers,
         'responsible': obj.Responsible,
         'customer_company': obj.Customer_company or 'Не выбрано',
-        'seller_company': obj.Seller_company or 'Не выбрано',
+        'seller_company': obj.Seller_company,
         'adres': obj.Adres_obj,
         'status': status,
         'status_name': status_name,
@@ -324,6 +340,9 @@ def get_transaction_context(obj):
         'payment_terms': obj.payment_terms,
         'delivery_type': obj.delivery_type,
         'guarantee': obj.guarantee,
+        'Adres_obj': Adres_obj,
+        "seller": seller,
+        "seller_title": seller_title,
     }
 
 
@@ -339,6 +358,7 @@ def transaction(request, transaction_uuid):
         if 'apply_cancel' in request.POST:
             cancelled_ids = request.POST.get('cancelled_ids', '')
             if cancelled_ids:
+                print(cancelled_ids)
                 ids_list = [int(id_str) for id_str in cancelled_ids.split(',') if id_str.strip().isdigit()]
                 Specification.objects.filter(id__in=ids_list, transaction=obj).update(status='cancelled')
             return redirect('transaction', transaction_uuid=transaction_uuid)
@@ -369,8 +389,81 @@ def transaction(request, transaction_uuid):
             )
             return redirect('transaction', transaction_uuid=transaction_uuid)
 
+    context['obj'] = obj
     context['form'] = transactionListForm()
     context['title2'] = 'Внесение изменений'
     context['form'] = transactionForm(instance=obj)
-    return render(request, 'reg/sdelka_new.html', context)
+    return render(request, 'reg/sdelka.html', context)
 
+
+# Карточка сделки для просмотрп печати
+def transaction_print(request, transaction_uuid):
+    obj = get_object_or_404(
+        regModel.objects.select_related('Customer_company', 'Seller_company'),
+        uuid=transaction_uuid
+    )
+    context = get_transaction_context(obj)
+    context['form'] = transactionListForm()
+    context['title2'] = 'Внесение изменений'
+    context['form'] = transactionForm(instance=obj)
+
+    return render(request, 'reg/sdelka_print.html', context)
+
+# Сохранение PDF файла
+def transaction_pdf(request, transaction_uuid):
+    obj = get_object_or_404(regModel.objects.select_related( 'Customer_company', 'Seller_company'), uuid=transaction_uuid)
+    context = get_transaction_context(obj)
+
+    # Добавляем пути ко всем изображениям
+    if obj.Seller_company:
+        if obj.Seller_company.Logo:
+            context['logo_path'] = obj.Seller_company.Logo.path
+        if obj.Seller_company.Signature:
+            context['signature_path'] = obj.Seller_company.Signature.path
+        if obj.Seller_company.Stamp:
+            context['stamp_path'] = obj.Seller_company.Stamp.path
+
+    # Путь к статическому изображению (находим через finders)
+    static_image = finders.find('images/image_652932_2.png')
+
+    if static_image:
+        context['static_image_path'] = static_image
+    else:
+        # fallback – если не найдено, используем абсолютный путь через STATIC_ROOT
+        context['static_image_path'] = os.path.join(settings.STATIC_ROOT, 'images/image_652932_2.png')
+
+    html = render_to_string('reg/sdelka_pdf.html', context)
+    # base_url должен быть корнем проекта, чтобы WeasyPrint мог находить CSS и другие файлы
+    pdf = HTML(string=html, base_url=settings.BASE_DIR).write_pdf()
+
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = (f'attachment; filename="KP_{obj.Numbers}.pdf"')
+
+    return response
+
+
+# Карточка компании
+def company_card(request, company_uuid):
+    company = get_object_or_404(companyModel, uuid=company_uuid)
+
+    if request.method == "POST":
+
+        form = companyForm(request.POST, request.FILES, instance=company)
+
+        if form.is_valid():
+            form.save()
+            return redirect("company_card", company_uuid=company.uuid)
+
+        print(form.errors)
+
+    else:
+        form = companyForm(instance=company)
+
+    context = {
+        "company": company,
+        "form": form,
+        "number": company.Numbers,
+        "name": company.Name,
+    }
+
+    return render(request, "reg/company.html", context)

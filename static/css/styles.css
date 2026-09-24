@@ -1,3 +1,4 @@
+/* Подключение шрифта Bebas Neue (кириллица) */
 @font-face {
     font-family: 'Bebas';
     src: url('/static/fonts/BebasNeueCyrillic.woff2') format('woff2'),
@@ -6,115 +7,197 @@
     font-style: normal;
 }
 
+/* Класс для применения шрифта Bebas */
 .font-bebas {
     font-family: 'Bebas', sans-serif;
 }
+
+/* Стиль для крупного текста (жирный, растянутый по вертикали) */
 .fs-4 {
     font-family: 'Bebas', 'Arial Narrow', Arial, sans-serif !important;
-    font-weight: 700 !important;
+    font-weight: 1000 !important;
     letter-spacing: 0.8px;
-    transform: scaleY(1.6);
+    transform: scaleY(1.6);        /* растягивает текст по высоте */
     display: inline-block;
     transform-origin: center;
 }
 
+/* Активная ссылка в навигации — синий фон */
 .nav-link.active {
     background-color: #0d6efd;
 }
 
+/* Заголовки H1 — тёмно-серые, с отступом снизу */
 h1 {
     color: #333;
     margin-bottom: 20px;
 }
 
+/* Стили для обычной секции (для всех остальных) */
+section {
+    background-color: #ffffff; /* Белый фон по умолчанию */
+}
+
+/* Стили только для секции с паттерном */
+section.bg-pattern {
+    background-image: url('../images/pattern2.png');
+    background-repeat: repeat;
+}
+
+/* для шапки в начальной странице для текста с реквизитами */
+.footer-requisites {
+    color: #8a8a8a; /* Серый цвет */
+    font-family: 'Manrope', sans-serif; /* Шрифт Manrope (Regular применится по умолчанию) */
+    src: url("../fonts/Manrope/static/manrope-cyrillic-300-normal.woff2") format('woff2');
+    font-size: 12px; /* размер */
+    font-weight: 200; /* толщина */
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Заголовки в карточках  */
+.title_card {
+    color: #8a8a8a; /* Серый цвет */
+    font-family: 'Manrope', sans-serif; /* Шрифт Manrope (Regular применится по умолчанию) */
+    src: url("../fonts/Manrope/static/manrope-cyrillic-400-normal.woff2") format('woff2');
+    font-size: 16px; /* размер */
+    font-weight: 400; /* толщина */
+}
+
+
+/* Текст в карточках  */
+.text_card {
+    color: #1C1C1C; /* Серый цвет */
+    font-family: 'Manrope', sans-serif; /* Шрифт Manrope (Regular применится по умолчанию) */
+    src: url("../fonts/Manrope/static/manrope-cyrillic-200-normal.woff2") format('woff2');
+    font-size: 12px; /* размер */
+    font-weight: 200; /* толщина */
+}
+
+/* Изображения в шапке: высота 80px, автоширина, отступ справа */
 header img {
     max-height: 80px;
     width: auto;
-    margin-right: 10px;
+    margin-right: 40px;
 }
 
+.custom-img {
+    max-width: 200px; /* Укажите нужную ширину в пикселях */
+    max-height: 200px;
+    height: auto;     /* Высота подстроится автоматически без искажений */
+}
+
+.first-img {
+    max-width: 100%; /* Укажите нужную ширину в процентах */
+    height: auto;     /* Высота подстроится автоматически без искажений */
+}
+
+/* Строки таблицы с классом cancelled — зачёркнуты, полупрозрачны, розовый фон */
 .cancelled-row td, .cancelled-row th {
     text-decoration: line-through;
     opacity: 0.6;
     background-color: #f8d7da !important;
 }
 
+.row {
+    display: flex;
+    gap: 10px; /* Add some space between the images */
+}
 
+/* === СТИЛИ ТОЛЬКО ДЛЯ ПЕЧАТИ === */
 @media print {
+    /* Настройки страницы: A4 альбомная, поля 10 мм */
     @page {
         size: A4 landscape;
         margin: 10mm;
     }
 
+    /* Абзацы при печати: мелкий шрифт, уменьшенный межстрочник, малый отступ снизу */
+
     p {
-        font-size: 7pt !important;
-        line-height: 1.3 !important;
-        margin-bottom: 4px !important;
+        margin-left: 20px;  /* отступ слева от края родителя */
+        text-indent: 2em;   /* красная строка */
     }
 
+    /* Скрыть элементы с классами no-print или d-print-none (кнопки, лишние блоки) */
     .no-print, .d-print-none {
         display: none !important;
     }
 
+    /* Показать элементы с классом d-print-block (обычно скрытые на экране) */
     .d-print-block {
         display: block !important;
     }
+
+    /* Тело документа — на всю ширину, без отступов */
     body {
-        width: 100%;
-        margin: 0;
+        width: 80%;
+        margin: 15mm;
     }
 
+    /* Таблицы: ширина 100%, шрифт 6pt */
     .table {
         width: 100% !important;
         font-size: 6pt !important;
     }
 
+    /* Ячейки таблицы: минимальные внутренние отступы */
     .table td, .table th {
-        padding: 1px 2px !important;  /* уменьшаем отступы внутри ячеек */
+        padding: 1px 2px !important;
     }
 
+    /* Контейнер: максимальная ширина 100%, внутренние отступы 10 мм */
     .container {
         max-width: 100% !important;
         padding: 0 10mm !important;
     }
 
+    /* Принудительно отображать элемент как строку таблицы (для печатных макетов) */
     .d-print-table-row {
         display: table-row !important;
     }
 
-    /* Убираем sticky шапку сайта */
+    /* Убираем липкую (sticky) шапку — она становится статичной */
     .sticky-top {
         position: static !important;
     }
 
+    /* Принудительный разрыв страницы перед элементом */
     .page-break-before {
         page-break-before: always;
     }
 
-    /* Убираем лишние отступы */
+    /* Убираем лишний нижний отступ у контейнера */
     .container {
         padding-bottom: 0 !important;
     }
 
-    /* Убираем фиксированный подвал который добавляет пространство */
+    /* Скрываем фиксированный подвал */
     .fixed-bottom {
         display: none !important;
     }
 
+    /* Изображения с классом busway-img: ширина 100%, но не больше 300px */
     .busway-img {
-        width: 100%;        /* на всю ширину контейнера */
-        max-width: 300px;   /* но не больше 500px */
+        width: 100%;
+        max-width: 300px;
         height: auto;
     }
 
+    /* Класс для удаления нижнего отступа у элемента */
     .print-no-padding {
         padding-bottom: 0 !important;
     }
 
-    /* Отступ с красной строки и текст прижат влево */
+    /* Абзацы с отступом красной строки и выравниванием по ширине */
     .text-paragraph {
         text-indent: 2em !important;
         text-align: justify !important;
         margin-bottom: 0.5rem;
+    }
+
+    /* Отступ сверху 200px для первой страницы (чтобы отодвинуть от шапки) */
+    .first_page_print_indent_from_header {
+        margin-top: 200px;
     }
 }

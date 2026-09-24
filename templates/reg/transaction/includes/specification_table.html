@@ -1,6 +1,6 @@
 <!-- Спецификация -->
 {% load static %}
-{% load custom_filters %}
+{% load filters %}
 <div class="d-flex justify-content-center page-break-before"><h1>Спецификация</h1></div>
 <div>
     <table class="table table-striped table-sm small table-bordered">
@@ -49,7 +49,7 @@
                     <td class="text-end">{{ item.nds_per_unit|thousands_space }}</td>
                     <td class="text-end">{{ item.total|thousands_space }}</td>
                     <td class="d-print-none" style="text-align: center;">
-                        <button type="button" class="btn btn-sm btn-outline-danger cancel-item-btn" data-id="{{ item.id }}">✖</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger cancel-item-btn" data-id="{{ item.id|stringformat:"d" }}">✖</button>
                     </td>
                 </tr>
                 {% empty %}

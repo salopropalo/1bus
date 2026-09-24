@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<body>
+
+<!-- 2. ТЕЛО -->
+<main class="container py-4">
+
+    <!-- Первая часть: Применение шинопровода -->
+    <h1 class="mb-4 text-center font-bebas">Применение шинопровода</h1>
+    <div class="row">
+        <div>
+            <img src="{% static 'images/Применение.png' %}" alt="Применение" class="first-img">
+        </div>
+    </div>
+
+    <!-- Вторая часть: Что такое шинопровод и почему он лучше кабеля -->
+    <h1 class="mb-4 text-center font-bebas">Особенности констркции шинопровода</h1>
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0">
+                <h5 class="card-title"><a class="text-decoration-none title_card">Серия "B" в бесшовной изоляции</a></h5>
+                <div class="text-center fw-bold mb-2 text-muted" style="letter-spacing: 2px;">L1 L2 L3 N</div>
+                    <img src="{% static 'images/Шинопровод в разрезе.webp' %}"
+                         class=" custom-img card-img-top mx-auto d-block" alt="Шинопровод в разрезе">
+                    <div class="card-body">
+                        <p class="text_card">Проводники из меди или алюминия, покрытые слоем изоляционного материала
+                            толщиной почти 0.5 мм упакованные в алюминиевый корпус.</p>
+                    </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <h5 class="card-title align-content-lg-center"><a class="text-decoration-none title_card">Соединительный узел</a></h5>
+            <div class="card h-100 border-0">
+                <div class="text-center fw-bold mb-2 text-muted" style="letter-spacing: 2px;">L1 L2 L3 N</div>
+                <img src="{% static 'images/Две секции.webp' %}"
+                     class=" custom-img card-img-top mx-auto d-block" alt="Стыковочный блок">
+                <div class="card-body">
+                    <p class="text_card">Серия "B" представляет собой конструкцию типа "сендвич", она состояит
+                        из пакета проводников в бесшовной изоляции упакованных в алюминиевый корпус.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Третья часть: Типы шинопроводов -->
+    <section class="mb-5">
+        <h1 class="mb-4 text-center font-bebas">Типы шинопроводов</h1>
+
+        <div class="row">
+            {% for type in types %}
+            <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        {% if type.image %}
+                        <img src="{{ type.image.url }}" class="card-img-top" alt="{{ type.name }}">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="#" class="text-decoration-none title_card">{{ type.name }}</a>
+                            </h5>
+                            <p class="text_card">{{ type.short_description }}</p>
+                        </div>
+                    </div>
+            </div>
+            {% empty %}
+            <p>Типы шинопроводов пока не добавлены.</p>
+            {% endfor %}
+        </div>
+
+    </section>
+
+    <!-- Четвертая часть: Информационные блоки (3 колонки) -->
+    <section>
+        <h1 class="mb-4 text-center font-bebas">Почему мы?</h1>
+        <div class="row">
+            {% for block in blocks %}
+            <div class="col-12 col-md-4 mb-4">
+                <div class="card h-100 block-card">
+                    {% if block.image %}
+                    <img src="{{ block.image.url }}" class="card-img-top" alt="{{ block.title }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="title_card">{{ block.title }}</h5>
+                        <p class="text_card">{{ block.description }}</p>
+                        {% if block.link %}
+                        <a href="{{ block.link }}" class="btn btn-outline-primary btn-sm">Подробнее</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p>Блоки не добавлены.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+</main>
+
+</body>
+</html>

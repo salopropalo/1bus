@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import RegexValidator
 from django.utils import timezone
 import uuid
+from production.models import seriesModel
 
 
 # модель для создания компании
@@ -18,19 +19,19 @@ class companyModel(models.Model):
     Date_born = models.DateField('Дата создания', auto_now=True)
     Responsible = models.CharField('Ответственный', max_length=100)
     Status = models.CharField('Статус', max_length=255, default='1', choices=STATUS)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     # -----------------------------------------------------------------------------------------------------------------
-
-    Full_Name_Company = models.CharField('Полное наименование', max_length=255, unique=True)
+    Full_Name_Company = models.CharField('Полное наименование', max_length=255, unique=True, null=True)
     inn_validator = RegexValidator(regex=r'^\d{10}$',
                                    message="ИНН должен содержать только цифры и быть длиной 10 символов")
-    INN = models.CharField('ИНН', max_length=10, validators=[inn_validator])
+    INN = models.CharField('ИНН', max_length=10, validators=[inn_validator], null=True)
     kpp_validator = RegexValidator(regex=r'^\d{9}$',
                                    message="КПП должен содержать только цифры и быть длиной 9 символов")
-    KPP = models.CharField('КПП', max_length=9, validators=[kpp_validator])
-    Legal_address = models.CharField('Юридический адрес', max_length=255)
-    Actual_address = models.CharField('Фактический адрес', max_length=255)
-    OGRN = models.CharField('ОГРН', max_length=13)
-    OKPO = models.CharField('ОКПО', max_length=10)
+    KPP = models.CharField('КПП', max_length=9, validators=[kpp_validator], null=True)
+    Legal_address = models.CharField('Юридический адрес', max_length=255, null=True)
+    Actual_address = models.CharField('Фактический адрес', max_length=255, null=True)
+    OGRN = models.CharField('ОГРН', max_length=13, null=True)
+    OKPO = models.CharField('ОКПО', max_length=10, null=True)
     Checking_account_validator = RegexValidator(regex=r'^\d{20}$',
                                                 message="Расчетный счёт должен содержать только "
                                                         "цифры и быть длиной 20 символов")
@@ -39,18 +40,27 @@ class companyModel(models.Model):
                                                      message="Расчетный счёт должен содержать "
                                                              "только цифры и быть длиной 20 символов")
     Correspondent_account = models.CharField('Корреспондентский счет', max_length=20,
-                                             validators=[Correspondent_account_validator])
+                                             validators=[Correspondent_account_validator], null=True)
     BIK_validator = RegexValidator(regex=r'^\d{9}$',
                                    message="БИК должен содержать только цифры и быть длиной 9 символов")
-    BIK = models.CharField('БИК', max_length=9, validators=[BIK_validator])
-    Bank = models.CharField('Банк', max_length=255)
-    Name_manager = models.CharField('Должность руководителя', max_length=255)
-    Manager = models.CharField('ФИО руководителя', max_length=255)
-    Right_of_management = models.CharField('Основание управления', max_length=255)
+    BIK = models.CharField('БИК', max_length=9, validators=[BIK_validator], null=True)
+    Bank = models.CharField('Банк', max_length=255, null=True)
+    Name_manager = models.CharField('Должность руководителя', max_length=255, null=True)
+    Manager = models.CharField('ФИО руководителя', max_length=255, null=True)
+    Right_of_management = models.CharField('Основание управления', max_length=255, null=True)
     Telephone_validator = RegexValidator(regex=r'^\d{11}$',
                                          message="Номер телефона должен "
                                                  "содержать только цифры и быть длиной 11 символов")
-    Telephone = models.CharField('Номер телефона', max_length=11, validators=[Telephone_validator])
+    Telephone = models.CharField('Номер телефона', max_length=11, validators=[Telephone_validator], null=True)
+    Email = models.EmailField('Электронная почта', max_length=254, blank=True, null=True)
+    # Для документов
+    Print_title = models.CharField("Заголовок в документах", max_length=100, blank=True, default="", null=True)
+    Print_address = models.TextField("Адрес для печати", blank=True, default="", null=True)
+    Logo = models.ImageField("Логотип", upload_to='company/logo/', blank=True, null=True)
+    Stamp = models.ImageField("Печать", upload_to='company/stamp/', blank=True, null=True)
+    Signature = models.ImageField("Подпись", upload_to='company/signature/', blank=True, null=True)
+    Website = models.URLField("Сайт", blank=True, null=True)
+    Comment = models.TextField("Комментарий", blank=True, null=True)
 
     # название строчки в таблице
     def __str__(self):
@@ -134,12 +144,18 @@ class regModel(models.Model):
     delivery_term = models.CharField('Срок поставки', max_length=10, choices=DELIVERY_TERMS, default='4-6', null=True,
                                      blank=True)
     payment_terms = models.TextField('Условия оплаты', null=True, blank=True,
-                                     default='40% аванс, 40% перед отгрузкой, 20% отсрочка после отгрузки не более 10 дней')
+                                     default='40% аванс, 60% перед отгрузкой')
     delivery_type = models.CharField('Тип доставки', max_length=10, choices=DELIVERY_CHOICES, default='delivery',
                                      null=True, blank=True)
     guarantee = models.CharField('Гарантия', max_length=5, choices=GUARANTEE_CHOICES, default='24', null=True,
                                  blank=True)
-
+    Series = models.ForeignKey(seriesModel,
+                               on_delete=models.CASCADE,
+                               to_field='Name',
+                               related_name='customer_company',
+                               blank=True,  # Делаем поле необязательным
+                               null=True
+                               )
     # название строчки в таблице
     def __str__(self):
         return f'Проект №{self.Numbers} {self.Name} - {self.get_Status_display()}'

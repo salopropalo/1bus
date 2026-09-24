@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'app_users',
     'reg',
     'production',
-    'axes'
+    'axes',
+    'busducts'
 ]
 
 MIDDLEWARE = [
@@ -147,6 +148,10 @@ AXES_LOCKOUT_URL = '/blocked/'  # редирект на страницу бло�
 
 LANGUAGE_CODE = 'ru-ru'
 
+USE_L10N = True
+
+USE_THOUSAND_SEPARATOR = True
+
 TIME_ZONE = 'Asia/Yekaterinburg'
 
 USE_I18N = True
@@ -162,6 +167,9 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Путь для сбора статических файлов при развертывании
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static"),]
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
@@ -175,3 +183,5 @@ SESSION_COOKIE_AGE = 24 * 60 * 60
 
 REST_FRAMEWORK = {'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']}
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+DADATA_TOKEN = os.getenv("DADATA_TOKEN")

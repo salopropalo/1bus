@@ -1,23 +1,225 @@
 {% extends 'reg/base.html' %}
 {% load static %}
-{% load custom_filters %}
+{% load filters %}
 {% block content %}
-    <div class="container print-no-padding" xmlns="http://www.w3.org/1999/html">
-    
-        <!-- Шапка только для печати — всегда вверху -->
-        <div class="d-none d-print-block mb-4">
-            <div class="d-flex align-items-center mb-2">
-                <img src="{% static 'images/perviy_shinomontazh_logo_blue2.png' %}" 
-                     alt="Первый Шинопровод" height="60" class="me-3">
-                <div style="font-size: 0.4rem; line-height: 1.4; " class="d-none d-print-block ms-auto align-self-start">
-                    <strong>ООО «Первый Шинопровод»</strong><br>
-                    Свердловская обл., г. Екатеринбург, ул. Мраморская, д 4.<br>
-                    ИНН: 6679186268, КПП: 667901001, ОГРН: 1256600038958<br>
-                    р/с: 40702810710001967218<br>
-                    Банк АО «Банк», БИК: 44525974, К/с: 30101810145250000974<br>
-                    Тел.: 8-922-602-33-52, E-mail: info@1bus.pro
+<div class="container-fluid">
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">
+                Компания {{ number }} {{ name }}
+            </h3>
+        </div>
+
+        <div class="card-body">
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- Основная информация -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <strong>Основная информация</strong>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Наименование</label>
+                                {{ form.Name }}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Полное наименование</label>
+                                {{ form.Full_Name_Company }}
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">ИНН</label>
+                                {{ form.INN }}
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">КПП</label>
+                                {{ form.KPP }}
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">ОГРН</label>
+                                {{ form.OGRN }}
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">ОКПО</label>
+                                {{ form.OKPO }}
+                            </div>
+
+                        </div>
+
+                    </div>
                 </div>
-            </div>
+
+                <!-- Адреса -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <strong>Адреса</strong>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="mb-3">
+                            <label class="form-label">Юридический адрес</label>
+                            {{ form.Legal_address }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Фактический адрес</label>
+                            {{ form.Actual_address }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Адрес для печати</label>
+                            {{ form.Print_address }}
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Банковские реквизиты -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <strong>Банковские реквизиты</strong>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Банк</label>
+                                {{ form.Bank }}
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">БИК</label>
+                                {{ form.BIK }}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Расчетный счет</label>
+                                {{ form.Checking_account }}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Корреспондентский счет</label>
+                                {{ form.Correspondent_account }}
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Контакты -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <strong>Контакты</strong>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="row">
+
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Телефон</label>
+                                {{ form.Telephone }}
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">E-mail</label>
+                                {{ form.Email }}
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Руководитель -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <strong>Руководитель</strong>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="row">
+
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">ФИО</label>
+                                {{ form.Manager }}
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Должность</label>
+                                {{ form.Name_manager }}
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Основание</label>
+                                {{ form.Right_of_management }}
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Прочее -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <strong>Прочее</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Заголовок в документах</label>
+                                {{ form.Print_title }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Логтип</label>
+                                {{ form.Logo }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Печать</label>
+                                {{ form.Stamp }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Подпись</label>
+                                {{ form.Signature }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Сайт</label>
+                                {{ form.Website }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Комментарии</label>
+                                {{ form.Comment }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-end">
+                    <button class="btn btn-success btn-lg">
+                        💾 Сохранить
+                    </button>
+                </div>
+
+            </form>
         </div>
     </div>
+</div>
 {% endblock %}

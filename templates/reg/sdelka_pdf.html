@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+{% load static %}
+{% load filters %}
+<meta charset="UTF-8">
+
+<style>
+    /* === Настройки страницы для печати === */
+    @page {
+        size: A4;
+        margin: 15mm; /* внешние поля страницы */
+    }
+
+    /* Страница для спецификации – А3 альбомная */
+    @page spec {
+        size: A3 landscape;
+        margin: 10mm 15mm; /* чуть меньше поля, чтобы таблица поместилась */
+    }
+
+    .spec-container {
+        page: spec;                 /* используем именованную страницу */
+        page-break-before: always;  /* начинаем с новой страницы */
+    }
+
+    .title {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;  /* центрируем по вертикали */
+        align-items: center;      /* центрируем по горизонтали */
+        height: 100vh;            /* высота на всю страницу (минус поля body) */
+        margin: 0;                /* убираем отступы */
+        padding: 0;
+    }
+
+    .signature-table {
+        width: 420px;
+        border: none;
+        border-collapse: collapse;
+    }
+
+    .signature-table td {
+        border: none;
+    }
+
+    .signature-right {
+        position: relative;   /* <-- это ключевой момент */
+        width: 300px;         /* задайте подходящую ширину */
+        height: 130px;        /* чтобы хватило места для печати и подписи */
+    }
+
+    /* === Основные стили документа === */
+    body {
+        font-family: DejaVu Sans, Arial, sans-serif;
+        font-size: 12pt;          /* базовый размер шрифта – увеличен для читаемости */
+        margin: 0;                /* убираем отступы браузера, чтобы использовать padding */
+        padding: 10mm 15mm;       /* внутренние отступы от края страницы (слева/справа) */
+        background: #fff;
+        color: #000;
+    }
+
+    /* === Абзацы: красная строка + выравнивание по ширине === */
+    p {
+        text-indent: 2em;         /* красная строка – отступ первой строки */
+        text-align: justify;      /* выравнивание по ширине */
+        margin: 0 0 0.6em 0;      /* отступы между абзацами (нижний) */
+        line-height: 1.4;         /* межстрочный интервал */
+    }
+
+    /* === Заголовки – без красной строки === */
+    h1, h2, h3, h4 {
+        text-indent: 0;
+        text-align: center;
+        margin: 0.5em 0;
+    }
+
+    /* === Списки – отступ слева, без красной строки === */
+    ul, ol {
+        padding-left: 2em;        /* отступ для маркеров */
+        margin: 0.5em 0;
+    }
+
+    li {
+        text-indent: 0;           /* у элементов списка красная строка не нужна */
+        text-align: justify;
+        margin-bottom: 0.2em;
+    }
+
+    /* === Разрыв страницы === */
+    .page-break {
+        page-break-before: always;
+    }
+
+    /* === Шапка документа === */
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
+    }
+
+    .logo {
+        width: 315px;
+        height: auto;
+    }
+
+    .company {
+        text-align: left;          /* выравнивание текста внутри блока по левому краю */
+        font-size: 10pt;
+        line-height: 1.4;
+        width: 250px;
+    }
+
+    /* === Заголовок "Коммерческое предложение" === */
+    .title {
+        text-align: center;
+        margin-top: 40px;
+    }
+
+    /* === Таблицы (общие) === */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1em 0;
+        font-size: 9pt;           /* чуть мельче для таблиц, чтобы помещалось */
+    }
+
+    th, td {
+        border: 1px solid #555;
+        padding: 4px 6px;
+        text-align: left;         /* весь текст в ячейках по левому краю */
+        vertical-align: middle;
+    }
+
+    /* Числовые колонки – выравниваем по правому краю */
+    td:not(:first-child):not(:nth-child(2)),
+    th:not(:first-child):not(:nth-child(2)) {
+        text-align: right;
+    }
+
+    /* === Подвал (подписи) === */
+    .signature {
+        position: absolute;
+        bottom: 20mm;
+        left: 0;
+        right: 0;
+    }
+
+    .signature-table {
+        width: 420px;
+        border: none;
+    }
+
+    .signature-table td {
+        border: none;
+        padding: 2px 0;
+    }
+
+    .text-end {
+        text-align: right;
+    }
+
+    /* === Общее для жирного текста === */
+    strong, b {
+        font-weight: bold;
+    }
+
+    /* === Дополнительно: изображения === */
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* === Для печати – убираем фон, если нужно === */
+    @media print {
+        body {
+            padding: 0;           /* при печати поля уже заданы @page, поэтому убираем внутренние */
+        }
+        .no-print {
+            display: none;
+        }
+    }
+</style>
+
+</head>
+<body>
+    <div class="header">
+        <div>
+            {% if seller_company.Logo %}
+            <img class="logo" src="{{ logo_path }}">
+            {% endif %}
+        </div>
+        <div class="company">
+            <b>{{ seller_company.Print_title }}</b><br>
+            {{ seller_company.Name }}<br>
+            ИНН {{ seller_company.INN }} КПП {{ seller_company.KPP }}<br>
+            {{ seller_company.Print_address }}
+        </div>
+    </div>
+
+    <div class="title">
+        <h1>Коммерческое предложение</h1>
+        <h2>№{{ number }}</h2>
+        <h2>для {{ customer_company }}</h2>
+        <img style="width:300px; margin-top: 50px;" src="{{ static_image_path }}">
+    </div>
+
+    <!-- Разрыв страницы после изображения -->
+    <div class="page-break"></div>
+
+    <!-- Абзацы с красной строкой (стиль применяется автоматически) -->
+    <p>Компания {{ seller.Name }} благодарит Вас за возможность предложить оптимальное решение для организации надежного и безопасного электроснабжения Вашего объекта.</p>
+    <p>На основании вашего технического запроса мы предлагаем к поставке современную систему распределения электроэнергии на основе "Первого шинопровода" серии «В» с эпоксидной бесшовной изоляцией.</p>
+
+    <p><strong>Описание:</strong></p>
+    <p>{{ series.Description }}</p>
+
+    <p><strong>Сроки и условия:</strong></p>
+    <ul>
+        <li>Стоимость с НДС (22%): <strong>{{ total_sum|floatformat:2 }} ₽</strong></li>
+        <li>Срок изготовления/поставки: <strong>{{ delivery_term }} недель с момента поступления аванса;</strong></li>
+        <li>Условия оплаты: {{ payment_terms }};</li>
+        {% if delivery_type == 'delivery' %}
+            <li>В стоимость включена доставка до: {{ Adres_obj }};</li>
+            {% else %}
+            <li>Отгрузка со склада поставщика;</li>
+        {% endif %}
+        <li>Упаковка: Закрытый ящик;</li>
+        <li>Гарантия: {{ guarantee }} месяцев на отсутствие заводских дефектов при соблюдении условий монтажа и эксплуатации;</li>
+        <li>Документация: Поставляется полный комплект исполнительной и паспортной документации.</li>
+    </ul>
+
+    <!-- Разрыв страницы перед подписью и итоговым текстом (если нужно) -->
+    <div class="page-break"></div>
+
+    <p>Наше предложение является комплексным и готовым к реализации. Мы уверены, что выбранное оборудование станет надежной основой энергосистемы Вашего объекта.</p>
+    <p>Предложение действует в течение двух недель. Готовы ответить на любые технические вопросы и оперативно подготовить проектную документацию при необходимости.</p>
+
+    <!-- ========== ПОДВАЛ (подписи) ========== -->
+    <div style="position:relative; width:420px;">
+
+        <table style="width:420px" class="signature-table">
+            <tr>
+                <td style="width:300px">
+                    <strong>{{ seller_company.Name_manager }}</strong>
+                </td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <td>{{ seller_company.Name }}</td>
+                <td class="text-end">{{ seller_company.Manager|initials }}</td>
+            </tr>
+
+            <tr>
+                <td colspan="2" style="height:45px"></td>
+            </tr>
+
+            <tr>
+                <td>{{ seller_company.Telephone|phone }}</td>
+                <td class="text-end">{{ seller_company.Email }}</td>
+            </tr>
+        </table>
+
+        {% if seller_company.Signature %}
+        <img src="{{ signature_path }}"
+             style="
+                 position:absolute;
+                 left:230px;
+                 top:10px;
+                 height:70px;
+                 z-index:20;">
+        {% endif %}
+
+        {% if seller_company.Stamp %}
+        <img src="{{ stamp_path }}"
+             style="
+                 position:absolute;
+                 left:190px;
+                 top:50px;
+                 height:110px;
+                 opacity:.95;
+                 z-index:10;">
+        {% endif %}
+
+    </div>
+
+    <!-- ========== СПЕЦИФИКАЦИЯ НА А3 ========== -->
+    <div class="spec-container">
+        <h1 style="text-align:center;">Спецификация</h1>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Артикул</th>
+                    <th>Наименование</th>
+                    <th>Длина</th>
+                    <th>Масса</th>
+                    <th>Кол-во</th>
+                    <th>Цена</th>
+                    <th>НДС</th>
+                    <th>Сумма с НДС</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for line_data in line_list %}
+                <tr>
+                    <th colspan="8">Комплект {{ line_data.grouper }}</th>
+                </tr>
+                {% for item in line_data.list %}
+                <tr>
+                    <td>{{ item.article.Numbers }}</td>
+                    <td>{{ item.article.Name.Name }}</td>
+                    <td>{{ item.article.Length|mm_to_m }}</td>
+                    <td>{{ item.article.weight }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.price_no_nds|floatformat:2 }}</td>
+                    <td>{{ item.nds_per_unit|floatformat:2 }}</td>
+                    <td>{{ item.total|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

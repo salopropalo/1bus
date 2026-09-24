@@ -1,6 +1,6 @@
 {% extends 'reg/base.html' %}
 {% load static %}
-{% load custom_filters %}
+{% load filters %}
 
 {% block content %}
     <div class="container" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
@@ -54,7 +54,7 @@
                     </div>
                 </div>
 
-                <!-- Фильтр для списка проектов -->
+                <!-- Фильтр для списка сделок -->
                 <div class="p-2">
                     {% if add %}
                     <div class="dropdown">
@@ -98,7 +98,7 @@
                 {% endif %}>
                 <form method="post">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-link" name="card" value="{{ el.id }}">
+                    <button type="submit" class="btn btn-link" name="card" value="{{ el.uuid }}">
                         №{{ el.Numbers }} {{ el.Name }} от {{ el.Date_born }}
                     </button>
                 </form>

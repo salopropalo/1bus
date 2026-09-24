@@ -1,12 +1,7 @@
 from django.db import models
 from datetime import datetime
-
-from djmoney import money
 from djmoney.models.fields import MoneyField
-from django.core.validators import MinValueValidator, MaxValueValidator
-from reg.models import companyModel
 from django.core.validators import RegexValidator
-from django.core.exceptions import ValidationError
 
 # единицы измерения
 class UnitModel(models.Model):
@@ -27,6 +22,7 @@ class seriesModel(models.Model):
     Name = models.CharField('Наименование', max_length=10, unique=True, primary_key=True)
     Standard = models.CharField('Стандарт', max_length=100)
     Description = models.CharField('Описание', max_length=2000)
+    IP = models.CharField('IP', max_length=100, null=True)
 
     # название строчки в таблице
     def __str__(self):

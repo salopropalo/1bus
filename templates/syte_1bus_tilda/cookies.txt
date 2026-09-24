@@ -1,7 +1,0 @@
-# HTTrack Website Copier Cookie File
-# This file format is compatible with Netscape cookies
-.1bus.pro	TRUE	/	FALSE	1999999999	__ddg8_	kxDZJlcZG4VWD7P5
-.1bus.pro	TRUE	/	FALSE	1999999999	__ddg10_	1778834177
-.1bus.pro	TRUE	/	FALSE	1999999999	__ddg9_	185.138.89.113
-.1bus.pro	TRUE	/	FALSE	1999999999	__ddg1_	sGnQG66rmAWNZXytmU2K
-

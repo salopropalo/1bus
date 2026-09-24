@@ -1,46 +1,80 @@
 <!-- Шапка только для печати — всегда вверху -->
 {% load static %}
-{% load custom_filters %}
-<div class="d-none d-print-block mb-4">
-    <div class="d-flex align-items-center mb-2">
-        <img src="{% static 'images/perviy_shinomontazh_logo_blue2.png' %}"
-             alt="Первый Шинопровод" height="60" class="me-3">
-        <div style="font-size: 0.4rem; line-height: 1.4; " class="d-none d-print-block ms-auto align-self-start">
-            <strong>ООО «Первый Шинопровод»</strong><br>
-            Свердловская обл., г. Екатеринбург, ул. Мраморская, д 4.<br>
-            ИНН: 6679186268, КПП: 667901001, ОГРН: 1256600038958<br>
-            р/с: 40702810710001967218<br>
-            Банк АО «Банк», БИК: 44525974, К/с: 30101810145250000974<br>
-            Тел.: 8-922-602-33-52, E-mail: info@1bus.pro
-        </div>
+{% load filters %}
+<div class="d-flex align-items-start">
+
+    <div style="width:180px; flex-shrink:0;">
+        {% if seller_company.Logo %}
+            <img src="{{ seller_company.Logo.url }}"
+                 style="max-width:170px; max-height:65px;">
+        {% endif %}
     </div>
-    <hr>
+
+    <div style="margin-left:120px; font-size:9px; line-height:1.2; text-align:left; flex:1;">
+
+        <div style="font-size:11px; font-weight:bold; color:#0d6efd;">
+            {{ seller_company.Print_title }}
+        </div>
+
+        <div style="font-size:11px; font-weight:bold;">
+            {{ seller_company.Name }}
+        </div>
+
+        <div>
+            {{ seller_company.Print_address|linebreaksbr }}
+        </div>
+
+        <div>
+            ИНН {{ seller_company.INN }} &nbsp;&nbsp; КПП {{ seller_company.KPP }}
+        </div>
+
+        <div>
+            р/с {{ seller_company.Checking_account }}
+        </div>
+
+        <div>
+            {{ seller_company.Bank }}
+        </div>
+
+        <div>
+            БИК {{ seller_company.BIK }}
+        </div>
+
+        <div>
+            {{ seller_company.Telephone|phone }}
+        </div>
+
+        <div>
+            {{ seller_company.Email }}
+        </div>
+
+    </div>
+
 </div>
-<div class="d-none d-print-block text-center mt-5">
+
+<div class="text-center first_page_print_indent_from_header">
     <span class="fs-4">Коммерческое предложение</span>
     <p style="font-size: 1.5rem; margin-top: 1rem;">№{{ number }}</p>
     <p style="font-size: 2rem; font-weight: bold; margin-top: 2rem; margin-bottom: 150px;" >для {{ customer_company }}</p>
     <img src="{% static 'images/image_652932 2.png' %}" class="busway-img" style="margin-top: 50px;" alt="100">
 </div>
 
-<div class="d-none d-print-block">
-    <div class="row">
-        <div class="col">
-            <p class="fs-6 print-small text-paragraph">Компания ООО “Первый шинопровод” благодарит Вас за возможность предложить оптимальное решение
-                для организации надежного и безопасного электроснабжения Вашего объекта.</p>
-            <p class="fs-6 print-small text-paragraph">На основании вашего технического запроса мы предлагаем к поставке современную систему
-                распределения электроэнергии на основе распределительного шинопровода серии «В» с эпоксидной бесшовной изоляцией.
-            </p>
-            <p class="fs-6 print-small text-paragraph">Описание: {{ series.Description }}</p>
-            <p class="fs-6 print-small text-paragraph"><strong>Сроки и условия:</strong></p>
-            <ul>
-                <li>Срок изготовления/поставки: {{ delivery_term }} недель с момента поступления аванса;</li>
-                <li>Условия оплаты: {{ payment_terms }};</li>
-                <li>Доставка: {{ delivery_text }};</li>
-                <li>Упаковка: Закрытый ящик;</li>
-                <li>Гарантия: {{ guarantee }} месяцев на отсутствие заводских дефектов при соблюдении условий монтажа и эксплуатации;</li>
-                <li>Документация: Поставляется полный комплект исполнительной и паспортной документации.</li>
-            </ul>
-        </div>
+<div class="row">
+    <div class="col">
+        <p class="fs-6 print-small text-paragraph">Компания {{ seller.Name }} благодарит Вас за возможность предложить оптимальное решение
+            для организации надежного и безопасного электроснабжения Вашего объекта.</p>
+        <p class="fs-6 print-small text-paragraph">На основании вашего технического запроса мы предлагаем к поставке современную систему
+            распределения электроэнергии на основе "Первого шинопровода" серии «В» с эпоксидной бесшовной изоляцией.
+        </p>
+        <p class="fs-6 print-small text-paragraph">Описание: {{ series.Description }}</p>
+        <p class="fs-6 print-small text-paragraph"><strong>Сроки и условия:</strong></p>
+        <ul>
+            <li>Срок изготовления/поставки: {{ delivery_term }} недель с момента поступления аванса;</li>
+            <li>Условия оплаты: {{ payment_terms }};</li>
+            <li>Доставка: {{ Adres_obj }};</li>
+            <li>Упаковка: Закрытый ящик;</li>
+            <li>Гарантия: {{ guarantee }} месяцев на отсутствие заводских дефектов при соблюдении условий монтажа и эксплуатации;</li>
+            <li>Документация: Поставляется полный комплект исполнительной и паспортной документации.</li>
+        </ul>
     </div>
 </div>
