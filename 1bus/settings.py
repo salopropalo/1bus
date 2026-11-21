@@ -53,7 +53,8 @@ INSTALLED_APPS = [
     'reg',
     'production',
     'axes',
-    'busducts'
+    'busducts',
+    'api'
 ]
 
 MIDDLEWARE = [
@@ -185,3 +186,7 @@ REST_FRAMEWORK = {'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.Dja
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 DADATA_TOKEN = os.getenv("DADATA_TOKEN")
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:5173',
+]

@@ -3963,7 +3963,7 @@ class Detali:
         self.B = '-'
         self.C = '-'
         self.L = float(self.os) - float(self.R_sh) * 2
-        self.L1 = float(self.L) + self.L1_sh_m * 2
+        self.L1 = float(self.L) + self.L1_sh_m * 2 + 2  # 20.11.2026 внес плюс 2 мм по просьбе Руслана
         self.oboznachenie = 'Ш2'
         self.naimenovanie = 'Шина (' + str(self.stp_L2) + ')'
         s = self.print_rezult()

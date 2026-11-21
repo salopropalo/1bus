@@ -173,6 +173,105 @@
             display: none;
         }
     }
+    
+    
+    
+    
+    
+    @media print {
+
+    /* === Спецификация: А3 альбом === */
+    .spec-container {
+        page: spec;
+        page-break-before: always;
+        break-before: page;
+    }
+
+    .spec-container h1 {
+        font-size: 14pt;
+        margin: 0 0 3mm 0;
+    }
+
+    /* === Сама таблица === */
+    .spec-container .spec-table {
+        width: 100%;
+        table-layout: fixed;      /* фиксированные ширины колонок */
+        font-size: 7pt;           /* было 9pt — уменьшили */
+        line-height: 1.1;         /* было 1.4 — плотнее */
+        margin: 0;
+        border-collapse: collapse;
+    }
+
+    /* Ширины колонок (8 штук) — сумма 100% */
+    .spec-container .spec-table th:nth-child(1),
+    .spec-container .spec-table td:nth-child(1) { width: 10%; }  /* Артикул */
+    .spec-container .spec-table th:nth-child(2),
+    .spec-container .spec-table td:nth-child(2) { width: 28%; }  /* Наименование */
+    .spec-container .spec-table th:nth-child(3),
+    .spec-container .spec-table td:nth-child(3) { width: 8%; }   /* Длина */
+    .spec-container .spec-table th:nth-child(4),
+    .spec-container .spec-table td:nth-child(4) { width: 8%; }   /* Масса */
+    .spec-container .spec-table th:nth-child(5),
+    .spec-container .spec-table td:nth-child(5) { width: 7%; }   /* Кол-во */
+    .spec-container .spec-table th:nth-child(6),
+    .spec-container .spec-table td:nth-child(6) { width: 11%; }  /* Цена без НДС */
+    .spec-container .spec-table th:nth-child(7),
+    .spec-container .spec-table td:nth-child(7) { width: 11%; }  /* НДС */
+    .spec-container .spec-table th:nth-child(8),
+    .spec-container .spec-table td:nth-child(8) { width: 17%; }  /* Сумма с НДС */
+
+    /* Ячейки — минимальные отступы */
+    .spec-container .spec-table th,
+    .spec-container .spec-table td {
+        padding: 1.5px 3px !important;
+        vertical-align: middle;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    /* Шапка таблицы повторяется на каждой странице */
+    .spec-container .spec-table thead {
+        display: table-header-group;
+    }
+    .spec-container .spec-table thead th {
+        font-size: 6.5pt;
+        padding: 2px 3px !important;
+        background: #e9ecef !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    /* Строка «Комплект ...» — тоже плотнее */
+    .spec-container .spec-table tbody tr.table-primary th {
+        font-size: 7pt;
+        padding: 2px 3px !important;
+        background: #cfe2ff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    .spec-container .spec-table tbody tr.table-primary th p {
+        margin: 0;
+        text-indent: 0;
+        line-height: 1.15;
+    }
+
+    /* Строки не рвутся между страницами */
+    .spec-container .spec-table tr {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    /* Итоги — тоже с повторением на каждой странице не нужно, оставляем в конце */
+    .spec-container .spec-table tfoot th {
+        font-size: 7.5pt;
+        padding: 2px 3px !important;
+    }
+
+    /* Убираем пустой резерв под подпись в конце спецификации */
+    .spec-container .container.print-no-padding {
+        display: none !important;
+    }
+}
 </style>
 
 </head>
@@ -282,9 +381,11 @@
     <div class="page-break"></div>
 
     <!-- ========== СПЕЦИФИКАЦИЯ НА А3 ========== -->
-    <div class="d-flex justify-content-center page-break-before"><h1>Спецификация</h1></div>
-        <div>
-            <table class="table table-striped table-sm small table-bordered">
+    <div class="spec-container">
+        <div class="d-flex justify-content-center">
+            <h1>Спецификация</h1>
+        </div>
+    <table class="table table-striped table-sm small table-bordered spec-table">
                 <thead class="table-light text-center align-middle">
                     <tr>
                         <th>Артикул</th>

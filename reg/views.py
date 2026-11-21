@@ -371,6 +371,7 @@ def transaction(request, transaction_uuid):
             else:
                 print("Ошибки формы:", form.errors)
             return redirect('transaction', transaction_uuid=obj.uuid)
+
         elif 'add_specification' in request.POST:
             material_val = request.POST.get('material', '').strip()
             conductors_val = request.POST.get('conductors', '').strip()
@@ -387,6 +388,20 @@ def transaction(request, transaction_uuid):
                 line=request.POST.get('line', ''),
                 quantity=request.POST.get('quantity', 1)
             )
+
+            # Если добавлен соединительный узел J, добавляем крышки JC
+            if nomenclature_val == 'J':
+                caps_article = (
+                    f"B-{material_val}-{conductors_val}-"
+                    f"{rated_current}-JC"
+                )
+                Specification.objects.create(
+                    transaction=obj,
+                    article_id=caps_article,
+                    line=request.POST.get('line', ''),
+                    quantity=request.POST.get('quantity', 1)
+                )
+
             return redirect('transaction', transaction_uuid=transaction_uuid)
 
     context['obj'] = obj
